@@ -7,12 +7,18 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		2F61BDC329DD02D600D71D33 /* CardinalKitStorage in Frameworks */ = {isa = PBXBuildFile; productRef = 2F61BDC229DD02D600D71D33 /* CardinalKitStorage */; };
-		2F61BDC929DD3CC000D71D33 /* OnboardingTestsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2F61BDC829DD3CC000D71D33 /* OnboardingTestsView.swift */; };
-		2F61BDCB29DDE76D00D71D33 /* CardinalKitStorageTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2F61BDCA29DDE76D00D71D33 /* CardinalKitStorageTests.swift */; };
-		2F61BDCE29DDE7B300D71D33 /* CardinalKit in Frameworks */ = {isa = PBXBuildFile; productRef = 2F61BDCD29DDE7B300D71D33 /* CardinalKit */; };
-		2F61BDD029DDE7B300D71D33 /* Views in Frameworks */ = {isa = PBXBuildFile; productRef = 2F61BDCF29DDE7B300D71D33 /* Views */; };
-		2F61BDD329DDE98C00D71D33 /* XCTestExtensions in Frameworks */ = {isa = PBXBuildFile; productRef = 2F61BDD229DDE98C00D71D33 /* XCTestExtensions */; };
+		2F2D336229DE0E5A00081B1D /* CardinalKitLocalStorage in Frameworks */ = {isa = PBXBuildFile; productRef = 2F2D336129DE0E5A00081B1D /* CardinalKitLocalStorage */; };
+		2F2D336429DE0E5A00081B1D /* CardinalKitSecureStorage in Frameworks */ = {isa = PBXBuildFile; productRef = 2F2D336329DE0E5A00081B1D /* CardinalKitSecureStorage */; };
+		2F2D336B29DE0E7900081B1D /* SecureStorageTestsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2F2D336629DE0E7900081B1D /* SecureStorageTestsView.swift */; };
+		2F2D336C29DE0E7900081B1D /* SecureStorageTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2F2D336729DE0E7900081B1D /* SecureStorageTests.swift */; };
+		2F2D336D29DE0E7900081B1D /* LocalStorageTestsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2F2D336929DE0E7900081B1D /* LocalStorageTestsView.swift */; };
+		2F2D336E29DE0E7900081B1D /* LocalStorageTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2F2D336A29DE0E7900081B1D /* LocalStorageTests.swift */; };
+		2F2D337129DE0E8600081B1D /* LocalStorageTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2F2D336F29DE0E8600081B1D /* LocalStorageTests.swift */; };
+		2F2D337229DE0E8600081B1D /* SecureStorageTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2F2D337029DE0E8600081B1D /* SecureStorageTests.swift */; };
+		2F2D338129DE4A6000081B1D /* XCTestApp in Frameworks */ = {isa = PBXBuildFile; productRef = 2F2D338029DE4A6000081B1D /* XCTestApp */; };
+		2F2D338329DE4B6400081B1D /* TestAppStandard.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2F2D338229DE4B6400081B1D /* TestAppStandard.swift */; };
+		2F2D338529DE525000081B1D /* TestAppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2F2D338429DE525000081B1D /* TestAppDelegate.swift */; };
+		2F2D338729DE52EA00081B1D /* CardinalKitStorageTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2F2D338629DE52EA00081B1D /* CardinalKitStorageTests.swift */; };
 		2F6D139A28F5F386007C25D6 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 2F6D139928F5F386007C25D6 /* Assets.xcassets */; };
 		2FA7382C290ADFAA007ACEB9 /* TestApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2FA7382B290ADFAA007ACEB9 /* TestApp.swift */; };
 /* End PBXBuildFile section */
@@ -28,9 +34,16 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		2F2D336629DE0E7900081B1D /* SecureStorageTestsView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SecureStorageTestsView.swift; sourceTree = "<group>"; };
+		2F2D336729DE0E7900081B1D /* SecureStorageTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SecureStorageTests.swift; sourceTree = "<group>"; };
+		2F2D336929DE0E7900081B1D /* LocalStorageTestsView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LocalStorageTestsView.swift; sourceTree = "<group>"; };
+		2F2D336A29DE0E7900081B1D /* LocalStorageTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LocalStorageTests.swift; sourceTree = "<group>"; };
+		2F2D336F29DE0E8600081B1D /* LocalStorageTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LocalStorageTests.swift; sourceTree = "<group>"; };
+		2F2D337029DE0E8600081B1D /* SecureStorageTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SecureStorageTests.swift; sourceTree = "<group>"; };
+		2F2D338229DE4B6400081B1D /* TestAppStandard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TestAppStandard.swift; sourceTree = "<group>"; };
+		2F2D338429DE525000081B1D /* TestAppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TestAppDelegate.swift; sourceTree = "<group>"; };
+		2F2D338629DE52EA00081B1D /* CardinalKitStorageTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CardinalKitStorageTests.swift; sourceTree = "<group>"; };
 		2F61BDC129DD023E00D71D33 /* CardinalKitStorage */ = {isa = PBXFileReference; lastKnownFileType = wrapper; name = CardinalKitStorage; path = ../..; sourceTree = "<group>"; };
-		2F61BDC829DD3CC000D71D33 /* OnboardingTestsView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = OnboardingTestsView.swift; sourceTree = "<group>"; };
-		2F61BDCA29DDE76D00D71D33 /* CardinalKitStorageTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CardinalKitStorageTests.swift; sourceTree = "<group>"; };
 		2F6D139228F5F384007C25D6 /* TestApp.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = TestApp.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		2F6D139928F5F386007C25D6 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		2F6D13AC28F5F386007C25D6 /* TestAppUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = TestAppUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -43,9 +56,9 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				2F61BDD029DDE7B300D71D33 /* Views in Frameworks */,
-				2F61BDC329DD02D600D71D33 /* CardinalKitStorage in Frameworks */,
-				2F61BDCE29DDE7B300D71D33 /* CardinalKit in Frameworks */,
+				2F2D336429DE0E5A00081B1D /* CardinalKitSecureStorage in Frameworks */,
+				2F2D336229DE0E5A00081B1D /* CardinalKitLocalStorage in Frameworks */,
+				2F2D338129DE4A6000081B1D /* XCTestApp in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -53,13 +66,30 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				2F61BDD329DDE98C00D71D33 /* XCTestExtensions in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		2F2D336529DE0E7900081B1D /* SecureStorageTests */ = {
+			isa = PBXGroup;
+			children = (
+				2F2D336629DE0E7900081B1D /* SecureStorageTestsView.swift */,
+				2F2D336729DE0E7900081B1D /* SecureStorageTests.swift */,
+			);
+			path = SecureStorageTests;
+			sourceTree = "<group>";
+		};
+		2F2D336829DE0E7900081B1D /* LocalStorageTests */ = {
+			isa = PBXGroup;
+			children = (
+				2F2D336929DE0E7900081B1D /* LocalStorageTestsView.swift */,
+				2F2D336A29DE0E7900081B1D /* LocalStorageTests.swift */,
+			);
+			path = LocalStorageTests;
+			sourceTree = "<group>";
+		};
 		2F6D138928F5F384007C25D6 = {
 			isa = PBXGroup;
 			children = (
@@ -85,7 +115,11 @@
 			isa = PBXGroup;
 			children = (
 				2FA7382B290ADFAA007ACEB9 /* TestApp.swift */,
-				2F61BDC829DD3CC000D71D33 /* OnboardingTestsView.swift */,
+				2F2D338429DE525000081B1D /* TestAppDelegate.swift */,
+				2F2D338229DE4B6400081B1D /* TestAppStandard.swift */,
+				2F2D338629DE52EA00081B1D /* CardinalKitStorageTests.swift */,
+				2F2D336829DE0E7900081B1D /* LocalStorageTests */,
+				2F2D336529DE0E7900081B1D /* SecureStorageTests */,
 				2F6D139928F5F386007C25D6 /* Assets.xcassets */,
 			);
 			path = TestApp;
@@ -94,7 +128,8 @@
 		2F6D13AF28F5F386007C25D6 /* TestAppUITests */ = {
 			isa = PBXGroup;
 			children = (
-				2F61BDCA29DDE76D00D71D33 /* CardinalKitStorageTests.swift */,
+				2F2D336F29DE0E8600081B1D /* LocalStorageTests.swift */,
+				2F2D337029DE0E8600081B1D /* SecureStorageTests.swift */,
 			);
 			path = TestAppUITests;
 			sourceTree = "<group>";
@@ -123,9 +158,9 @@
 			);
 			name = TestApp;
 			packageProductDependencies = (
-				2F61BDC229DD02D600D71D33 /* CardinalKitStorage */,
-				2F61BDCD29DDE7B300D71D33 /* CardinalKit */,
-				2F61BDCF29DDE7B300D71D33 /* Views */,
+				2F2D336129DE0E5A00081B1D /* CardinalKitLocalStorage */,
+				2F2D336329DE0E5A00081B1D /* CardinalKitSecureStorage */,
+				2F2D338029DE4A6000081B1D /* XCTestApp */,
 			);
 			productName = Example;
 			productReference = 2F6D139228F5F384007C25D6 /* TestApp.app */;
@@ -146,7 +181,6 @@
 			);
 			name = TestAppUITests;
 			packageProductDependencies = (
-				2F61BDD229DDE98C00D71D33 /* XCTestExtensions */,
 			);
 			productName = ExampleUITests;
 			productReference = 2F6D13AC28F5F386007C25D6 /* TestAppUITests.xctest */;
@@ -182,8 +216,7 @@
 			);
 			mainGroup = 2F6D138928F5F384007C25D6;
 			packageReferences = (
-				2F61BDCC29DDE7B300D71D33 /* XCRemoteSwiftPackageReference "CardinalKit" */,
-				2F61BDD129DDE98C00D71D33 /* XCRemoteSwiftPackageReference "XCTestExtensions" */,
+				2F2D337F29DE4A6000081B1D /* XCRemoteSwiftPackageReference "XCTestExtensions" */,
 			);
 			productRefGroup = 2F6D139328F5F384007C25D6 /* Products */;
 			projectDirPath = "";
@@ -218,8 +251,14 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				2F2D338529DE525000081B1D /* TestAppDelegate.swift in Sources */,
+				2F2D338329DE4B6400081B1D /* TestAppStandard.swift in Sources */,
+				2F2D336D29DE0E7900081B1D /* LocalStorageTestsView.swift in Sources */,
 				2FA7382C290ADFAA007ACEB9 /* TestApp.swift in Sources */,
-				2F61BDC929DD3CC000D71D33 /* OnboardingTestsView.swift in Sources */,
+				2F2D336B29DE0E7900081B1D /* SecureStorageTestsView.swift in Sources */,
+				2F2D336C29DE0E7900081B1D /* SecureStorageTests.swift in Sources */,
+				2F2D338729DE52EA00081B1D /* CardinalKitStorageTests.swift in Sources */,
+				2F2D336E29DE0E7900081B1D /* LocalStorageTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -227,7 +266,8 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				2F61BDCB29DDE76D00D71D33 /* CardinalKitStorageTests.swift in Sources */,
+				2F2D337129DE0E8600081B1D /* LocalStorageTests.swift in Sources */,
+				2F2D337229DE0E8600081B1D /* SecureStorageTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -607,43 +647,29 @@
 /* End XCConfigurationList section */
 
 /* Begin XCRemoteSwiftPackageReference section */
-		2F61BDCC29DDE7B300D71D33 /* XCRemoteSwiftPackageReference "CardinalKit" */ = {
+		2F2D337F29DE4A6000081B1D /* XCRemoteSwiftPackageReference "XCTestExtensions" */ = {
 			isa = XCRemoteSwiftPackageReference;
-			repositoryURL = "https://github.com/StanfordBDHG/CardinalKit.git";
+			repositoryURL = "https://github.com/StanfordBDHG/XCTestExtensions.git";
 			requirement = {
 				kind = upToNextMinorVersion;
-				minimumVersion = 0.3.5;
-			};
-		};
-		2F61BDD129DDE98C00D71D33 /* XCRemoteSwiftPackageReference "XCTestExtensions" */ = {
-			isa = XCRemoteSwiftPackageReference;
-			repositoryURL = "https://github.com/StanfordBDHG/XCTestExtensions";
-			requirement = {
-				kind = upToNextMinorVersion;
-				minimumVersion = 0.3.0;
+				minimumVersion = 0.4.0;
 			};
 		};
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
-		2F61BDC229DD02D600D71D33 /* CardinalKitStorage */ = {
+		2F2D336129DE0E5A00081B1D /* CardinalKitLocalStorage */ = {
 			isa = XCSwiftPackageProductDependency;
-			productName = CardinalKitStorage;
+			productName = CardinalKitLocalStorage;
 		};
-		2F61BDCD29DDE7B300D71D33 /* CardinalKit */ = {
+		2F2D336329DE0E5A00081B1D /* CardinalKitSecureStorage */ = {
 			isa = XCSwiftPackageProductDependency;
-			package = 2F61BDCC29DDE7B300D71D33 /* XCRemoteSwiftPackageReference "CardinalKit" */;
-			productName = CardinalKit;
+			productName = CardinalKitSecureStorage;
 		};
-		2F61BDCF29DDE7B300D71D33 /* Views */ = {
+		2F2D338029DE4A6000081B1D /* XCTestApp */ = {
 			isa = XCSwiftPackageProductDependency;
-			package = 2F61BDCC29DDE7B300D71D33 /* XCRemoteSwiftPackageReference "CardinalKit" */;
-			productName = Views;
-		};
-		2F61BDD229DDE98C00D71D33 /* XCTestExtensions */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = 2F61BDD129DDE98C00D71D33 /* XCRemoteSwiftPackageReference "XCTestExtensions" */;
-			productName = XCTestExtensions;
+			package = 2F2D337F29DE4A6000081B1D /* XCRemoteSwiftPackageReference "XCTestExtensions" */;
+			productName = XCTestApp;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};

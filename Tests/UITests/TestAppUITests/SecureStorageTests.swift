@@ -9,8 +9,13 @@
 import XCTest
 
 
-final class SecureStorageTests: TestAppUITests {
+final class SecureStorageTests: XCTestCase {
     func testLocalStorage() throws {
-        try runTestAppUITests(feature: "SecureStorage", timeout: 0.2)
+        let app = XCUIApplication()
+        app.launch()
+        
+        app.staticTexts["Secure Storage"].tap()
+        
+        XCTAssertTrue(app.staticTexts["Passed"].waitForExistence(timeout: 2))
     }
 }

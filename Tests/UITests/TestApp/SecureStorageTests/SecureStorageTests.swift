@@ -9,7 +9,8 @@
 import CardinalKit
 import CryptoKit
 import Foundation
-import SecureStorage
+import CardinalKitSecureStorage
+import XCTestApp
 import XCTRuntimeAssertions
 
 

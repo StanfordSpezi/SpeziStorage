@@ -20,9 +20,9 @@ jobs:
     name: Build and Test Swift Package
     uses: StanfordBDHG/.github/.github/workflows/xcodebuild-or-fastlane.yml@v2
     with:
-      artifactname: CardinalKitStorage.xcresult
+      artifactname: CardinalKitStorage-Package.xcresult
       runsonlabels: '["macOS", "self-hosted"]'
-      scheme: CardinalKitStorage
+      scheme: CardinalKitStorage-Package
   buildandtestuitests:
     name: Build and Test UI Tests
     uses: StanfordBDHG/.github/.github/workflows/xcodebuild-or-fastlane.yml@v2
@@ -36,4 +36,4 @@ jobs:
     needs: [buildandtest, buildandtestuitests]
     uses: StanfordBDHG/.github/.github/workflows/create-and-upload-coverage-report.yml@v2
     with:
-      coveragereports: CardinalKitStorage.xcresult TestApp.xcresult
+      coveragereports: CardinalKitStorage-Package.xcresult TestApp.xcresult

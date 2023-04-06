@@ -7,8 +7,9 @@
 //
 
 import CryptoKit
-import LocalStorage
-import SecureStorage
+import CardinalKitLocalStorage
+import CardinalKitSecureStorage
+import XCTestApp
 import XCTRuntimeAssertions
 
 

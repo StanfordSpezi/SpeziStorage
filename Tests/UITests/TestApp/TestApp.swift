@@ -7,18 +7,17 @@
 //
 
 import SwiftUI
-
+import XCTestApp
 
 @main
 struct UITestsApp: App {
-    @State private var path = NavigationPath()
+    @UIApplicationDelegateAdaptor(TestAppDelegate.self) var appDelegate
     
     
     var body: some Scene {
         WindowGroup {
-            NavigationStack(path: $path) {
-                OnboardingTestsView(navigationPath: $path)
-            }
+            TestAppTestsView<CardinalKitStorageTests>()
+                .cardinalKit(appDelegate)
         }
     }
 }

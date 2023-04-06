@@ -7,7 +7,7 @@
 //
 
 @testable import CardinalKit
-@testable import LocalStorage
+@testable import CardinalKitLocalStorage
 import XCTest
 
 

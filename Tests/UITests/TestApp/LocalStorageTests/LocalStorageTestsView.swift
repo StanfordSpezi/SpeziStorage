@@ -6,9 +6,10 @@
 // SPDX-License-Identifier: MIT
 //
 
-import LocalStorage
-import SecureStorage
+import CardinalKitLocalStorage
+import CardinalKitSecureStorage
 import SwiftUI
+import XCTestApp
 
 
 struct LocalStorageTestsView: View {

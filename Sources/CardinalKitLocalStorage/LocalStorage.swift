@@ -7,8 +7,8 @@
 //
 
 import CardinalKit
+import CardinalKitSecureStorage
 import Foundation
-import SecureStorage
 import Security
 
 

@@ -7,7 +7,7 @@
 //
 
 import CardinalKit
-import SecureStorage
+import CardinalKitSecureStorage
 import Security
 
 

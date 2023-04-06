@@ -21,8 +21,7 @@ let package = Package(
         .library(name: "CardinalKitSecureStorage", targets: ["CardinalKitSecureStorage"])
     ],
     dependencies: [
-        .package(url: "https://github.com/StanfordBDHG/CardinalKit", .upToNextMinor(from: "0.3.5")),
-        .package(url: "https://github.com/StanfordBDHG/XCTRuntimeAssertions", .upToNextMinor(from: "0.1.0")),
+        .package(url: "https://github.com/StanfordBDHG/CardinalKit", .upToNextMinor(from: "0.3.5"))
     ],
     targets: [
         .target(
@@ -41,9 +40,9 @@ let package = Package(
         .target(
             name: "CardinalKitSecureStorage",
             dependencies: [
-                .product(name: "CardinalKitCardinalKit", package: "CardinalKit"),
-                .product(name: "XCTRuntimeAssertions", package: "XCTRuntimeAssertions")
+                .product(name: "CardinalKit", package: "CardinalKit"),
+                .product(name: "XCTRuntimeAssertions", package: "CardinalKit")
             ]
-        ),
+        )
     ]
 )
