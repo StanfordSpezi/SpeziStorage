@@ -1,7 +1,7 @@
 // swift-tools-version:5.7
 
 //
-// This source file is part of the TemplatePackage open source project
+// This source file is part of the CardinalKit open-source project
 // 
 // SPDX-FileCopyrightText: 2022 Stanford University and the project authors (see CONTRIBUTORS.md)
 // 
@@ -12,21 +12,36 @@ import PackageDescription
 
 
 let package = Package(
-    name: "TemplatePackage",
+    name: "CardinalKitStorage",
     platforms: [
         .iOS(.v16)
     ],
     products: [
-        .library(name: "TemplatePackage", targets: ["TemplatePackage"])
+        .library(name: "CardinalKitLocalStorage", targets: ["CardinalKitLocalStorage"]),
+        .library(name: "CardinalKitSecureStorage", targets: ["CardinalKitSecureStorage"])
+    ],
+    dependencies: [
+        .package(url: "https://github.com/StanfordBDHG/CardinalKit", .upToNextMinor(from: "0.3.5"))
     ],
     targets: [
         .target(
-            name: "TemplatePackage"
+            name: "CardinalKitLocalStorage",
+            dependencies: [
+                .product(name: "CardinalKit", package: "CardinalKit"),
+                .target(name: "CardinalKitSecureStorage")
+            ]
         ),
         .testTarget(
-            name: "TemplatePackageTests",
+            name: "CardinalKitLocalStorageTests",
             dependencies: [
-                .target(name: "TemplatePackage")
+                .target(name: "CardinalKitLocalStorage")
+            ]
+        ),
+        .target(
+            name: "CardinalKitSecureStorage",
+            dependencies: [
+                .product(name: "CardinalKit", package: "CardinalKit"),
+                .product(name: "XCTRuntimeAssertions", package: "CardinalKit")
             ]
         )
     ]

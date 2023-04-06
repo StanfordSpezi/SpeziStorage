@@ -6,18 +6,16 @@
 // SPDX-License-Identifier: MIT
 //
 
+import CardinalKitSecureStorage
 import SwiftUI
 import XCTestApp
 
-@main
-struct UITestsApp: App {
-    @UIApplicationDelegateAdaptor(TestAppDelegate.self) var appDelegate
+
+struct SecureStorageTestsView: View {
+    @EnvironmentObject var secureStorage: SecureStorage<TestAppStandard>
     
     
-    var body: some Scene {
-        WindowGroup {
-            TestAppTestsView<CardinalKitStorageTests>()
-                .cardinalKit(appDelegate)
-        }
+    var body: some View {
+        TestAppView(testCase: SecureStorageTests(secureStorage: secureStorage))
     }
 }
