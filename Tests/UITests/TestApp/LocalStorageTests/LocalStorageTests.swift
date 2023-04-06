@@ -6,9 +6,9 @@
 // SPDX-License-Identifier: MIT
 //
 
-import CryptoKit
 import CardinalKitLocalStorage
 import CardinalKitSecureStorage
+import CryptoKit
 import XCTestApp
 import XCTRuntimeAssertions
 
