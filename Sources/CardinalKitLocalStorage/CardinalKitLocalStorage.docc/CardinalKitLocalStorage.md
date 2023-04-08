@@ -1,4 +1,4 @@
-# ``LocalStorage``
+# ``CardinalKitLocalStorage``
 
 <!--
                   
