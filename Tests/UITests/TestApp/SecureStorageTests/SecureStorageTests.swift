@@ -1,13 +1,13 @@
 //
-// This source file is part of the CardinalKit open-source project
+// This source file is part of the Spezi open-source project
 //
 // SPDX-FileCopyrightText: 2022 Stanford University and the project authors (see CONTRIBUTORS.md)
 //
 // SPDX-License-Identifier: MIT
 //
 
-import CardinalKit
-import CardinalKitSecureStorage
+import Spezi
+import SpeziSecureStorage
 import CryptoKit
 import Foundation
 import XCTestApp
@@ -30,7 +30,7 @@ final class SecureStorageTests: TestAppTestCase {
     }
     
     func testCredentials() throws {
-        var serverCredentials = Credentials(username: "@PSchmiedmayer", password: "CardinalKitInventor")
+        var serverCredentials = Credentials(username: "@PSchmiedmayer", password: "SpeziInventor")
         try secureStorage.store(credentials: serverCredentials)
         try secureStorage.store(credentials: serverCredentials, storageScope: .keychainSynchronizable)
         try secureStorage.store(credentials: serverCredentials, storageScope: .keychainSynchronizable) // Overwrite existing credentials.
@@ -40,19 +40,19 @@ final class SecureStorageTests: TestAppTestCase {
         try XCTAssertEqual(serverCredentials.id, retrievedCredentials.id)
         
         
-        serverCredentials = Credentials(username: "@CardinalKit", password: "Paul")
+        serverCredentials = Credentials(username: "@Spezi", password: "Paul")
         try secureStorage.updateCredentials("@PSchmiedmayer", newCredentials: serverCredentials)
         
-        let retrievedUpdatedCredentials = try XCTUnwrap(secureStorage.retrieveCredentials("@CardinalKit"))
+        let retrievedUpdatedCredentials = try XCTUnwrap(secureStorage.retrieveCredentials("@Spezi"))
         try XCTAssertEqual(serverCredentials, retrievedUpdatedCredentials)
         
         
-        try secureStorage.deleteCredentials("@CardinalKit")
-        try XCTAssertNil(try secureStorage.retrieveCredentials("@CardinalKit"))
+        try secureStorage.deleteCredentials("@Spezi")
+        try XCTAssertNil(try secureStorage.retrieveCredentials("@Spezi"))
     }
     
     func testInternetCredentials() throws {
-        var serverCredentials = Credentials(username: "@PSchmiedmayer", password: "CardinalKitInventor")
+        var serverCredentials = Credentials(username: "@PSchmiedmayer", password: "SpeziInventor")
         try secureStorage.store(credentials: serverCredentials, server: "twitter.com")
         try secureStorage.store(credentials: serverCredentials, server: "twitter.com") // Overwrite existing credentials.
         try secureStorage.store(
@@ -65,15 +65,15 @@ final class SecureStorageTests: TestAppTestCase {
         try XCTAssertEqual(serverCredentials, retrievedCredentials)
         
         
-        serverCredentials = Credentials(username: "@CardinalKit", password: "Paul")
+        serverCredentials = Credentials(username: "@Spezi", password: "Paul")
         try secureStorage.updateCredentials("@PSchmiedmayer", server: "twitter.com", newCredentials: serverCredentials, newServer: "stanford.edu")
         
-        let retrievedUpdatedCredentials = try XCTUnwrap(secureStorage.retrieveCredentials("@CardinalKit", server: "stanford.edu"))
+        let retrievedUpdatedCredentials = try XCTUnwrap(secureStorage.retrieveCredentials("@Spezi", server: "stanford.edu"))
         try XCTAssertEqual(serverCredentials, retrievedUpdatedCredentials)
         
         
-        try secureStorage.deleteCredentials("@CardinalKit", server: "stanford.edu")
-        try XCTAssertNil(try secureStorage.retrieveCredentials("@CardinalKit", server: "stanford.edu"))
+        try secureStorage.deleteCredentials("@Spezi", server: "stanford.edu")
+        try XCTAssertNil(try secureStorage.retrieveCredentials("@Spezi", server: "stanford.edu"))
     }
     
     func testKeys() throws {
@@ -95,7 +95,7 @@ final class SecureStorageTests: TestAppTestCase {
             throw XCTestFailure()
         }
         
-        let plainText = Data("CardinalKit & Paul Schmiedmayer".utf8)
+        let plainText = Data("Spezi & Paul Schmiedmayer".utf8)
         
         var encryptError: Unmanaged<CFError>?
         guard let cipherText = SecKeyCreateEncryptedData(publicKey, algorithm, plainText as CFData, &encryptError) as Data? else {

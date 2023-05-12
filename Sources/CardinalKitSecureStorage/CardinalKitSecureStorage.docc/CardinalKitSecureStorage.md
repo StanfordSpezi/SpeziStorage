@@ -1,8 +1,8 @@
-# ``CardinalKitSecureStorage``
+# ``SpeziSecureStorage``
 
 <!--
                   
-This source file is part of the CardinalKit open-source project
+This source file is part of the Spezi open-source project
 
 SPDX-FileCopyrightText: 2022 Stanford University and the project authors (see CONTRIBUTORS.md)
 
@@ -21,13 +21,13 @@ Credentials can be stored in the Secure Enclave (if available) or the Keychain. 
 
 ## Add the Secure Storage Component
 
-You can configure the ``SecureStorage/SecureStorage`` component in the `CardinalKitAppDelegate`.
+You can configure the ``SecureStorage/SecureStorage`` component in the `SpeziAppDelegate`.
 ```swift
-import CardinalKit
+import Spezi
 import SecureStorage
 
 
-class ExampleDelegate: CardinalKitAppDelegate {
+class ExampleDelegate: SpeziAppDelegate {
     override var configuration: Configuration {
         Configuration(standard: ExampleStandard()) {
             SecureStorage()
