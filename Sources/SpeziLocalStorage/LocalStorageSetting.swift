@@ -6,9 +6,9 @@
 // SPDX-License-Identifier: MIT
 //
 
+import Security
 import Spezi
 import SpeziSecureStorage
-import Security
 
 
 /// The ``LocalStorageSetting`` enables configuring how data in the ``LocalStorage/LocalStorage`` module can be stored and retrieved.

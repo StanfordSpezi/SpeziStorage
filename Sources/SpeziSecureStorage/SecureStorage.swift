@@ -6,11 +6,11 @@
 // SPDX-License-Identifier: MIT
 //
 
-import Spezi
 import CryptoKit
 import Foundation
 import LocalAuthentication
 import Security
+import Spezi
 import XCTRuntimeAssertions
 
 

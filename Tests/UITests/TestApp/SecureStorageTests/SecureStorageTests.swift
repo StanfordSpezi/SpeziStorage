@@ -6,10 +6,10 @@
 // SPDX-License-Identifier: MIT
 //
 
-import Spezi
-import SpeziSecureStorage
 import CryptoKit
 import Foundation
+import Spezi
+import SpeziSecureStorage
 import XCTestApp
 import XCTRuntimeAssertions
 
