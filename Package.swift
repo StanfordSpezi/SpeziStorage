@@ -1,7 +1,7 @@
 // swift-tools-version:5.7
 
 //
-// This source file is part of the CardinalKit open-source project
+// This source file is part of the Stanford Spezi open-source project
 // 
 // SPDX-FileCopyrightText: 2022 Stanford University and the project authors (see CONTRIBUTORS.md)
 // 
@@ -12,36 +12,36 @@ import PackageDescription
 
 
 let package = Package(
-    name: "CardinalKitStorage",
+    name: "SpeziStorage",
     platforms: [
         .iOS(.v16)
     ],
     products: [
-        .library(name: "CardinalKitLocalStorage", targets: ["CardinalKitLocalStorage"]),
-        .library(name: "CardinalKitSecureStorage", targets: ["CardinalKitSecureStorage"])
+        .library(name: "SpeziLocalStorage", targets: ["SpeziLocalStorage"]),
+        .library(name: "SpeziSecureStorage", targets: ["SpeziSecureStorage"])
     ],
     dependencies: [
-        .package(url: "https://github.com/StanfordBDHG/CardinalKit", .upToNextMinor(from: "0.4.1")),
-        .package(url: "https://github.com/StanfordBDHG/XCTRuntimeAssertions", .upToNextMinor(from: "0.2.1"))
+        .package(url: "https://github.com/StanfordSpezi/Spezi", .upToNextMinor(from: "0.5.0")),
+        .package(url: "https://github.com/StanfordSpezi/XCTRuntimeAssertions", .upToNextMinor(from: "0.2.2"))
     ],
     targets: [
         .target(
-            name: "CardinalKitLocalStorage",
+            name: "SpeziLocalStorage",
             dependencies: [
-                .product(name: "CardinalKit", package: "CardinalKit"),
-                .target(name: "CardinalKitSecureStorage")
+                .product(name: "Spezi", package: "Spezi"),
+                .target(name: "SpeziSecureStorage")
             ]
         ),
         .testTarget(
-            name: "CardinalKitLocalStorageTests",
+            name: "SpeziLocalStorageTests",
             dependencies: [
-                .target(name: "CardinalKitLocalStorage")
+                .target(name: "SpeziLocalStorage")
             ]
         ),
         .target(
-            name: "CardinalKitSecureStorage",
+            name: "SpeziSecureStorage",
             dependencies: [
-                .product(name: "CardinalKit", package: "CardinalKit"),
+                .product(name: "Spezi", package: "Spezi"),
                 .product(name: "XCTRuntimeAssertions", package: "XCTRuntimeAssertions")
             ]
         )

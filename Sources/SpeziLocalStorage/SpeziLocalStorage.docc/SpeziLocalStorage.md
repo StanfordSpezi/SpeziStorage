@@ -1,8 +1,8 @@
-# ``CardinalKitLocalStorage``
+# ``SpeziLocalStorage``
 
 <!--
                   
-This source file is part of the CardinalKit open-source project
+This source file is part of the Stanford Spezi open-source project
 
 SPDX-FileCopyrightText: 2022 Stanford University and the project authors (see CONTRIBUTORS.md)
 
@@ -21,14 +21,14 @@ The data stored can optionally be encrypted by importing the `SecureStorage` mod
 
 ## Add the LocalStorage Module
 
-You can configure the ``LocalStorage/LocalStorage`` module in the `CardinalKitAppDelegate`.
+You can configure the ``LocalStorage/LocalStorage`` module in the `SpeziAppDelegate`.
 
 ```swift
-import CardinalKit
+import Spezi
 import LocalStorage
 
 
-class ExampleDelegate: CardinalKitAppDelegate {
+class ExampleDelegate: SpeziAppDelegate {
     override var configuration: Configuration {
         Configuration(standard: ExampleStandard()) {
             LocalStorage()
@@ -64,7 +64,7 @@ struct Note: Codable, Equatable {
     let date: Date
 }
 
-let note = Note(text: "CardinalKit is awesome!", date: Date())
+let note = Note(text: "Spezi is awesome!", date: Date())
 
 do {
     try await localStorage.store(

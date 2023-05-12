@@ -1,13 +1,13 @@
 //
-// This source file is part of the CardinalKit open-source project
+// This source file is part of the Stanford Spezi open-source project
 //
 // SPDX-FileCopyrightText: 2022 Stanford University and the project authors (see CONTRIBUTORS.md)
 //
 // SPDX-License-Identifier: MIT
 //
 
-@testable import CardinalKit
-@testable import CardinalKitLocalStorage
+@testable import Spezi
+@testable import SpeziLocalStorage
 import XCTest
 
 
@@ -29,7 +29,7 @@ final class LocalStorageTests: XCTestCase {
         let greeting: String
     }
     
-    class LocalStorageTestsAppDelegate: CardinalKitAppDelegate {
+    class LocalStorageTestsAppDelegate: SpeziAppDelegate {
         override var configuration: Configuration {
             Configuration(standard: LocalStorageTestStandard()) {
                 LocalStorage()
@@ -39,8 +39,8 @@ final class LocalStorageTests: XCTestCase {
     
     
     func testLocalStorage() async throws {
-        let cardinalKit = await LocalStorageTestsAppDelegate().cardinalKit
-        let localStorage = try XCTUnwrap(cardinalKit.typedCollection[LocalStorage<LocalStorageTestStandard>.self])
+        let spezi = await LocalStorageTestsAppDelegate().spezi
+        let localStorage = try XCTUnwrap(spezi.typedCollection[LocalStorage<LocalStorageTestStandard>.self])
         
         let letter = Letter(greeting: "Hello Paul 👋\(String(repeating: "🚀", count: Int.random(in: 0...10)))")
         try await localStorage.store(letter, settings: .unencrypted())

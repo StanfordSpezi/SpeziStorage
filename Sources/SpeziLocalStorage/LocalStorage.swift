@@ -1,15 +1,15 @@
 //
-// This source file is part of the CardinalKit open-source project
+// This source file is part of the Stanford Spezi open-source project
 //
 // SPDX-FileCopyrightText: 2022 Stanford University and the project authors (see CONTRIBUTORS.md)
 //
 // SPDX-License-Identifier: MIT
 //
 
-import CardinalKit
-import CardinalKitSecureStorage
 import Foundation
 import Security
+import Spezi
+import SpeziSecureStorage
 
 
 /// The   ``LocalStorage/`` module enables the on-disk storage of data in mobile applications.
@@ -27,7 +27,7 @@ public final class LocalStorage<ComponentStandard: Standard>: Module, DefaultIni
         // We store the files in the application support directory as described in
         // https://developer.apple.com/library/archive/documentation/FileManagement/Conceptual/FileSystemProgrammingGuide/FileSystemOverview/FileSystemOverview.html
         let paths = FileManager.default.urls(for: .applicationSupportDirectory, in: .userDomainMask)
-        let localStoragePath = paths[0].appendingPathComponent("edu.stanford.cardinalkit/LocalStorage")
+        let localStoragePath = paths[0].appendingPathComponent("edu.stanford.spezi/LocalStorage")
         if !FileManager.default.fileExists(atPath: localStoragePath.path) {
             do {
                 try FileManager.default.createDirectory(atPath: localStoragePath.path, withIntermediateDirectories: true, attributes: nil)
