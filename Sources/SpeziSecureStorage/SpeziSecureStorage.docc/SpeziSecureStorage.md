@@ -2,7 +2,7 @@
 
 <!--
                   
-This source file is part of the Spezi open-source project
+This source file is part of the Stanford Spezi open-source project
 
 SPDX-FileCopyrightText: 2022 Stanford University and the project authors (see CONTRIBUTORS.md)
 
@@ -106,7 +106,7 @@ do {
         "user",
         server: "stanford.edu",
         newCredentials: newCredentials,
-        newServer: "biodesign.stanford.edu"
+        newServer: "spezi.stanford.edu"
     )
 } catch {
     // Handle update error here.
@@ -122,7 +122,7 @@ The ``SecureStorage/SecureStorage`` component enables the deletion of a previous
 do {
     try secureStorage.deleteCredentials(
         "user", 
-        server: "biodesign.stanford.edu"
+        server: "spezi.stanford.edu"
     )
 } catch {
     // Handle deletion error here.
