@@ -43,12 +43,12 @@ final class LocalStorageTests: XCTestCase {
         let localStorage = try XCTUnwrap(spezi.typedCollection[LocalStorage<LocalStorageTestStandard>.self])
         
         let letter = Letter(greeting: "Hello Paul 👋\(String(repeating: "🚀", count: Int.random(in: 0...10)))")
-        try await localStorage.store(letter, settings: .unencrypted())
-        let storedLetter: Letter = try await localStorage.read(settings: .unencrypted())
+        try localStorage.store(letter, settings: .unencrypted())
+        let storedLetter: Letter = try localStorage.read(settings: .unencrypted())
         
         XCTAssertEqual(letter, storedLetter)
         
-        try await localStorage.delete(Letter.self)
-        try await localStorage.delete(storageKey: "Letter")
+        try localStorage.delete(Letter.self)
+        try localStorage.delete(storageKey: "Letter")
     }
 }

@@ -52,7 +52,7 @@ public final class LocalStorage<ComponentStandard: Standard>: Module, DefaultIni
         _ element: C,
         storageKey: String? = nil,
         settings: LocalStorageSetting = .encryptedUsingKeyChain()
-    ) async throws {
+    ) throws {
         var fileURL = fileURL(from: storageKey, type: C.self)
         let fileExistsAlready = FileManager.default.fileExists(atPath: fileURL.path)
         
@@ -109,7 +109,7 @@ public final class LocalStorage<ComponentStandard: Standard>: Module, DefaultIni
         _ type: C.Type = C.self,
         storageKey: String? = nil,
         settings: LocalStorageSetting = .encryptedUsingKeyChain()
-    ) async throws -> C {
+    ) throws -> C {
         let fileURL = fileURL(from: storageKey, type: C.self)
         let data = try Data(contentsOf: fileURL)
         
@@ -134,22 +134,22 @@ public final class LocalStorage<ComponentStandard: Standard>: Module, DefaultIni
     /// Use ``LocalStorage/LocalStorage/delete(storageKey:)`` to deletes a file stored on disk identified by the `storageKey`.
     /// - Parameters:
     ///   - storageKey: An optional storage key to identify the file.
-    public func delete(storageKey: String) async throws {
-        try await delete(String.self, storageKey: storageKey)
+    public func delete(storageKey: String) throws {
+        try delete(String.self, storageKey: storageKey)
     }
     
     /// Use ``LocalStorage/LocalStorage/delete(storageKey:)`` to deletes a file stored on disk defined by a  `Decodable` type that is used to derive the storage key.
     /// - Parameters:
     ///   - type: The `Decodable` type that is used to derive the storage key from.
-    public func delete<C: Encodable>(_ type: C.Type = C.self) async throws {
-        try await delete(C.self, storageKey: nil)
+    public func delete<C: Encodable>(_ type: C.Type = C.self) throws {
+        try delete(C.self, storageKey: nil)
     }
     
     
     private func delete<C: Encodable>(
         _ type: C.Type = C.self,
         storageKey: String? = nil
-    ) async throws {
+    ) throws {
         let fileURL = self.fileURL(from: storageKey, type: C.self)
         
         if FileManager.default.fileExists(atPath: fileURL.path) {
