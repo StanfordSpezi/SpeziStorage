@@ -18,7 +18,7 @@ final class LocalStorageTests: XCTestCase {
     
     class LocalStorageTestsAppDelegate: SpeziAppDelegate {
         override var configuration: Configuration {
-            Configuration() {
+            Configuration {
                 LocalStorage()
             }
         }

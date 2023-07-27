@@ -13,7 +13,7 @@ import SpeziSecureStorage
 
 class TestAppDelegate: SpeziAppDelegate {
     override var configuration: Configuration {
-        Configuration() {
+        Configuration {
             LocalStorage()
             SecureStorage()
         }
