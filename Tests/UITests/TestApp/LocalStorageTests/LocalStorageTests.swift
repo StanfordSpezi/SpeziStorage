@@ -19,13 +19,13 @@ final class LocalStorageTests: TestAppTestCase {
     }
     
     
-    let localStorage: LocalStorage<TestAppStandard>
-    let secureStorage: SecureStorage<TestAppStandard>
+    let localStorage: LocalStorage
+    let secureStorage: SecureStorage
     
     
     init(
-        localStorage: LocalStorage<TestAppStandard>,
-        secureStorage: SecureStorage<TestAppStandard>
+        localStorage: LocalStorage,
+        secureStorage: SecureStorage
     ) {
         self.localStorage = localStorage
         self.secureStorage = secureStorage

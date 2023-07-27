@@ -35,7 +35,7 @@ public enum LocalStorageSetting {
     }
     
     
-    func keys<S: Standard>(from secureStorage: SecureStorage<S>) throws -> (privateKey: SecKey, publicKey: SecKey)? {
+    func keys(from secureStorage: SecureStorage) throws -> (privateKey: SecKey, publicKey: SecKey)? {
         let secureStorageScope: SecureStorageScope
         switch self {
         case .unencrypted:
