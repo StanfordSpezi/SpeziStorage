@@ -29,7 +29,7 @@ import SecureStorage
 
 class ExampleDelegate: SpeziAppDelegate {
     override var configuration: Configuration {
-        Configuration(standard: ExampleStandard()) {
+        Configuration {
             SecureStorage()
         }
     }
@@ -40,7 +40,7 @@ You can then use the ``SecureStorage/SecureStorage`` class in any SwiftUI view.
 
 ```swift
 struct ExampleSecureStorageView: View {
-    @EnvironmentObject var secureStorage: SecureStorage<ExampleStandard>
+    @EnvironmentObject var secureStorage: SecureStorage
     
     
     var body: some View {

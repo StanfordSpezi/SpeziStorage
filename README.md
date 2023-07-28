@@ -23,7 +23,7 @@ For more information, please refer to the [API documentation](https://swiftpacka
 
 ## The Spezi Template Application
 
-The [Spezi Template Application](https://github.com/StanfordSpezi/SpeziTemplateApplication) provides a great starting point and example using the `SpeziStorage` module.
+The [Spezi Template Application](https://github.com/StanfordSpezi/SpeziTemplateApplication) provides a great starting point and example using the Spezi Storage module.
 
 
 ## Contributing

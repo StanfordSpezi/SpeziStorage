@@ -16,7 +16,6 @@
 		2F2D337129DE0E8600081B1D /* LocalStorageTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2F2D336F29DE0E8600081B1D /* LocalStorageTests.swift */; };
 		2F2D337229DE0E8600081B1D /* SecureStorageTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2F2D337029DE0E8600081B1D /* SecureStorageTests.swift */; };
 		2F2D338129DE4A6000081B1D /* XCTestApp in Frameworks */ = {isa = PBXBuildFile; productRef = 2F2D338029DE4A6000081B1D /* XCTestApp */; };
-		2F2D338329DE4B6400081B1D /* TestAppStandard.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2F2D338229DE4B6400081B1D /* TestAppStandard.swift */; };
 		2F2D338529DE525000081B1D /* TestAppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2F2D338429DE525000081B1D /* TestAppDelegate.swift */; };
 		2F2D338729DE52EA00081B1D /* SpeziStorageTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2F2D338629DE52EA00081B1D /* SpeziStorageTests.swift */; };
 		2F6D139A28F5F386007C25D6 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 2F6D139928F5F386007C25D6 /* Assets.xcassets */; };
@@ -40,7 +39,6 @@
 		2F2D336A29DE0E7900081B1D /* LocalStorageTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LocalStorageTests.swift; sourceTree = "<group>"; };
 		2F2D336F29DE0E8600081B1D /* LocalStorageTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LocalStorageTests.swift; sourceTree = "<group>"; };
 		2F2D337029DE0E8600081B1D /* SecureStorageTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SecureStorageTests.swift; sourceTree = "<group>"; };
-		2F2D338229DE4B6400081B1D /* TestAppStandard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TestAppStandard.swift; sourceTree = "<group>"; };
 		2F2D338429DE525000081B1D /* TestAppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TestAppDelegate.swift; sourceTree = "<group>"; };
 		2F2D338629DE52EA00081B1D /* SpeziStorageTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SpeziStorageTests.swift; sourceTree = "<group>"; };
 		2F61BDC129DD023E00D71D33 /* SpeziStorage */ = {isa = PBXFileReference; lastKnownFileType = wrapper; name = SpeziStorage; path = ../..; sourceTree = "<group>"; };
@@ -116,7 +114,6 @@
 			children = (
 				2FA7382B290ADFAA007ACEB9 /* TestApp.swift */,
 				2F2D338429DE525000081B1D /* TestAppDelegate.swift */,
-				2F2D338229DE4B6400081B1D /* TestAppStandard.swift */,
 				2F2D338629DE52EA00081B1D /* SpeziStorageTests.swift */,
 				2F2D336829DE0E7900081B1D /* LocalStorageTests */,
 				2F2D336529DE0E7900081B1D /* SecureStorageTests */,
@@ -252,7 +249,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				2F2D338529DE525000081B1D /* TestAppDelegate.swift in Sources */,
-				2F2D338329DE4B6400081B1D /* TestAppStandard.swift in Sources */,
 				2F2D336D29DE0E7900081B1D /* LocalStorageTestsView.swift in Sources */,
 				2FA7382C290ADFAA007ACEB9 /* TestApp.swift in Sources */,
 				2F2D336B29DE0E7900081B1D /* SecureStorageTestsView.swift in Sources */,

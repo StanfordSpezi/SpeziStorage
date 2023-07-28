@@ -13,8 +13,8 @@ import XCTestApp
 
 
 struct LocalStorageTestsView: View {
-    @EnvironmentObject var localStorage: LocalStorage<TestAppStandard>
-    @EnvironmentObject var secureStorage: SecureStorage<TestAppStandard>
+    @EnvironmentObject var localStorage: LocalStorage
+    @EnvironmentObject var secureStorage: SecureStorage
     
     
     var body: some View {

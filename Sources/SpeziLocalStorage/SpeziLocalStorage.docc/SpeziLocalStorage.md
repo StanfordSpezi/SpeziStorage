@@ -30,7 +30,7 @@ import LocalStorage
 
 class ExampleDelegate: SpeziAppDelegate {
     override var configuration: Configuration {
-        Configuration(standard: ExampleStandard()) {
+        Configuration {
             LocalStorage()
         }
     }
@@ -41,7 +41,7 @@ You can then use the ``LocalStorage/LocalStorage`` class in any SwiftUI view.
 
 ```swift
 struct ExampleLocalStorageView: View {
-    @EnvironmentObject var localStorage: LocalStorage<ExampleStandard>
+    @EnvironmentObject var localStorage: LocalStorage
     
     
     var body: some View {

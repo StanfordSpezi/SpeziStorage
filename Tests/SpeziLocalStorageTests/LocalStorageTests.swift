@@ -12,26 +12,13 @@ import XCTest
 
 
 final class LocalStorageTests: XCTestCase {
-    private actor LocalStorageTestStandard: Standard {
-        typealias BaseType = StandardType
-        typealias RemovalContext = StandardType
-        
-        
-        struct StandardType: Sendable, Identifiable {
-            var id: UUID
-        }
-        
-        
-        func registerDataSource(_ asyncSequence: some TypedAsyncSequence<DataChange<BaseType, RemovalContext>>) { }
-    }
-    
     struct Letter: Codable, Equatable {
         let greeting: String
     }
     
     class LocalStorageTestsAppDelegate: SpeziAppDelegate {
         override var configuration: Configuration {
-            Configuration(standard: LocalStorageTestStandard()) {
+            Configuration {
                 LocalStorage()
             }
         }
@@ -40,7 +27,7 @@ final class LocalStorageTests: XCTestCase {
     
     func testLocalStorage() async throws {
         let spezi = await LocalStorageTestsAppDelegate().spezi
-        let localStorage = try XCTUnwrap(spezi.typedCollection[LocalStorage<LocalStorageTestStandard>.self])
+        let localStorage = try XCTUnwrap(spezi.storage[LocalStorage.self])
         
         let letter = Letter(greeting: "Hello Paul 👋\(String(repeating: "🚀", count: Int.random(in: 0...10)))")
         try localStorage.store(letter, settings: .unencrypted())

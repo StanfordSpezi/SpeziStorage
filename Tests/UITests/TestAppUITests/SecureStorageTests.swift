@@ -10,7 +10,7 @@ import XCTest
 
 
 final class SecureStorageTests: XCTestCase {
-    func testLocalStorage() throws {
+    func testSecureStorage() throws {
         let app = XCUIApplication()
         app.launch()
         

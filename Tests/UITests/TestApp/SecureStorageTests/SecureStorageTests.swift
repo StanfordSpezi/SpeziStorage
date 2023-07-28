@@ -15,10 +15,10 @@ import XCTRuntimeAssertions
 
 
 final class SecureStorageTests: TestAppTestCase {
-    let secureStorage: SecureStorage<TestAppStandard>
+    let secureStorage: SecureStorage
     
     
-    init(secureStorage: SecureStorage<TestAppStandard>) {
+    init(secureStorage: SecureStorage) {
         self.secureStorage = secureStorage
     }
     
