@@ -22,7 +22,7 @@ let package = Package(
     ],
     dependencies: [
         .package(url: "https://github.com/StanfordSpezi/Spezi", .upToNextMinor(from: "0.7.0")),
-        .package(url: "https://github.com/StanfordSpezi/XCTRuntimeAssertions", .upToNextMinor(from: "0.2.2"))
+        .package(url: "https://github.com/StanfordBDHG/XCTRuntimeAssertions", .upToNextMinor(from: "0.2.5"))
     ],
     targets: [
         .target(
