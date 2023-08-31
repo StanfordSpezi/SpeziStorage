@@ -24,12 +24,34 @@ final class SecureStorageTests: TestAppTestCase {
     
     
     func runTests() async throws {
+        try testDeleteAllCredentials()
         try testCredentials()
         try testInternetCredentials()
+        try testMultipleInternetCredentials()
+        try testMultipleCredentials()
         try testKeys()
     }
     
+    func testDeleteAllCredentials() throws {
+        let serverCredentials1 = Credentials(username: "@Schmiedmayer", password: "SpeziInventor")
+        try secureStorage.store(credentials: serverCredentials1, server: "apple.com")
+        
+        let serverCredentials2 = Credentials(username: "Stanford Spezi", password: "Paul")
+        try secureStorage.store(credentials: serverCredentials2)
+        
+        try secureStorage.createKey("DeleteKeyTest", storageScope: .keychain)
+        
+        try secureStorage.deleteAllCredentials()
+        
+        try XCTAssertEqual(try XCTUnwrap(secureStorage.retrieveAllCredentials(forServer: "apple.com")).count, 0)
+        try XCTAssertEqual(try XCTUnwrap(secureStorage.retrieveAllCredentials()).count, 0)
+        try XCTAssertNil(secureStorage.retrievePrivateKey(forTag: "DeleteKeyTest"))
+        try XCTAssertNil(secureStorage.retrievePublicKey(forTag: "DeleteKeyTest"))
+    }
+    
     func testCredentials() throws {
+        try secureStorage.deleteAllCredentials(itemTypes: .credentials)
+        
         var serverCredentials = Credentials(username: "@PSchmiedmayer", password: "SpeziInventor")
         try secureStorage.store(credentials: serverCredentials)
         try secureStorage.store(credentials: serverCredentials, storageScope: .keychainSynchronizable)
@@ -52,6 +74,8 @@ final class SecureStorageTests: TestAppTestCase {
     }
     
     func testInternetCredentials() throws {
+        try secureStorage.deleteAllCredentials(itemTypes: .credentials)
+        
         var serverCredentials = Credentials(username: "@PSchmiedmayer", password: "SpeziInventor")
         try secureStorage.store(credentials: serverCredentials, server: "twitter.com")
         try secureStorage.store(credentials: serverCredentials, server: "twitter.com") // Overwrite existing credentials.
@@ -76,8 +100,48 @@ final class SecureStorageTests: TestAppTestCase {
         try XCTAssertNil(try secureStorage.retrieveCredentials("@Spezi", server: "stanford.edu"))
     }
     
+    func testMultipleInternetCredentials() throws {
+        try secureStorage.deleteAllCredentials(itemTypes: .credentials)
+        
+        let serverCredentials1 = Credentials(username: "Paul Schmiedmayer", password: "SpeziInventor")
+        try secureStorage.store(credentials: serverCredentials1, server: "linkedin.com")
+        
+        let serverCredentials2 = Credentials(username: "Stanford Spezi", password: "Paul")
+        try secureStorage.store(credentials: serverCredentials2, server: "linkedin.com")
+        
+        let retrievedCredentials = try XCTUnwrap(secureStorage.retrieveAllCredentials(forServer: "linkedin.com"))
+        try XCTAssertEqual(retrievedCredentials.count, 2)
+        try XCTAssert(retrievedCredentials.contains(where: { $0 == serverCredentials1 }))
+        try XCTAssert(retrievedCredentials.contains(where: { $0 == serverCredentials2 }))
+        
+        try secureStorage.deleteCredentials("Paul Schmiedmayer", server: "linkedin.com")
+        try secureStorage.deleteCredentials("Stanford Spezi", server: "linkedin.com")
+        
+        try XCTAssertEqual(try XCTUnwrap(secureStorage.retrieveAllCredentials(forServer: "linkedin.com")).count, 0)
+    }
+    
+    func testMultipleCredentials() throws {
+        try secureStorage.deleteAllCredentials(itemTypes: .credentials)
+        
+        let serverCredentials1 = Credentials(username: "Paul Schmiedmayer", password: "SpeziInventor")
+        try secureStorage.store(credentials: serverCredentials1)
+        
+        let serverCredentials2 = Credentials(username: "Stanford Spezi", password: "Paul")
+        try secureStorage.store(credentials: serverCredentials2)
+        
+        let retrievedCredentials = try XCTUnwrap(secureStorage.retrieveAllCredentials())
+        try XCTAssertEqual(retrievedCredentials.count, 2)
+        try XCTAssert(retrievedCredentials.contains(where: { $0 == serverCredentials1 }))
+        try XCTAssert(retrievedCredentials.contains(where: { $0 == serverCredentials2 }))
+        
+        try secureStorage.deleteCredentials("Paul Schmiedmayer")
+        try secureStorage.deleteCredentials("Stanford Spezi")
+        
+        try XCTAssertEqual(try XCTUnwrap(secureStorage.retrieveAllCredentials()).count, 0)
+    }
+    
     func testKeys() throws {
-        try secureStorage.deleteKeys(forTag: "MyKey")
+        try secureStorage.deleteAllCredentials(itemTypes: .keys)
         try XCTAssertNil(try secureStorage.retrievePublicKey(forTag: "MyKey"))
         
         try secureStorage.createKey("MyKey", storageScope: .keychain)

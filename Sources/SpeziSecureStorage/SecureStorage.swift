@@ -178,6 +178,27 @@ public final class SecureStorage: Module, DefaultInitializable {
         try execute(SecItemDelete(query as CFDictionary))
     }
     
+    /// Delete all existing credentials stored in the Keychain.
+    /// - Parameters:
+    ///   - accessGroup: The access group associated with the credentials.
+    public func deleteAllCredentials(itemTypes: SecureStorageItemTypes = .all, accessGroup: String? = nil) throws {
+        for kSecClassType in itemTypes.kSecClass {
+            do {
+                var query: [String: Any] = [kSecClass as String: kSecClassType]
+                // Only append the accessGroup attribute if the `CredentialsStore` is configured to use KeyChain access groups
+                if let accessGroup {
+                    query[kSecAttrAccessGroup as String] = accessGroup
+                }
+                try execute(SecItemDelete(query as CFDictionary))
+            } catch SecureStorageError.notFound {
+                // We are fine it no keychain items have been found and therefore non had been deleted.
+                continue
+            } catch {
+                print(error)
+            }
+        }
+    }
+    
     /// Update existing credentials found in the Keychain.
     /// - Parameters:
     ///   - username: The username associated with the old credentials.
@@ -207,11 +228,23 @@ public final class SecureStorage: Module, DefaultInitializable {
     ///   - accessGroup: The access group associated with the credentials.
     /// - Returns: Returns the credentials stored in the Keychain identified by the `username`, `server`, and `accessGroup`.
     public func retrieveCredentials(_ username: String, server: String? = nil, accessGroup: String? = nil) throws -> Credentials? {
+        try retrieveAllCredentials(forServer: server, accessGroup: accessGroup)
+            .first { credentials in
+                credentials.username == username
+            }
+    }
+    
+    /// Retrieve all existing credentials stored in the Keychain for a specific server.
+    /// - Parameters:
+    ///   - server: The server associated with the credentials.
+    ///   - accessGroup: The access group associated with the credentials.
+    /// - Returns: Returns all existing credentials stored in the Keychain identified by the `server` and `accessGroup`.
+    public func retrieveAllCredentials(forServer server: String? = nil, accessGroup: String? = nil) throws -> [Credentials] {
         // This method uses code provided by the Apple Developer documentation at
         // https://developer.apple.com/documentation/security/keychain_services/keychain_items/searching_for_keychain_items
         
-        var query: [String: Any] = queryFor(username, server: server, accessGroup: accessGroup)
-        query[kSecMatchLimit as String] = kSecMatchLimitOne
+        var query: [String: Any] = queryFor(nil, server: server, accessGroup: accessGroup)
+        query[kSecMatchLimit as String] = kSecMatchLimitAll
         query[kSecReturnAttributes as String] = true
         query[kSecReturnData as String] = true
         
@@ -219,19 +252,28 @@ public final class SecureStorage: Module, DefaultInitializable {
         do {
             try execute(SecItemCopyMatching(query as CFDictionary, &item))
         } catch SecureStorageError.notFound {
-            return nil
+            return []
         } catch {
             throw error
         }
         
-        guard let existingItem = item as? [String: Any],
-              let passwordData = existingItem[kSecValueData as String] as? Data,
-              let password = String(data: passwordData, encoding: String.Encoding.utf8),
-              let account = existingItem[kSecAttrAccount as String] as? String else {
+        guard let existingItems = item as? [[String: Any]] else {
             throw SecureStorageError.unexpectedCredentialsData
         }
         
-        return Credentials(username: account, password: password)
+        var credentials: [Credentials] = []
+        
+        for existingItem in existingItems {
+            guard let passwordData = existingItem[kSecValueData as String] as? Data,
+                  let password = String(data: passwordData, encoding: String.Encoding.utf8),
+                  let account = existingItem[kSecAttrAccount as String] as? String else {
+                continue
+            }
+            
+            credentials.append(Credentials(username: account, password: password))
+        }
+        
+        return credentials
     }
     
     
@@ -249,12 +291,14 @@ public final class SecureStorage: Module, DefaultInitializable {
         }
     }
     
-    private func queryFor(_ account: String, server: String?, accessGroup: String?) -> [String: Any] {
+    private func queryFor(_ account: String?, server: String?, accessGroup: String?) -> [String: Any] {
         // This method uses code provided by the Apple Developer documentation at
         // https://developer.apple.com/documentation/security/keychain_services/keychain_items/using_the_keychain_to_manage_user_secrets
         
         var query: [String: Any] = [:]
-        query[kSecAttrAccount as String] = account
+        if let account {
+            query[kSecAttrAccount as String] = account
+        }
         
         // Only append the accessGroup attribute if the `CredentialsStore` is configured to use KeyChain access groups
         if let accessGroup {
