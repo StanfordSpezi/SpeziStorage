@@ -49,7 +49,7 @@ struct ExampleSecureStorageView: View {
 }
 ```
 
-Alternatively it is common to use the ``SecureStorage/SecureStorage`` module in other components as a dependency:
+Alternatively it is common to use the ``SecureStorage/SecureStorage`` module in other modules as a dependency:
 
 ## Use the ``SecureStorage/SecureStorage`` Module
 
