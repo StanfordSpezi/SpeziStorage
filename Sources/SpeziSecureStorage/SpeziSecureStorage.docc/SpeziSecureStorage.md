@@ -19,9 +19,9 @@ The ``SecureStorage`` module allows for the encrypted storage of small chunks of
 Credentials can be stored in the Secure Enclave (if available) or the Keychain. Credentials stored in the Keychain can be made synchronizable between different instances of user devices.
 
 
-## Add the Secure Storage Component
+## Add the Secure Storage Module
 
-You can configure the ``SecureStorage/SecureStorage`` component in the `SpeziAppDelegate`.
+You can configure the ``SecureStorage/SecureStorage`` module in the `SpeziAppDelegate`.
 ```swift
 import Spezi
 import SecureStorage
@@ -49,16 +49,16 @@ struct ExampleSecureStorageView: View {
 }
 ```
 
-Alternatively it is common to use the ``SecureStorage/SecureStorage`` component in other components as a dependency:
+Alternatively it is common to use the ``SecureStorage/SecureStorage`` module in other components as a dependency:
 
-## Use the ``SecureStorage/SecureStorage`` component.
+## Use the ``SecureStorage/SecureStorage`` Module
 
-You can use the ``SecureStorage/SecureStorage`` component to store, update, retrieve, and delete credentials and keys. 
+You can use the ``SecureStorage/SecureStorage`` module to store, update, retrieve, and delete credentials and keys. 
 
 
 ### Storing Credentials
 
-Use the ``SecureStorage/SecureStorage`` component to store a set of ``Credentials`` instances in the Keychain associated with a server that is synchronizable between different devices.
+Use the ``SecureStorage/SecureStorage`` module to store a set of ``Credentials`` instances in the Keychain associated with a server that is synchronizable between different devices.
 
 ```swift
 do {
@@ -80,7 +80,7 @@ do {
 
 ### Retrieving Credentials
 
-The ``SecureStorage/SecureStorage`` component enables the retrieval of a previously stored set of credentials.
+The ``SecureStorage/SecureStorage`` module enables the retrieval of a previously stored set of credentials.
 
 ```swift
 if let serverCredentials = secureStorage.retrieveCredentials(
@@ -94,7 +94,7 @@ if let serverCredentials = secureStorage.retrieveCredentials(
 
 ### Updating Credentials
 
-The ``SecureStorage/SecureStorage`` component enables the update of a previously stored set of credentials.
+The ``SecureStorage/SecureStorage`` module enables the update of a previously stored set of credentials.
 
 ```swift
 do {
@@ -116,7 +116,7 @@ do {
 
 ### Deleting Credentials
 
-The ``SecureStorage/SecureStorage`` component enables the deletion of a previously stored set of credentials.
+The ``SecureStorage/SecureStorage`` module enables the deletion of a previously stored set of credentials.
 
 ```swift
 do {
@@ -132,7 +132,7 @@ do {
 
 ### Handeling Keys
 
-Similiar to ``Credentials`` instances, you can also use the ``SecureStorage`` component to interact with keys.
+Similiar to ``Credentials`` instances, you can also use the ``SecureStorage`` module to interact with keys.
 
 - ``SecureStorage/SecureStorage/createKey(_:size:storageScope:)``
 - ``SecureStorage/SecureStorage/retrievePrivateKey(forTag:)``

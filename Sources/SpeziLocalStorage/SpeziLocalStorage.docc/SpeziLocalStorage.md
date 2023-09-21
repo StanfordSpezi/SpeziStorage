@@ -50,13 +50,13 @@ struct ExampleLocalStorageView: View {
 }
 ```
 
-Alternatively it is common to use the ``LocalStorage/LocalStorage`` component in other components as a dependency.
+Alternatively it is common to use the ``LocalStorage/LocalStorage`` module in other modules as a dependency.
 
 ## Use the LocalStorage Module
 
 ### Storing data
 
-Use the ``LocalStorage/LocalStorage`` component to store data that conforms to `Encodable`.
+Use the ``LocalStorage/LocalStorage`` module to store data that conforms to `Encodable`.
 
 ```swift
 struct Note: Codable, Equatable {
@@ -81,7 +81,7 @@ do {
 
 ### Reading stored data
 
-Use the ``LocalStorage/LocalStorage`` component to read previously stored data.
+Use the ``LocalStorage/LocalStorage`` module to read previously stored data.
 
 ```swift
 do {
@@ -98,7 +98,7 @@ do {
 
 ### Deleting stored data
 
-Use the ``LocalStorage/LocalStorage`` component to delete previously stored data.
+Use the ``LocalStorage/LocalStorage`` module to delete previously stored data.
 
 ```swift
 do {
