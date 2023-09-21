@@ -161,7 +161,7 @@ Alternatively it is common to use the [`SecureStorage`](https://swiftpackageinde
 
 ### Storing Credentials
 
-Use the [`SecureStorage`](https://swiftpackageindex.com/StanfordSpezi/SpeziStorage/documentation/spezisecurestorage) module to store a set of ``Credentials`` instances in the Keychain associated with a server that is synchronizable between different devices.
+Use the [`SecureStorage`](https://swiftpackageindex.com/StanfordSpezi/SpeziStorage/documentation/spezisecurestorage) module to store a set of [`Credentials`](https://swiftpackageindex.com/stanfordspezi/spezistorage/documentation/spezisecurestorage/credentials) instances in the Keychain associated with a server that is synchronizable between different devices.
 
 ```swift
 do {
@@ -231,10 +231,10 @@ do {
 
 Similiar to [`Credentials`](https://swiftpackageindex.com/stanfordspezi/spezistorage/documentation/spezisecurestorage/credentials) instances, you can also use the ``SecureStorage`` module to interact with keys.
 
-- ``SecureStorage/SecureStorage/createKey(_:size:storageScope:)``
-- ``SecureStorage/SecureStorage/retrievePrivateKey(forTag:)``
-- ``SecureStorage/SecureStorage/retrievePublicKey(forTag:)``
-- ``SecureStorage/SecureStorage/deleteKeys(forTag:)``
+- [`createKey(_:size:storageScope:)`](https://swiftpackageindex.com/stanfordspezi/spezistorage/documentation/spezisecurestorage/securestorage/createkey(_:size:storagescope:))
+- [`retrievePrivateKey(forTag:)`](https://swiftpackageindex.com/stanfordspezi/spezistorage/documentation/spezisecurestorage/securestorage/createkey(_:size:storagescope:))
+- [`retrievePublicKey(forTag:)`](https://swiftpackageindex.com/stanfordspezi/spezistorage/documentation/spezisecurestorage/securestorage/retrievepublickey(fortag:))
+- [`deleteKeys(forTag:)`](https://swiftpackageindex.com/stanfordspezi/spezistorage/0.4.2/documentation/spezisecurestorage/securestorage/deletekeys(fortag:))
 
 For more information, please refer to the [API documentation](https://swiftpackageindex.com/StanfordSpezi/SpeziStorage/documentation).
 
