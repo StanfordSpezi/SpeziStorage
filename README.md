@@ -24,9 +24,13 @@ The Spezi Storage module consists of two sub-modules that enable on-disk storage
 
 The [`LocalStorage`](https://swiftpackageindex.com/stanfordspezi/spezistorage/documentation/spezilocalstorage/localstorage) module enables the on-disk storage of data in mobile applications. The [`LocalStorageSetting`](https://swiftpackageindex.com/stanfordspezi/spezistorage/0.4.2/documentation/spezilocalstorage/localstoragesetting) enables configuring how data in the [`LocalStorage`](https://swiftpackageindex.com/stanfordspezi/spezistorage/documentation/spezilocalstorage/localstorage) module can be stored and retrieved.
 
-The data stored can optionally be encrypted by importing the [`SecureStorage`](https://swiftpackageindex.com/StanfordSpezi/SpeziStorage/documentation/spezisecurestorage) module.
+The data stored can optionally be encrypted by importing the [`SecureStorage`](https://swiftpackageindex.com/StanfordSpezi/SpeziStorage/documentation/spezisecurestorage) module (see the [Spezi Secure Storage](#spezi-secure-storage) section below).
 
 ## Setup
+
+You need to add the Spezi Storage Swift package to
+[your app in Xcode](https://developer.apple.com/documentation/xcode/adding-package-dependencies-to-your-app#) or
+[Swift package](https://developer.apple.com/documentation/xcode/creating-a-standalone-swift-package-with-xcode#Add-a-dependency-on-another-Swift-package).
 
 > [!IMPORTANT]  
 > If your application is not yet configured to use Spezi, follow the [Spezi setup article](https://swiftpackageindex.com/stanfordspezi/spezi/documentation/spezi/setup) to setup the core Spezi infrastructure.
@@ -123,6 +127,10 @@ Credentials can be stored in the Secure Enclave (if available) or the Keychain. 
 
 
 ## Setup
+
+You need to add the Spezi Storage Swift package to
+[your app in Xcode](https://developer.apple.com/documentation/xcode/adding-package-dependencies-to-your-app#) or
+[Swift package](https://developer.apple.com/documentation/xcode/creating-a-standalone-swift-package-with-xcode#Add-a-dependency-on-another-Swift-package).
 
 > [!IMPORTANT]  
 > If your application is not yet configured to use Spezi, follow the [Spezi setup article](https://swiftpackageindex.com/stanfordspezi/spezi/documentation/spezi/setup) to setup the core Spezi infrastructure.
