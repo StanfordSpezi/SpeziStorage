@@ -15,9 +15,9 @@ import SpeziSecureStorage
 /// The   ``LocalStorage/`` module enables the on-disk storage of data in mobile applications.
 /// The module relies on the `SecureStorage` module to enable an encrypted on-disk storage as defined by the ``LocalStorageSetting`` configuration.
 ///
-/// Use ``LocalStorage/LocalStorage/store(_:storageKey:settings:)`` to store elements on disk and define the settings using a ``LocalStorageSetting`` instance.
+/// Use ``LocalStorage/store(_:storageKey:settings:)`` to store elements on disk and define the settings using a ``LocalStorageSetting`` instance.
 ///
-/// Use ``LocalStorage/LocalStorage/read(_:storageKey:settings:)`` to read elements on disk which are decoded as define by  passed in  ``LocalStorageSetting`` instance.
+/// Use ``LocalStorage/read(_:storageKey:settings:)`` to read elements on disk which are decoded as define by  passed in  ``LocalStorageSetting`` instance.
 public final class LocalStorage: Module, DefaultInitializable {
     private let encryptionAlgorithm: SecKeyAlgorithm = .eciesEncryptionCofactorX963SHA256AESGCM
     @Dependency private var secureStorage = SecureStorage()
@@ -43,7 +43,23 @@ public final class LocalStorage: Module, DefaultInitializable {
     public required init() {}
     
     
-    /// Use ``LocalStorage/LocalStorage/store(_:storageKey:settings:)`` to store elements on disk and define the settings using a ``LocalStorageSetting`` instance.
+    /// Store elements on disk and define the settings using a ``LocalStorageSetting`` instance.
+    ///
+    /// ```swift
+    /// struct Note: Codable, Equatable {
+    ///     let text: String
+    ///     let date: Date
+    /// }
+    ///
+    /// let note = Note(text: "Spezi is awesome!", date: Date())
+    ///
+    /// do {
+    ///     try await localStorage.store(note)
+    /// } catch {
+    ///     // Handle storage errors ...
+    /// }
+    /// ```
+    ///
     /// - Parameters:
     ///   - element: The element that should be stored conforming to `Encodable`
     ///   - storageKey: An optional storage key to identify the file.
@@ -100,7 +116,17 @@ public final class LocalStorage: Module, DefaultInitializable {
     }
     
     
-    /// Use ``LocalStorage/LocalStorage/read(_:storageKey:settings:)`` to read elements on disk which are decoded as defined by  passed in  ``LocalStorageSetting`` instance.
+    /// Read elements on disk which are decoded as defined by  passed in  ``LocalStorageSetting`` instance.
+    ///
+    /// ```swift
+    /// do {
+    ///     let storedNote: Note = try await localStorage.read()
+    ///     // Do something with `storedNote`.
+    /// } catch {
+    ///     // Handle read errors ...
+    /// }
+    /// ```
+    ///
     /// - Parameters:
     ///   - storageKey: An optional storage key to identify the file.
     ///   - settings: The ``LocalStorageSetting``s used to retrieve the file on disk.
@@ -131,14 +157,28 @@ public final class LocalStorage: Module, DefaultInitializable {
     }
     
     
-    /// Use ``LocalStorage/LocalStorage/delete(storageKey:)`` to deletes a file stored on disk identified by the `storageKey`.
+    /// Deletes a file stored on disk identified by the `storageKey`.
+    ///
+    /// ```swift
+    /// do {
+    ///     try await localStorage.delete(storageKey: "MyNote")
+    /// } catch {
+    ///     // Handle delete errors ...
+    /// }
+    /// ```
+    ///
+    /// Use ``delete(_:)`` as an automatically define the `storageKey` if the type conforms to `Encodable`.
+    ///
     /// - Parameters:
     ///   - storageKey: An optional storage key to identify the file.
     public func delete(storageKey: String) throws {
         try delete(String.self, storageKey: storageKey)
     }
     
-    /// Use ``LocalStorage/LocalStorage/delete(storageKey:)`` to deletes a file stored on disk defined by a  `Decodable` type that is used to derive the storage key.
+    /// Deletes a file stored on disk defined by a  `Decodable` type that is used to derive the storage key.
+    ///
+    /// Use ``delete(storageKey:)`` to manually define the storage key.
+    ///
     /// - Parameters:
     ///   - type: The `Decodable` type that is used to derive the storage key from.
     public func delete<C: Encodable>(_ type: C.Type = C.self) throws {
