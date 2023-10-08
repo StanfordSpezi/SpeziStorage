@@ -14,11 +14,11 @@ import Spezi
 import XCTRuntimeAssertions
 
 
-/// The ``SecureStorage/SecureStorage`` serves as a reusable `Module` that can be used to store small chunks of data such as credentials and keys.
+/// The ``SecureStorage`` serves as a reusable `Module` that can be used to store small chunks of data such as credentials and keys.
 ///
 /// The storing of credentials and keys follows the Keychain documentation provided by Apple: https://developer.apple.com/documentation/security/keychain_services/keychain_items/using_the_keychain_to_manage_user_secrets.
 public final class SecureStorage: Module, DefaultInitializable {
-    /// The ``SecureStorage/SecureStorage`` serves as a reusable `Module` that can be used to store store small chunks of data such as credentials and keys.
+    /// The ``SecureStorage`` serves as a reusable `Module` that can be used to store store small chunks of data such as credentials and keys.
     ///
     /// The storing of credentials and keys follows the Keychain documentation provided by Apple:
     /// https://developer.apple.com/documentation/security/keychain_services/keychain_items/using_the_keychain_to_manage_user_secrets.
@@ -130,6 +130,27 @@ public final class SecureStorage: Module, DefaultInitializable {
     // MARK: - Credentials Handling
     
     /// Stores credentials in the Keychain.
+    ///
+    /// ```swift
+    /// do {
+    ///     let serverCredentials = Credentials(
+    ///         username: "user",
+    ///         password: "password"
+    ///     )
+    ///     try secureStorage.store(
+    ///         credentials: serverCredentials,
+    ///         server: "stanford.edu",
+    ///         storageScope: .keychainSynchronizable
+    ///     )
+    ///
+    ///     // ...
+    ///
+    /// } catch {
+    ///     // Handle creation error here.
+    ///     // ...
+    /// }
+    /// ```
+    ///
     /// - Parameters:
     ///   - credentials: The ``Credentials`` stored in the Keychain.
     ///   - server: The server associated with the credentials.
@@ -168,6 +189,21 @@ public final class SecureStorage: Module, DefaultInitializable {
     }
     
     /// Delete existing credentials stored in the Keychain.
+    ///
+    /// ```swift
+    /// do {
+    ///     try secureStorage.deleteCredentials(
+    ///         "user",
+    ///         server: "spezi.stanford.edu"
+    ///     )
+    /// } catch {
+    ///     // Handle deletion error here.
+    ///     // ...
+    /// }
+    /// ```
+    ///
+    /// Use to ``deleteAllCredentials(itemTypes:accessGroup:)`` delete all existing credentials stored in the Keychain.
+    ///
     /// - Parameters:
     ///   - username: The username associated with the credentials.
     ///   - server: The server associated with the credentials.
@@ -200,6 +236,25 @@ public final class SecureStorage: Module, DefaultInitializable {
     }
     
     /// Update existing credentials found in the Keychain.
+    ///
+    /// ```swift
+    /// do {
+    ///     let newCredentials = Credentials(
+    ///         username: "user",
+    ///         password: "newPassword"
+    ///     )
+    ///     try secureStorage.updateCredentials(
+    ///         "user",
+    ///         server: "stanford.edu",
+    ///         newCredentials: newCredentials,
+    ///         newServer: "spezi.stanford.edu"
+    ///     )
+    /// } catch {
+    ///     // Handle update error here.
+    ///     // ...
+    /// }
+    /// ```
+    ///
     /// - Parameters:
     ///   - username: The username associated with the old credentials.
     ///   - server: The server associated with the old credentials.
@@ -222,6 +277,17 @@ public final class SecureStorage: Module, DefaultInitializable {
     }
     
     /// Retrieve existing credentials stored in the Keychain.
+    ///
+    /// ```swift
+    /// guard let serverCredentials = secureStorage.retrieveCredentials("user", server: "stanford.edu") else {
+    ///     // Handle errors here.
+    /// }
+    ///
+    /// // Use the credentials
+    /// ```
+    ///
+    /// Use ``retrieveAllCredentials(forServer:accessGroup:)`` to retrieve all existing credentials stored in the Keychain for a specific server.
+    ///
     /// - Parameters:
     ///   - username: The username associated with the credentials.
     ///   - server: The server associated with the credentials.

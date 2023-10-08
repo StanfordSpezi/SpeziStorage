@@ -7,7 +7,7 @@
 //
 
 
-/// Credentials that can be stored, updated, deleted, and retrieved from a ``SecureStorage/SecureStorage`` module.
+/// Credentials that can be stored, updated, deleted, and retrieved from a ``SecureStorage`` module.
 public struct Credentials: Equatable, Identifiable {
     /// The username
     public var username: String
@@ -21,7 +21,7 @@ public struct Credentials: Equatable, Identifiable {
     }
     
     
-    /// Credentials that can be stored, updated, deleted, and retrieved from a ``SecureStorage/SecureStorage`` module.
+    /// Credentials that can be stored, updated, deleted, and retrieved from a ``SecureStorage`` module.
     /// - Parameters:
     ///   - username: The username
     ///   - password: The password associated to the ``Credentials/username``

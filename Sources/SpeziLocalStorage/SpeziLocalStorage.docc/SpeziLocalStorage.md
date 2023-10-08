@@ -10,37 +10,45 @@ SPDX-License-Identifier: MIT
              
 -->
 
-Store data on-disk.
+Store data encryped on-disk.
 
 ## Overview
 
-The ``LocalStorage`` module enables the on-disk storage of data in mobile applications. The ``LocalStorageSetting`` enables configuring how data in the ``LocalStorage`` module can be stored and retrieved.
+The ``LocalStorage`` module enables the on-disk storage of data in mobile applications.
 
-The data stored can optionally be encrypted by importing the `SecureStorage` module.
+The ``LocalStorage`` module defaults to storing data encrypted supported by the [`SecureStorage`](https://swiftpackageindex.com/StanfordSpezi/SpeziStorage/documentation/spezisecurestorage) module.
+The ``LocalStorageSetting`` enables configuring how data in the ``LocalStorage`` module can be stored and retrieved.
 
 
-## Add the LocalStorage Module
+## Setup
 
-You can configure the ``LocalStorage/LocalStorage`` module in the `SpeziAppDelegate`.
+You need to add the Spezi Storage Swift package to
+[your app in Xcode](https://developer.apple.com/documentation/xcode/adding-package-dependencies-to-your-app#) or
+[Swift package](https://developer.apple.com/documentation/xcode/creating-a-standalone-swift-package-with-xcode#Add-a-dependency-on-another-Swift-package).
+
+> Important: If your application is not yet configured to use Spezi, follow the [Spezi setup article](https://swiftpackageindex.com/stanfordspezi/spezi/documentation/spezi/setup) to set up the core Spezi infrastructure.
+
+You can configure the ``LocalStorage`` module in the [`SpeziAppDelegate`](https://swiftpackageindex.com/stanfordspezi/spezi/documentation/spezi/speziappdelegate).
 
 ```swift
 import Spezi
-import LocalStorage
+import SpeziLocalStorage
 
 
 class ExampleDelegate: SpeziAppDelegate {
     override var configuration: Configuration {
         Configuration {
             LocalStorage()
+            // ...
         }
     }
 }
 ```
 
-You can then use the ``LocalStorage/LocalStorage`` class in any SwiftUI view.
+You can then use the ``LocalStorage`` class in any SwiftUI view.
 
 ```swift
-struct ExampleLocalStorageView: View {
+struct ExampleStorageView: View {
     @EnvironmentObject var localStorage: LocalStorage
     
     
@@ -50,13 +58,17 @@ struct ExampleLocalStorageView: View {
 }
 ```
 
-Alternatively it is common to use the ``LocalStorage/LocalStorage`` module in other modules as a dependency.
+Alternatively, it is common to use the ``LocalStorage`` module in other modules as a dependency: [Spezi component dependencies](https://swiftpackageindex.com/stanfordspezi/spezi/documentation/spezi/component#Dependencies).
+
 
 ## Use the LocalStorage Module
 
-### Storing data
+You can use the ``LocalStorage`` module to store, update, retrieve, and delete element conforming to [`Codable`](https://developer.apple.com/documentation/swift/codable). 
 
-Use the ``LocalStorage/LocalStorage`` module to store data that conforms to `Encodable`.
+
+### Storing & Update Data
+
+The ``LocalStorage`` module enables the storage and update of elements conforming to [`Codable`](https://developer.apple.com/documentation/swift/codable).
 
 ```swift
 struct Note: Codable, Equatable {
@@ -67,44 +79,55 @@ struct Note: Codable, Equatable {
 let note = Note(text: "Spezi is awesome!", date: Date())
 
 do {
-    try await localStorage.store(
-        note,
-        storageKey: "MyNote",
-        settings: .unencrypted()
-    )
+    try await localStorage.store(note)
 } catch {
-    // Handle storage error here
-    // ...
+    // Handle storage errors ...
 }
-
 ```
 
-### Reading stored data
+See ``LocalStorage/store(_:storageKey:settings:)`` for more details.
 
-Use the ``LocalStorage/LocalStorage`` module to read previously stored data.
+
+
+### Read Data
+
+The ``LocalStorage`` module enables the retrieval of elements conforming to [`Codable`](https://developer.apple.com/documentation/swift/codable).
 
 ```swift
 do {
-    let storedNote: Note = try await localStorage.read(
-        storageKey: "MyNote", 
-        settings: .unencrypted()
-    )
+    let storedNote: Note = try await localStorage.read()
     // Do something with `storedNote`.
 } catch {
-    // Handle read error.
-    // ...
+    // Handle read errors ...
 }
 ```
 
-### Deleting stored data
+See ``LocalStorage/read(_:storageKey:settings:)`` for more details.
 
-Use the ``LocalStorage/LocalStorage`` module to delete previously stored data.
+
+### Deleting Element
+
+The ``LocalStorage`` module enables the deletion of a previously stored elements.
 
 ```swift
 do {
     try await localStorage.delete(storageKey: "MyNote")
 } catch {
-    // Handle delete error.
-    // ...
+    // Handle delete errors ...
 }
 ```
+
+See ``LocalStorage/delete(_:)`` or ``LocalStorage/delete(storageKey:)`` for more details.
+
+
+## Topics
+
+### LocalStorage
+
+- ``LocalStorage``
+- ``LocalStorageSetting``
+- ``LocalStorage/store(_:storageKey:settings:)``
+- ``LocalStorage/read(_:storageKey:settings:)``
+- ``LocalStorage/delete(storageKey:)``
+- ``LocalStorage/delete(_:)``
+

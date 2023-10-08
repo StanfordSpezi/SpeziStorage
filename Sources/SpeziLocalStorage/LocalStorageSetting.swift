@@ -11,7 +11,7 @@ import Spezi
 import SpeziSecureStorage
 
 
-/// The ``LocalStorageSetting`` enables configuring how data in the ``LocalStorage/LocalStorage`` module can be stored and retrieved.
+/// The ``LocalStorageSetting`` enables configuring how data in the ``LocalStorage`` module can be stored and retrieved.
 public enum LocalStorageSetting {
     /// Unencrypted
     case unencrypted(excludedFromBackup: Bool = true)
