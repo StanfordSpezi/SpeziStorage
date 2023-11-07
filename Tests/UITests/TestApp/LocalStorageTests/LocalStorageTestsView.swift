@@ -13,9 +13,9 @@ import XCTestApp
 
 
 struct LocalStorageTestsView: View {
-    @EnvironmentObject var localStorage: LocalStorage
-    @EnvironmentObject var secureStorage: SecureStorage
-    
+    @Environment(LocalStorage.self) var localStorage
+    @Environment(SecureStorage.self) var secureStorage
+
     
     var body: some View {
         TestAppView(testCase: LocalStorageTests(localStorage: localStorage, secureStorage: secureStorage))

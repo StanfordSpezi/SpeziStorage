@@ -52,8 +52,8 @@ You can then use the [`LocalStorage`](https://swiftpackageindex.com/stanfordspez
 
 ```swift
 struct ExampleStorageView: View {
-    @EnvironmentObject var secureStorage: LocalStorage
-    @EnvironmentObject var secureStorage: SecureStorage
+    @Environment(LocalStorage.self) var secureStorage
+    @Environment(SecureStorage.self) var secureStorage
     
     
     var body: some View {

@@ -12,7 +12,7 @@ import XCTestApp
 
 
 struct SecureStorageTestsView: View {
-    @EnvironmentObject var secureStorage: SecureStorage
+    @Environment(SecureStorage.self) var secureStorage
     
     
     var body: some View {
