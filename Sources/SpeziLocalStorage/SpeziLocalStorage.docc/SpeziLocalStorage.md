@@ -49,7 +49,7 @@ You can then use the ``LocalStorage`` class in any SwiftUI view.
 
 ```swift
 struct ExampleStorageView: View {
-    @EnvironmentObject var localStorage: LocalStorage
+    @Environment(LocalStorage.self) var localStorage
     
     
     var body: some View {

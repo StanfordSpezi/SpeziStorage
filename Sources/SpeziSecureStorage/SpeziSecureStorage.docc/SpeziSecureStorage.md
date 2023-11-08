@@ -49,7 +49,7 @@ You can then use the ``SecureStorage`` class in any SwiftUI view.
 
 ```swift
 struct ExampleStorageView: View {
-    @EnvironmentObject var secureStorage: SecureStorage
+    @Environment(SecureStorage.self) var secureStorage
     
     
     var body: some View {
