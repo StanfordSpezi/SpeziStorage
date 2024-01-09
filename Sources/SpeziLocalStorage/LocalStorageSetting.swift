@@ -11,7 +11,7 @@ import Spezi
 import SpeziSecureStorage
 
 
-/// The ``LocalStorageSetting`` enables configuring how data in the ``LocalStorage`` module can be stored and retrieved.
+/// Configure how data in the ``LocalStorage`` module can be stored and retrieved.
 public enum LocalStorageSetting {
     /// Unencrypted
     case unencrypted(excludedFromBackup: Bool = true)
@@ -57,7 +57,7 @@ public enum LocalStorageSetting {
         
         let privateKey = try secureStorage.createKey(tag)
         guard let publicKey = try secureStorage.retrievePublicKey(forTag: tag) else {
-            throw LocalStorageError.encyptionNotPossible
+            throw LocalStorageError.encryptionNotPossible
         }
         
         return (privateKey, publicKey)

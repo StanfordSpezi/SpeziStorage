@@ -21,8 +21,8 @@ let package = Package(
         .library(name: "SpeziSecureStorage", targets: ["SpeziSecureStorage"])
     ],
     dependencies: [
-        .package(url: "https://github.com/StanfordSpezi/Spezi", .upToNextMinor(from: "0.8.0")),
-        .package(url: "https://github.com/StanfordBDHG/XCTRuntimeAssertions", .upToNextMinor(from: "0.2.5"))
+        .package(url: "https://github.com/StanfordSpezi/Spezi", from: "1.0.0"),
+        .package(url: "https://github.com/StanfordBDHG/XCTRuntimeAssertions", from: "1.0.0")
     ],
     targets: [
         .target(
