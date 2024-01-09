@@ -14,10 +14,10 @@ Store data encryped on-disk.
 
 ## Overview
 
-The ``LocalStorage`` module enables the on-disk storage of data in mobile applications.
+The `LocalStorage` module enables the on-disk storage of data in mobile applications.
 
-The ``LocalStorage`` module defaults to storing data encrypted supported by the [`SecureStorage`](https://swiftpackageindex.com/StanfordSpezi/SpeziStorage/documentation/spezisecurestorage) module.
-The ``LocalStorageSetting`` enables configuring how data in the ``LocalStorage`` module can be stored and retrieved.
+The module defaults to storing data encrypted supported by the [`SecureStorage`](https://swiftpackageindex.com/StanfordSpezi/SpeziStorage/documentation/spezisecurestorage) module.
+The ``LocalStorageSetting`` enables configuring how data in the `LocalStorage` module can be stored and retrieved.
 
 
 ## Setup
@@ -28,7 +28,7 @@ You need to add the Spezi Storage Swift package to
 
 > Important: If your application is not yet configured to use Spezi, follow the [Spezi setup article](https://swiftpackageindex.com/stanfordspezi/spezi/documentation/spezi/initial-setup) to set up the core Spezi infrastructure.
 
-You can configure the ``LocalStorage`` module in the [`SpeziAppDelegate`](https://swiftpackageindex.com/stanfordspezi/spezi/documentation/spezi/speziappdelegate).
+You can configure the `LocalStorage` module in the [`SpeziAppDelegate`](https://swiftpackageindex.com/stanfordspezi/spezi/documentation/spezi/speziappdelegate).
 
 ```swift
 import Spezi
@@ -50,8 +50,7 @@ You can then use the ``LocalStorage`` class in any SwiftUI view.
 ```swift
 struct ExampleStorageView: View {
     @Environment(LocalStorage.self) var localStorage
-    
-    
+
     var body: some View {
         // ...
     }

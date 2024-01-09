@@ -15,19 +15,19 @@ public enum SecureStorageScope: Equatable, Identifiable {
     case secureEnclave(userPresence: Bool = false)
     /// Store the element in the Keychain
     ///
-    /// The `userPresence` flag indicates if a retrieval of the item requires user presence.
-    /// https://developer.apple.com/documentation/security/keychain_services/keychain_items/restricting_keychain_item_accessibility
+    /// The `userPresence` flag indicates if a retrieval of the item requires user presence
+    /// (see [Restricting keychain item accessibility](https://developer.apple.com/documentation/security/keychain_services/keychain_items/restricting_keychain_item_accessibility)).
     ///
     /// The `accessGroup` defines the access group used to store the element and share it across different applications:
-    /// https://developer.apple.com/documentation/security/keychain_services/keychain_items/sharing_access_to_keychain_items_among_a_collection_of_apps
+    /// [Sharing access to keychain items among a collection of apps](https://developer.apple.com/documentation/security/keychain_services/keychain_items/sharing_access_to_keychain_items_among_a_collection_of_apps).
     case keychain(userPresence: Bool = false, accessGroup: String? = nil)
     /// Store the element in the Keychain and enable it to be synchronizable between different instances of user devices.
     ///
-    /// The `userPresence` flag indicates if a retrieval of the item requires user presence.
-    /// https://developer.apple.com/documentation/security/keychain_services/keychain_items/restricting_keychain_item_accessibility
+    /// The `userPresence` flag indicates if a retrieval of the item requires user presence
+    /// (see [Restricting keychain item accessibility](https://developer.apple.com/documentation/security/keychain_services/keychain_items/restricting_keychain_item_accessibility)).
     ///
     /// The `accessGroup` defines the access group used to store the element and share it across different applications:
-    /// https://developer.apple.com/documentation/security/keychain_services/keychain_items/sharing_access_to_keychain_items_among_a_collection_of_apps
+    /// [Sharing access to keychain items among a collection of apps](https://developer.apple.com/documentation/security/keychain_services/keychain_items/sharing_access_to_keychain_items_among_a_collection_of_apps).
     case keychainSynchronizable(accessGroup: String? = nil)
     
     

@@ -15,7 +15,8 @@ Securely store small chunks of data, such as credentials and keys.
 
 ## Overview
 
-The ``SecureStorage`` module allows for the encrypted storage of small chunks of sensitive user data, such as usernames and passwords for internet services, using Apple's [Keychain documentation](https://developer.apple.com/documentation/security/keychain_services/keychain_items/using_the_keychain_to_manage_user_secrets). 
+The `SecureStorage` module allows for the encrypted storage of small chunks of sensitive user data, such as usernames and passwords for internet services,
+using Apple's [Keychain](https://developer.apple.com/documentation/security/keychain_services/keychain_items/using_the_keychain_to_manage_user_secrets). 
 
 Credentials can be stored in the Secure Enclave (if available) or the Keychain. Credentials stored in the Keychain can be made synchronizable between different instances of user devices.
 
@@ -50,8 +51,7 @@ You can then use the ``SecureStorage`` class in any SwiftUI view.
 ```swift
 struct ExampleStorageView: View {
     @Environment(SecureStorage.self) var secureStorage
-    
-    
+
     var body: some View {
         // ...
     }

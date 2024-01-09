@@ -12,8 +12,10 @@ import Spezi
 import SpeziSecureStorage
 
 
-/// The   ``LocalStorage/`` module enables the on-disk storage of data in mobile applications.
-/// The module relies on the `SecureStorage` module to enable an encrypted on-disk storage as defined by the ``LocalStorageSetting`` configuration.
+/// On-disk storage of data in mobile applications.
+///
+/// The module relies on the [`SecureStorage`](https://swiftpackageindex.com/StanfordSpezi/SpeziStorage/documentation/spezisecurestorage)
+/// module to enable an encrypted on-disk storage as defined by the ``LocalStorageSetting`` configuration.
 ///
 /// Use ``LocalStorage/store(_:storageKey:settings:)`` to store elements on disk and define the settings using a ``LocalStorageSetting`` instance.
 ///
@@ -25,7 +27,7 @@ public final class LocalStorage: Module, DefaultInitializable, EnvironmentAccess
     
     private var localStorageDirectory: URL {
         // We store the files in the application support directory as described in
-        // https://developer.apple.com/library/archive/documentation/FileManagement/Conceptual/FileSystemProgrammingGuide/FileSystemOverview/FileSystemOverview.html
+        // [File System Basics](https://developer.apple.com/library/archive/documentation/FileManagement/Conceptual/FileSystemProgrammingGuide/FileSystemOverview/FileSystemOverview.html).
         let paths = FileManager.default.urls(for: .applicationSupportDirectory, in: .userDomainMask)
         let localStoragePath = paths[0].appendingPathComponent("edu.stanford.spezi/LocalStorage")
         if !FileManager.default.fileExists(atPath: localStoragePath.path) {
@@ -103,12 +105,12 @@ public final class LocalStorage: Module, DefaultInitializable, EnvironmentAccess
         
         // Encryption enabled:
         guard SecKeyIsAlgorithmSupported(keys.publicKey, .encrypt, encryptionAlgorithm) else {
-            throw LocalStorageError.encyptionNotPossible
+            throw LocalStorageError.encryptionNotPossible
         }
 
         var encryptError: Unmanaged<CFError>?
         guard let encryptedData = SecKeyCreateEncryptedData(keys.publicKey, encryptionAlgorithm, data as CFData, &encryptError) as Data? else {
-            throw LocalStorageError.encyptionNotPossible
+            throw LocalStorageError.encryptionNotPossible
         }
         
         try encryptedData.write(to: fileURL)
@@ -128,6 +130,7 @@ public final class LocalStorage: Module, DefaultInitializable, EnvironmentAccess
     /// ```
     ///
     /// - Parameters:
+    ///   - type: The `Decodable` type that is used to decode the data from disk.
     ///   - storageKey: An optional storage key to identify the file.
     ///   - settings: The ``LocalStorageSetting``s used to retrieve the file on disk.
     /// - Returns: The element conforming to `Decodable`.
@@ -180,7 +183,7 @@ public final class LocalStorage: Module, DefaultInitializable, EnvironmentAccess
     /// Use ``delete(storageKey:)`` to manually define the storage key.
     ///
     /// - Parameters:
-    ///   - type: The `Decodable` type that is used to derive the storage key from.
+    ///   - type: The `Encodable` type that is used to store the type originally.
     public func delete<C: Encodable>(_ type: C.Type = C.self) throws {
         try delete(C.self, storageKey: nil)
     }
