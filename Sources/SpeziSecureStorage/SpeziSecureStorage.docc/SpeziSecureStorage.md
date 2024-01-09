@@ -19,6 +19,7 @@ The `SecureStorage` module allows for the encrypted storage of small chunks of s
 using Apple's [Keychain](https://developer.apple.com/documentation/security/keychain_services/keychain_items/using_the_keychain_to_manage_user_secrets). 
 
 Credentials can be stored in the Secure Enclave (if available) or the Keychain. Credentials stored in the Keychain can be made synchronizable between different instances of user devices.
+Credentials can be stored in the Secure Enclave (if available) or the Keychain. Credentials stored in the Keychain can be made synchronizable between different instances of user devices.
 
 
 ## Setup
@@ -58,7 +59,7 @@ struct ExampleStorageView: View {
 }
 ```
 
-Alternatively, it is common to use the ``SecureStorage`` module in other modules as a dependency: [Spezi component dependencies](https://swiftpackageindex.com/stanfordspezi/spezi/documentation/spezi/component#Dependencies).
+Alternatively, it is common to use the ``SecureStorage`` module in other modules as a dependency: [Spezi Module dependencies](https://swiftpackageindex.com/stanfordspezi/spezi/documentation/spezi/module-dependency).
 
 
 ## Use the SecureStorage Module

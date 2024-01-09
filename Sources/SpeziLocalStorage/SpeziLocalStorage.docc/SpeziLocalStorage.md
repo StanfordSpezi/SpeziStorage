@@ -57,7 +57,7 @@ struct ExampleStorageView: View {
 }
 ```
 
-Alternatively, it is common to use the ``LocalStorage`` module in other modules as a dependency: [Spezi component dependencies](https://swiftpackageindex.com/stanfordspezi/spezi/documentation/spezi/component#Dependencies).
+Alternatively, it is common to use the ``LocalStorage`` module in other modules as a dependency: [Spezi Module dependencies](https://swiftpackageindex.com/stanfordspezi/spezi/documentation/spezi/module-dependency).
 
 
 ## Use the LocalStorage Module
