@@ -26,7 +26,12 @@ final class LocalStorageTests: XCTestCase {
     
     
     func testLocalStorage() async throws {
+        #if !os(macOS)
         let spezi = await LocalStorageTestsAppDelegate().spezi
+        #else
+        let spezi = LocalStorageTestsAppDelegate().spezi
+        #endif
+        
         let localStorage = try XCTUnwrap(spezi.storage[LocalStorage.self])
         
         let letter = Letter(greeting: "Hello Paul 👋\(String(repeating: "🚀", count: Int.random(in: 0...10)))")
