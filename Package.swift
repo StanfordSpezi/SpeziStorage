@@ -14,15 +14,17 @@ import PackageDescription
 let package = Package(
     name: "SpeziStorage",
     platforms: [
-        .iOS(.v17)
+        .iOS(.v17),
+        .visionOS(.v1),
+        .macOS(.v14)
     ],
     products: [
         .library(name: "SpeziLocalStorage", targets: ["SpeziLocalStorage"]),
         .library(name: "SpeziSecureStorage", targets: ["SpeziSecureStorage"])
     ],
     dependencies: [
-        .package(url: "https://github.com/StanfordSpezi/Spezi", from: "1.0.0"),
-        .package(url: "https://github.com/StanfordBDHG/XCTRuntimeAssertions", from: "1.0.0")
+        .package(url: "https://github.com/StanfordSpezi/Spezi", from: "1.2.1"),
+        .package(url: "https://github.com/StanfordBDHG/XCTRuntimeAssertions", from: "1.0.1")
     ],
     targets: [
         .target(
