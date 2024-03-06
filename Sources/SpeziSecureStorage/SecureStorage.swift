@@ -56,6 +56,11 @@ public final class SecureStorage: Module, DefaultInitializable, EnvironmentAcces
             kSecPrivateKeyAttrs as String: privateKeyAttrs
         ]
         
+        // Use Data protection keychain on macOS
+        #if os(macOS)
+        attributes[kSecUseDataProtectionKeychain as String] = true
+        #endif
+        
         // Check that the device has a Secure Enclave
         if SecureEnclave.isAvailable {
             // Generate private key in Secure Enclave
@@ -119,12 +124,18 @@ public final class SecureStorage: Module, DefaultInitializable, EnvironmentAcces
     }
     
     private func keyQuery(forTag tag: String) -> [String: Any] {
-        [
+        var query: [String: Any] = [
             kSecClass as String: kSecClassKey,
             kSecAttrApplicationTag as String: tag,
             kSecAttrKeyType as String: kSecAttrKeyTypeECSECPrimeRandom,
-            kSecReturnRef as String: true
+            kSecReturnRef as String: true,
         ]
+        
+        #if os(macOS)
+        query[kSecUseDataProtectionKeychain as String] = true
+        #endif
+        
+        return query
     }
     
     
@@ -174,7 +185,7 @@ public final class SecureStorage: Module, DefaultInitializable, EnvironmentAcces
         query[kSecValueData as String] = Data(credentials.password.utf8)
         
         if case .keychainSynchronizable = storageScope {
-            query[kSecAttrSynchronizable as String] = true as CFBoolean
+            query[kSecAttrSynchronizable as String] = true
         } else if let accessControl = try storageScope.accessControl {
             query[kSecAttrAccessControl as String] = accessControl
         }
@@ -226,6 +237,12 @@ public final class SecureStorage: Module, DefaultInitializable, EnvironmentAcces
                 if let accessGroup {
                     query[kSecAttrAccessGroup as String] = accessGroup
                 }
+                
+                // Use Data protection keychain on macOS
+                #if os(macOS)
+                query[kSecUseDataProtectionKeychain as String] = true
+                #endif
+                
                 try execute(SecItemDelete(query as CFDictionary))
             } catch SecureStorageError.notFound {
                 // We are fine it no keychain items have been found and therefore non had been deleted.
@@ -371,6 +388,11 @@ public final class SecureStorage: Module, DefaultInitializable, EnvironmentAcces
         if let accessGroup {
             query[kSecAttrAccessGroup as String] = accessGroup
         }
+        
+        // Use Data protection keychain on macOS
+        #if os(macOS)
+        query[kSecUseDataProtectionKeychain as String] = true
+        #endif
         
         // If the user provided us with a server associated with the credentials we assume it is an internet password.
         if server == nil {
