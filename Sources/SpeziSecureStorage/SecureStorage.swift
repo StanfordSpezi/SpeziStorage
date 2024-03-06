@@ -130,7 +130,7 @@ public final class SecureStorage: Module, DefaultInitializable, EnvironmentAcces
             kSecClass as String: kSecClassKey,
             kSecAttrApplicationTag as String: tag,
             kSecAttrKeyType as String: kSecAttrKeyTypeECSECPrimeRandom,
-            kSecReturnRef as String: true,
+            kSecReturnRef as String: true
         ]
         
         #if os(macOS)
