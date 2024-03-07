@@ -14,7 +14,7 @@ final class SecureStorageTests: XCTestCase {
         let app = XCUIApplication()
         app.launch()
         
-        app.staticTexts["Secure Storage"].tap()
+        app.buttons["Secure Storage"].tap()
         
         XCTAssertTrue(app.staticTexts["Passed"].waitForExistence(timeout: 2))
     }

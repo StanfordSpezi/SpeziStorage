@@ -18,6 +18,8 @@ import XCTRuntimeAssertions
 ///
 /// The storing of credentials and keys follows the Keychain documentation provided by Apple: 
 /// [Using the keychain to manage user secrets](https://developer.apple.com/documentation/security/keychain_services/keychain_items/using_the_keychain_to_manage_user_secrets).
+///
+/// On the macOS platform, the ``SecureStorage`` uses the [Data protection keychain](https://developer.apple.com/documentation/technotes/tn3137-on-mac-keychains) which mirrors the data protection keychain originated on iOS.
 public final class SecureStorage: Module, DefaultInitializable, EnvironmentAccessible {
     /// The ``SecureStorage`` serves as a reusable `Module` that can be used to store store small chunks of data such as credentials and keys.
     ///
@@ -55,6 +57,11 @@ public final class SecureStorage: Module, DefaultInitializable, EnvironmentAcces
             kSecAttrTokenID as String: kSecAttrTokenIDSecureEnclave,
             kSecPrivateKeyAttrs as String: privateKeyAttrs
         ]
+        
+        // Use Data protection keychain on macOS
+        #if os(macOS)
+        attributes[kSecUseDataProtectionKeychain as String] = true
+        #endif
         
         // Check that the device has a Secure Enclave
         if SecureEnclave.isAvailable {
@@ -119,12 +126,18 @@ public final class SecureStorage: Module, DefaultInitializable, EnvironmentAcces
     }
     
     private func keyQuery(forTag tag: String) -> [String: Any] {
-        [
+        var query: [String: Any] = [
             kSecClass as String: kSecClassKey,
             kSecAttrApplicationTag as String: tag,
             kSecAttrKeyType as String: kSecAttrKeyTypeECSECPrimeRandom,
             kSecReturnRef as String: true
         ]
+        
+        #if os(macOS)
+        query[kSecUseDataProtectionKeychain as String] = true
+        #endif
+        
+        return query
     }
     
     
@@ -174,7 +187,7 @@ public final class SecureStorage: Module, DefaultInitializable, EnvironmentAcces
         query[kSecValueData as String] = Data(credentials.password.utf8)
         
         if case .keychainSynchronizable = storageScope {
-            query[kSecAttrSynchronizable as String] = true as CFBoolean
+            query[kSecAttrSynchronizable as String] = true
         } else if let accessControl = try storageScope.accessControl {
             query[kSecAttrAccessControl as String] = accessControl
         }
@@ -226,6 +239,12 @@ public final class SecureStorage: Module, DefaultInitializable, EnvironmentAcces
                 if let accessGroup {
                     query[kSecAttrAccessGroup as String] = accessGroup
                 }
+                
+                // Use Data protection keychain on macOS
+                #if os(macOS)
+                query[kSecUseDataProtectionKeychain as String] = true
+                #endif
+                
                 try execute(SecItemDelete(query as CFDictionary))
             } catch SecureStorageError.notFound {
                 // We are fine it no keychain items have been found and therefore non had been deleted.
@@ -371,6 +390,11 @@ public final class SecureStorage: Module, DefaultInitializable, EnvironmentAcces
         if let accessGroup {
             query[kSecAttrAccessGroup as String] = accessGroup
         }
+        
+        // Use Data protection keychain on macOS
+        #if os(macOS)
+        query[kSecUseDataProtectionKeychain as String] = true
+        #endif
         
         // If the user provided us with a server associated with the credentials we assume it is an internet password.
         if server == nil {

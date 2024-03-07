@@ -14,7 +14,7 @@ final class LocalStorageTests: XCTestCase {
         let app = XCUIApplication()
         app.launch()
         
-        app.staticTexts["Local Storage"].tap()
+        app.buttons["Local Storage"].tap()
         
         XCTAssertTrue(app.staticTexts["Passed"].waitForExistence(timeout: 2))
     }
