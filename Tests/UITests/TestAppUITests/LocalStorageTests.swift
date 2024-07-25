@@ -10,6 +10,7 @@ import XCTest
 
 
 final class LocalStorageTests: XCTestCase {
+    @MainActor
     func testLocalStorage() throws {
         let app = XCUIApplication()
         app.launch()

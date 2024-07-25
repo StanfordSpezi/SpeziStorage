@@ -49,7 +49,8 @@ let package = Package(
         .testTarget(
             name: "SpeziLocalStorageTests",
             dependencies: [
-                .target(name: "SpeziLocalStorage")
+                .target(name: "SpeziLocalStorage"),
+                .product(name: "XCTSpezi", package: "Spezi")
             ],
             swiftSettings: [
                 swiftConcurrency
