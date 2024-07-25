@@ -30,3 +30,6 @@ public struct Credentials: Equatable, Identifiable {
         self.password = password
     }
 }
+
+
+extension Credentials: Sendable {}

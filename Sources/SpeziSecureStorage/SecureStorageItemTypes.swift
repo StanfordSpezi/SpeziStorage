@@ -46,3 +46,6 @@ public struct SecureStorageItemTypes: OptionSet {
         self.rawValue = rawValue
     }
 }
+
+
+extension SecureStorageItemTypes: Sendable {}
