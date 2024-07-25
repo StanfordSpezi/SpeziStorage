@@ -65,6 +65,7 @@ public final class LocalStorage: Module, DefaultInitializable, EnvironmentAccess
     ///
     /// - Parameters:
     ///   - element: The element that should be stored conforming to `Encodable`
+    ///   - encoder: The `Encoder` to use for encoding the `element`.
     ///   - storageKey: An optional storage key to identify the file.
     ///   - settings: The ``LocalStorageSetting``s applied to the file on disk.
     public func store<C: Encodable, D: TopLevelEncoder>(
@@ -133,6 +134,7 @@ public final class LocalStorage: Module, DefaultInitializable, EnvironmentAccess
     ///
     /// - Parameters:
     ///   - type: The `Decodable` type that is used to decode the data from disk.
+    ///   - decoder: The `Decoder` to use to decode the stored data into the provided `type`.
     ///   - storageKey: An optional storage key to identify the file.
     ///   - settings: The ``LocalStorageSetting``s used to retrieve the file on disk.
     /// - Returns: The element conforming to `Decodable`.
