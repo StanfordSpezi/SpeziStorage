@@ -6,33 +6,22 @@
 // SPDX-License-Identifier: MIT
 //
 
-@testable import Spezi
 @testable import SpeziLocalStorage
 import XCTest
+import XCTSpezi
 
 
 final class LocalStorageTests: XCTestCase {
     struct Letter: Codable, Equatable {
         let greeting: String
     }
-    
-    class LocalStorageTestsAppDelegate: SpeziAppDelegate {
-        override var configuration: Configuration {
-            Configuration {
-                LocalStorage()
-            }
-        }
-    }
-    
-    
+
+    @MainActor
     func testLocalStorage() async throws {
-        #if !os(macOS)
-        let spezi = await LocalStorageTestsAppDelegate().spezi
-        #else
-        let spezi = LocalStorageTestsAppDelegate().spezi
-        #endif
-        
-        let localStorage = try XCTUnwrap(spezi.storage[LocalStorage.self])
+        let localStorage = LocalStorage()
+        withDependencyResolution {
+            localStorage
+        }
         
         let letter = Letter(greeting: "Hello Paul 👋\(String(repeating: "🚀", count: Int.random(in: 0...10)))")
         try localStorage.store(letter, settings: .unencrypted())

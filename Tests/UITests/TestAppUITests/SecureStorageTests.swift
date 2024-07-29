@@ -10,6 +10,7 @@ import XCTest
 
 
 final class SecureStorageTests: XCTestCase {
+    @MainActor
     func testSecureStorage() throws {
         let app = XCUIApplication()
         app.launch()

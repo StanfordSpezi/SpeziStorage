@@ -102,3 +102,6 @@ public enum SecureStorageScope: Equatable, Identifiable {
         }
     }
 }
+
+
+extension SecureStorageScope: Sendable {}

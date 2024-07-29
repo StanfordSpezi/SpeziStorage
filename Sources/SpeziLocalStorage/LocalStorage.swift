@@ -6,6 +6,7 @@
 // SPDX-License-Identifier: MIT
 //
 
+import Combine
 import Foundation
 import Security
 import Spezi
@@ -64,13 +65,15 @@ public final class LocalStorage: Module, DefaultInitializable, EnvironmentAccess
     ///
     /// - Parameters:
     ///   - element: The element that should be stored conforming to `Encodable`
+    ///   - encoder: The `Encoder` to use for encoding the `element`.
     ///   - storageKey: An optional storage key to identify the file.
     ///   - settings: The ``LocalStorageSetting``s applied to the file on disk.
-    public func store<C: Encodable>(
+    public func store<C: Encodable, D: TopLevelEncoder>(
         _ element: C,
+        encoder: D = JSONEncoder(),
         storageKey: String? = nil,
         settings: LocalStorageSetting = .encryptedUsingKeyChain()
-    ) throws {
+    ) throws where D.Output == Data {
         var fileURL = fileURL(from: storageKey, type: C.self)
         let fileExistsAlready = FileManager.default.fileExists(atPath: fileURL.path)
         
@@ -91,9 +94,9 @@ public final class LocalStorage: Module, DefaultInitializable, EnvironmentAccess
                 throw LocalStorageError.couldNotExcludedFromBackup
             }
         }
-        
-        let data = try JSONEncoder().encode(element)
-        
+
+        let data = try encoder.encode(element)
+
         
         // Determine if the data should be encrypted or not:
         guard let keys = try settings.keys(from: secureStorage) else {
@@ -131,20 +134,22 @@ public final class LocalStorage: Module, DefaultInitializable, EnvironmentAccess
     ///
     /// - Parameters:
     ///   - type: The `Decodable` type that is used to decode the data from disk.
+    ///   - decoder: The `Decoder` to use to decode the stored data into the provided `type`.
     ///   - storageKey: An optional storage key to identify the file.
     ///   - settings: The ``LocalStorageSetting``s used to retrieve the file on disk.
     /// - Returns: The element conforming to `Decodable`.
-    public func read<C: Decodable>(
+    public func read<C: Decodable, D: TopLevelDecoder>(
         _ type: C.Type = C.self,
+        decoder: D = JSONDecoder(),
         storageKey: String? = nil,
         settings: LocalStorageSetting = .encryptedUsingKeyChain()
-    ) throws -> C {
+    ) throws -> C where D.Input == Data {
         let fileURL = fileURL(from: storageKey, type: C.self)
         let data = try Data(contentsOf: fileURL)
         
         // Determine if the data should be decrypted or not:
         guard let keys = try settings.keys(from: secureStorage) else {
-            return try JSONDecoder().decode(C.self, from: data)
+            return try decoder.decode(C.self, from: data)
         }
         
         guard SecKeyIsAlgorithmSupported(keys.privateKey, .decrypt, encryptionAlgorithm) else {
