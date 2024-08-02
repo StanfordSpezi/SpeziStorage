@@ -76,8 +76,8 @@ The [`LocalStorage`](https://swiftpackageindex.com/stanfordspezi/spezistorage/do
 The [`LocalStorage`](https://swiftpackageindex.com/stanfordspezi/spezistorage/documentation/spezilocalstorage/localstorage) module defaults to storing data encrypted supported by the [`SecureStorage`](https://swiftpackageindex.com/StanfordSpezi/SpeziStorage/documentation/spezisecurestorage) module.
 The [`LocalStorageSetting`](https://swiftpackageindex.com/stanfordspezi/spezistorage/documentation/spezilocalstorage/localstoragesetting) enables configuring how data in the [`LocalStorage`](https://swiftpackageindex.com/stanfordspezi/spezistorage/documentation/spezilocalstorage/localstorage) module can be stored and retrieved.
 
-- Store or update new elements: [`store(_:storageKey:settings:)`](https://swiftpackageindex.com/stanfordspezi/spezistorage/documentation/spezilocalstorage/localstorage/store(_:storagekey:settings:))
-- Retrieve existing elements: [`read(_:storageKey:settings:)`](https://swiftpackageindex.com/stanfordspezi/spezistorage/documentation/spezilocalstorage/localstorage/read(_:storagekey:settings:))
+- Store or update new elements: [`store(_:encoder:storageKey:settings:)`](https://swiftpackageindex.com/stanfordspezi/spezistorage/documentation/spezilocalstorage/localstorage/store(_:encoder:storagekey:settings:))
+- Retrieve existing elements: [`read(_:decoder:storageKey:settings:)`](https://swiftpackageindex.com/stanfordspezi/spezistorage/documentation/spezilocalstorage/localstorage/read(_:decoder:storagekey:settings:))
 - Delete existing elements: [`delete(_:)`](https://swiftpackageindex.com/stanfordspezi/spezistorage/documentation/spezilocalstorage/localstorage/delete(_:))
 
 
