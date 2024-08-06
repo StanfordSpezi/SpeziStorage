@@ -19,8 +19,8 @@ import XCTRuntimeAssertions
 /// The storing of credentials and keys follows the Keychain documentation provided by Apple: 
 /// [Using the keychain to manage user secrets](https://developer.apple.com/documentation/security/keychain_services/keychain_items/using_the_keychain_to_manage_user_secrets).
 ///
-/// On the macOS platform, the ``SecureStorage`` uses the [Data protection keychain](https://developer.apple.com/documentation/technotes/tn3137-on-mac-keychains) which mirrors the data protection keychain originated on iOS.
-public final class SecureStorage: Module, DefaultInitializable, EnvironmentAccessible {
+/// On the macOS platform, the `SecureStorage` uses the [Data protection keychain](https://developer.apple.com/documentation/technotes/tn3137-on-mac-keychains) which mirrors the data protection keychain originated on iOS.
+public final class SecureStorage: Module, DefaultInitializable, EnvironmentAccessible, Sendable {
     /// The ``SecureStorage`` serves as a reusable `Module` that can be used to store store small chunks of data such as credentials and keys.
     ///
     /// The storing of credentials and keys follows the Keychain documentation provided by Apple:
@@ -230,6 +230,7 @@ public final class SecureStorage: Module, DefaultInitializable, EnvironmentAcces
     
     /// Delete all existing credentials stored in the Keychain.
     /// - Parameters:
+    ///   - itemTypes: The types of items.
     ///   - accessGroup: The access group associated with the credentials.
     public func deleteAllCredentials(itemTypes: SecureStorageItemTypes = .all, accessGroup: String? = nil) throws {
         for kSecClassType in itemTypes.kSecClass {

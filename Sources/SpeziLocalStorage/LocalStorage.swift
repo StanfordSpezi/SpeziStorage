@@ -18,10 +18,10 @@ import SpeziSecureStorage
 /// The module relies on the [`SecureStorage`](https://swiftpackageindex.com/StanfordSpezi/SpeziStorage/documentation/spezisecurestorage)
 /// module to enable an encrypted on-disk storage as defined by the ``LocalStorageSetting`` configuration.
 ///
-/// Use ``LocalStorage/store(_:storageKey:settings:)`` to store elements on disk and define the settings using a ``LocalStorageSetting`` instance.
+/// Use ``store(_:encoder:storageKey:settings:)`` to store elements on disk and define the settings using a `LocalStorageSetting` instance.
 ///
-/// Use ``LocalStorage/read(_:storageKey:settings:)`` to read elements on disk which are decoded as define by  passed in  ``LocalStorageSetting`` instance.
-public final class LocalStorage: Module, DefaultInitializable, EnvironmentAccessible {
+/// Use ``read(_:decoder:storageKey:settings:)`` to read elements on disk which are decoded as define by  passed in  `LocalStorageSetting` instance.
+public final class LocalStorage: Module, DefaultInitializable, EnvironmentAccessible, @unchecked Sendable {
     private let encryptionAlgorithm: SecKeyAlgorithm = .eciesEncryptionCofactorX963SHA256AESGCM
     @Dependency private var secureStorage = SecureStorage()
     

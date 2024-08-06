@@ -19,7 +19,7 @@ public struct SecureStorageItemTypes: OptionSet {
     public static let nonServerCredentials = SecureStorageItemTypes(rawValue: 1 << 2)
     
     /// Credentials as created with (``SecureStorage/store(credentials:server:removeDuplicate:storageScope:)``).
-    public static let credentials: SecureStorageItemTypes = [.serverCredentials, .serverCredentials]
+    public static let credentials: SecureStorageItemTypes = [.serverCredentials, .nonServerCredentials]
     /// All types of items that can be handled by the secure storage component.
     public static let all: SecureStorageItemTypes = [.keys, .serverCredentials, .nonServerCredentials]
     
