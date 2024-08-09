@@ -161,7 +161,7 @@ public final class LocalStorage: Module, DefaultInitializable, EnvironmentAccess
             throw LocalStorageError.decryptionNotPossible
         }
         
-        return try JSONDecoder().decode(C.self, from: decryptedData)
+        return try decoder.decode(C.self, from: decryptedData)
     }
     
     
