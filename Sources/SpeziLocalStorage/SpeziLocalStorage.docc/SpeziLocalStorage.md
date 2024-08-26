@@ -28,9 +28,9 @@ You need to add the Spezi Storage Swift package to
 
 > Important: If your application is not yet configured to use Spezi, follow the [Spezi setup article](https://swiftpackageindex.com/stanfordspezi/spezi/documentation/spezi/initial-setup) to set up the core Spezi infrastructure.
 
-> Important: If you use the ``LocalStorage`` on the macOS platform, ensure to add the [`Keychain Access Groups` entitlement](https://developer.apple.com/documentation/bundleresources/entitlements/keychain-access-groups) to the enclosing Xcode project via *PROJECT_NAME > Signing&Capabilities > + Capability*. The array of keychain groups can be left empty, only the base entitlement is required.
-
 You can configure the `LocalStorage` module in the [`SpeziAppDelegate`](https://swiftpackageindex.com/stanfordspezi/spezi/documentation/spezi/speziappdelegate).
+
+> Important: If you use the ``LocalStorage`` on the macOS platform, ensure to add the [`Keychain Access Groups` entitlement](https://developer.apple.com/documentation/bundleresources/entitlements/keychain-access-groups) to the enclosing Xcode project via *PROJECT_NAME > Signing&Capabilities > + Capability*. The array of keychain groups can be left empty, only the base entitlement is required.
 
 ```swift
 import Spezi
@@ -47,7 +47,7 @@ class ExampleDelegate: SpeziAppDelegate {
 }
 ```
 
-You can then use the ``LocalStorage`` class in any SwiftUI view.
+You can then use the `LocalStorage` module in any SwiftUI view.
 
 ```swift
 struct ExampleStorageView: View {
@@ -59,17 +59,17 @@ struct ExampleStorageView: View {
 }
 ```
 
-Alternatively, it is common to use the ``LocalStorage`` module in other modules as a dependency: [Spezi Module dependencies](https://swiftpackageindex.com/stanfordspezi/spezi/documentation/spezi/module-dependency).
+Alternatively, it is common to use the `LocalStorage` module in other modules as a dependency: [Spezi Module dependencies](https://swiftpackageindex.com/stanfordspezi/spezi/documentation/spezi/module-dependency).
 
 
 ## Use the LocalStorage Module
 
-You can use the ``LocalStorage`` module to store, update, retrieve, and delete element conforming to [`Codable`](https://developer.apple.com/documentation/swift/codable). 
+You can use the `LocalStorage` module to store, update, retrieve, and delete element conforming to [`Codable`](https://developer.apple.com/documentation/swift/codable). 
 
 
 ### Storing & Update Data
 
-The ``LocalStorage`` module enables the storage and update of elements conforming to [`Codable`](https://developer.apple.com/documentation/swift/codable).
+The `LocalStorage` module enables the storage and update of elements conforming to `Codable`.
 
 ```swift
 struct Note: Codable, Equatable {
@@ -86,13 +86,13 @@ do {
 }
 ```
 
-See ``LocalStorage/store(_:storageKey:settings:)`` for more details.
+See ``LocalStorage/store(_:encoder:storageKey:settings:)`` for more details.
 
 
 
 ### Read Data
 
-The ``LocalStorage`` module enables the retrieval of elements conforming to [`Codable`](https://developer.apple.com/documentation/swift/codable).
+The `LocalStorage` module enables the retrieval of elements conforming to [`Codable`](https://developer.apple.com/documentation/swift/codable).
 
 ```swift
 do {
@@ -103,12 +103,12 @@ do {
 }
 ```
 
-See ``LocalStorage/read(_:storageKey:settings:)`` for more details.
+See ``LocalStorage/read(_:decoder:storageKey:settings:)`` for more details.
 
 
 ### Deleting Element
 
-The ``LocalStorage`` module enables the deletion of a previously stored elements.
+The `LocalStorage` module enables the deletion of a previously stored elements.
 
 ```swift
 do {
@@ -127,8 +127,4 @@ See ``LocalStorage/delete(_:)`` or ``LocalStorage/delete(storageKey:)`` for more
 
 - ``LocalStorage``
 - ``LocalStorageSetting``
-- ``LocalStorage/store(_:storageKey:settings:)``
-- ``LocalStorage/read(_:storageKey:settings:)``
-- ``LocalStorage/delete(storageKey:)``
-- ``LocalStorage/delete(_:)``
 

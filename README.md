@@ -30,10 +30,10 @@ You need to add the Spezi Storage Swift package to
 > [!IMPORTANT]
 > If your application is not yet configured to use Spezi, follow the [Spezi setup article](https://swiftpackageindex.com/stanfordspezi/spezi/documentation/spezi/initial-setup) to set up the core Spezi infrastructure.
 
+You can configure the [`LocalStorage`](https://swiftpackageindex.com/stanfordspezi/spezistorage/documentation/spezilocalstorage/localstorage) or [`SecureStorage`](https://swiftpackageindex.com/StanfordSpezi/SpeziStorage/documentation/spezisecurestorage) module in the [`SpeziAppDelegate`](https://swiftpackageindex.com/stanfordspezi/spezi/documentation/spezi/speziappdelegate).
+
 > [!IMPORTANT]
 > If you use SpeziStorage on the macOS platform, ensure to add the [`Keychain Access Groups` entitlement](https://developer.apple.com/documentation/bundleresources/entitlements/keychain-access-groups) to the enclosing Xcode project via *PROJECT_NAME > Signing&Capabilities > + Capability*. The array of keychain groups can be left empty, only the base entitlement is required.
-
-You can configure the [`LocalStorage`](https://swiftpackageindex.com/stanfordspezi/spezistorage/documentation/spezilocalstorage/localstorage) or [`SecureStorage`](https://swiftpackageindex.com/StanfordSpezi/SpeziStorage/documentation/spezisecurestorage) module in the [`SpeziAppDelegate`](https://swiftpackageindex.com/stanfordspezi/spezi/documentation/spezi/speziappdelegate).
 
 ```swift
 import Spezi
@@ -52,7 +52,7 @@ class ExampleDelegate: SpeziAppDelegate {
 }
 ```
 
-You can then use the [`LocalStorage`](https://swiftpackageindex.com/stanfordspezi/spezistorage/documentation/spezilocalstorage/localstorage) or [`SecureStorage`](https://swiftpackageindex.com/StanfordSpezi/SpeziStorage/documentation/spezisecurestorage) class in any SwiftUI view.
+You can then use the `LocalStorage` or `SecureStorage` class in any SwiftUI view.
 
 ```swift
 struct ExampleStorageView: View {
@@ -66,15 +66,15 @@ struct ExampleStorageView: View {
 }
 ```
 
-Alternatively, it is common to use the [`LocalStorage`](https://swiftpackageindex.com/stanfordspezi/spezistorage/documentation/spezilocalstorage/localstorage) or [`SecureStorage`](https://swiftpackageindex.com/StanfordSpezi/SpeziStorage/documentation/spezisecurestorage) module in other modules as a dependency: [Spezi Module dependencies](https://swiftpackageindex.com/stanfordspezi/spezi/documentation/spezi/module-dependency).
+Alternatively, it is common to use the `LocalStorage` or `SecureStorage` module in other modules as a dependency: [Spezi Module dependencies](https://swiftpackageindex.com/stanfordspezi/spezi/documentation/spezi/module-dependency).
 
 
 ## Local Storage
 
-The [`LocalStorage`](https://swiftpackageindex.com/stanfordspezi/spezistorage/documentation/spezilocalstorage/localstorage) module enables the on-disk storage of data in mobile applications.
+The `LocalStorage` module enables the on-disk storage of data in mobile applications.
 
-The [`LocalStorage`](https://swiftpackageindex.com/stanfordspezi/spezistorage/documentation/spezilocalstorage/localstorage) module defaults to storing data encrypted supported by the [`SecureStorage`](https://swiftpackageindex.com/StanfordSpezi/SpeziStorage/documentation/spezisecurestorage) module.
-The [`LocalStorageSetting`](https://swiftpackageindex.com/stanfordspezi/spezistorage/documentation/spezilocalstorage/localstoragesetting) enables configuring how data in the [`LocalStorage`](https://swiftpackageindex.com/stanfordspezi/spezistorage/documentation/spezilocalstorage/localstorage) module can be stored and retrieved.
+The `LocalStorage` module defaults to storing data encrypted supported by the `SecureStorage` module.
+The [`LocalStorageSetting`](https://swiftpackageindex.com/stanfordspezi/spezistorage/documentation/spezilocalstorage/localstoragesetting) enables configuring how data in the `LocalStorage` module can be stored and retrieved.
 
 - Store or update new elements: [`store(_:encoder:storageKey:settings:)`](https://swiftpackageindex.com/stanfordspezi/spezistorage/documentation/spezilocalstorage/localstorage/store(_:encoder:storagekey:settings:))
 - Retrieve existing elements: [`read(_:decoder:storageKey:settings:)`](https://swiftpackageindex.com/stanfordspezi/spezistorage/documentation/spezilocalstorage/localstorage/read(_:decoder:storagekey:settings:))
@@ -83,13 +83,13 @@ The [`LocalStorageSetting`](https://swiftpackageindex.com/stanfordspezi/spezisto
 
 ## Secure Storage
 
-The [`SecureStorage`](https://swiftpackageindex.com/StanfordSpezi/SpeziStorage/documentation/spezisecurestorage) module allows for the encrypted storage of small chunks of sensitive user data, such as usernames and passwords for internet services, using Apple's [Keychain documentation](https://developer.apple.com/documentation/security/keychain_services/keychain_items/using_the_keychain_to_manage_user_secrets). 
+The `SecureStorage` module allows for the encrypted storage of small chunks of sensitive user data, such as usernames and passwords for internet services, using Apple's [Keychain documentation](https://developer.apple.com/documentation/security/keychain_services/keychain_items/using_the_keychain_to_manage_user_secrets). 
 
 Credentials can be stored in the Secure Enclave (if available) or the Keychain. Credentials stored in the Keychain can be made synchronizable between different instances of user devices.
 
 ### Handling Credentials
 
-Use the [`SecureStorage`](https://swiftpackageindex.com/StanfordSpezi/SpeziStorage/documentation/spezisecurestorage) module to store a set of [`Credentials`](https://swiftpackageindex.com/stanfordspezi/spezistorage/documentation/spezisecurestorage/credentials) instances in the Keychain associated with a server that is synchronizable between different devices.
+Use the `SecureStorage` module to store a set of [`Credentials`](https://swiftpackageindex.com/stanfordspezi/spezistorage/documentation/spezisecurestorage/credentials) instances in the Keychain associated with a server that is synchronizable between different devices.
 
 - Store new credentials: [`store(credentials:server:removeDuplicate:storageScope:)`](https://swiftpackageindex.com/stanfordspezi/spezistorage/documentation/spezisecurestorage/securestorage/store(credentials:server:removeduplicate:storagescope:))
 - Retrieve existing credentials: [`retrieveCredentials(_:server:accessGroup:)`](https://swiftpackageindex.com/stanfordspezi/spezistorage/documentation/spezisecurestorage/securestorage/retrievecredentials(_:server:accessgroup:))
@@ -101,7 +101,7 @@ Use the [`SecureStorage`](https://swiftpackageindex.com/StanfordSpezi/SpeziStora
 
 ### Handling Keys
 
-Similar to [`Credentials`](https://swiftpackageindex.com/stanfordspezi/spezistorage/documentation/spezisecurestorage/credentials) instances, you can also use the [`SecureStorage`](https://swiftpackageindex.com/StanfordSpezi/SpeziStorage/documentation/spezisecurestorage) module to interact with keys.
+Similar to `Credentials` instances, you can also use the `SecureStorage` module to interact with keys.
 
 - Create new keys: [`createKey(_:size:storageScope:)`](https://swiftpackageindex.com/stanfordspezi/spezistorage/documentation/spezisecurestorage/securestorage/createkey(_:size:storagescope:))
 - Retrieve existing public keys: [`retrievePublicKey(forTag:)`](https://swiftpackageindex.com/stanfordspezi/spezistorage/documentation/spezisecurestorage/securestorage/retrievepublickey(fortag:))

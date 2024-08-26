@@ -7,7 +7,7 @@
 //
 
 
-/// An error thrown by the ``LocalStorage`` module.
+/// An error thrown by the `LocalStorage` module.
 enum LocalStorageError: Error {
     /// Encryption of the file was not possible, did not store the data on disk.
     case encryptionNotPossible

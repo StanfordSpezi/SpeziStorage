@@ -10,7 +10,7 @@ import CryptoKit
 import Security
 
 
-/// An `Error` thrown by the ``SecureStorage`` module.
+/// An `Error` thrown by the `SecureStorage` module.
 public enum SecureStorageError: Error {
     /// Creation of a new element failed with a `CFError`.
     case createFailed(CFError? = nil)
@@ -26,8 +26,8 @@ public enum SecureStorageError: Error {
     /// for more information about KeyChain access groups.
     /// Remove the  ``SecureStorageScope``'s `accessGroup` configuration value if you do not intend to use KeyChain access groups.
     case missingEntitlement
-    /// The ``SecureStorage`` is unable to decode the information obtained into a credentials.
+    /// The `SecureStorage` module is unable to decode the information obtained into a credentials.
     case unexpectedCredentialsData
-    /// The ``SecureStorage`` encountered a Keychain error when interacting with the Keychain.
+    /// The `SecureStorage` module encountered a Keychain error when interacting with the Keychain.
     case keychainError(status: OSStatus)
 }

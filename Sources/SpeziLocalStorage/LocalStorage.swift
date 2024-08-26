@@ -6,21 +6,36 @@
 // SPDX-License-Identifier: MIT
 //
 
-import Combine
 import Foundation
 import Security
 import Spezi
+import SpeziFoundation
 import SpeziSecureStorage
 
 
 /// On-disk storage of data in mobile applications.
 ///
 /// The module relies on the [`SecureStorage`](https://swiftpackageindex.com/StanfordSpezi/SpeziStorage/documentation/spezisecurestorage)
-/// module to enable an encrypted on-disk storage as defined by the ``LocalStorageSetting`` configuration.
+/// module to enable an encrypted on-disk storage. You configuration encryption using the ``LocalStorageSetting`` type.
 ///
-/// Use ``store(_:encoder:storageKey:settings:)`` to store elements on disk and define the settings using a `LocalStorageSetting` instance.
+/// ## Topics
 ///
-/// Use ``read(_:decoder:storageKey:settings:)`` to read elements on disk which are decoded as define by  passed in  `LocalStorageSetting` instance.
+/// ### Configuration
+/// - ``init()``
+///
+/// ### Storing Elements
+/// - ``store(_:encoder:storageKey:settings:)``
+/// - ``store(_:configuration:encoder:storageKey:settings:)``
+///
+/// ### Loading Elements
+///
+/// - ``read(_:decoder:storageKey:settings:)``
+/// - ``read(_:configuration:decoder:storageKey:settings:)``
+///
+/// ### Deleting Entries
+///
+/// - ``delete(_:)``
+/// - ``delete(storageKey:)``
 public final class LocalStorage: Module, DefaultInitializable, EnvironmentAccessible, @unchecked Sendable {
     private let encryptionAlgorithm: SecKeyAlgorithm = .eciesEncryptionCofactorX963SHA256AESGCM
     @Dependency private var secureStorage = SecureStorage()
@@ -42,11 +57,11 @@ public final class LocalStorage: Module, DefaultInitializable, EnvironmentAccess
     }
     
     
-    /// The ``LocalStorage`` initializer.
+    /// Configure the `LocalStorage` module.
     public required init() {}
     
     
-    /// Store elements on disk and define the settings using a ``LocalStorageSetting`` instance.
+    /// Store elements on disk.
     ///
     /// ```swift
     /// struct Note: Codable, Equatable {
@@ -74,9 +89,40 @@ public final class LocalStorage: Module, DefaultInitializable, EnvironmentAccess
         storageKey: String? = nil,
         settings: LocalStorageSetting = .encryptedUsingKeyChain()
     ) throws where D.Output == Data {
+        try store(element, storageKey: storageKey, settings: settings) { element in
+            try encoder.encode(element)
+        }
+    }
+
+    /// Store elements on disk that require additional configuration for encoding.
+    ///
+    /// - Parameters:
+    ///   - element: The element that should be stored conforming to `Encodable`
+    ///   - configuration: A configuration that provides additional information for encoding.
+    ///   - encoder: The `Encoder` to use for encoding the `element`.
+    ///   - storageKey: An optional storage key to identify the file.
+    ///   - settings: The ``LocalStorageSetting``s applied to the file on disk.
+    public func store<C: EncodableWithConfiguration, D: TopLevelEncoder>(
+        _ element: C,
+        configuration: C.EncodingConfiguration,
+        encoder: D = JSONEncoder(),
+        storageKey: String? = nil,
+        settings: LocalStorageSetting = .encryptedUsingKeyChain()
+    ) throws where D.Output == Data {
+        try store(element, storageKey: storageKey, settings: settings) { element in
+            try encoder.encode(element, configuration: configuration)
+        }
+    }
+
+    private func store<C>(
+        _ element: C,
+        storageKey: String?,
+        settings: LocalStorageSetting,
+        encoding: (C) throws -> Data
+    ) throws {
         var fileURL = fileURL(from: storageKey, type: C.self)
         let fileExistsAlready = FileManager.default.fileExists(atPath: fileURL.path)
-        
+
         // Called at the end of each execution path
         // We can not use defer as the function can potentially throw an error.
         func setResourceValues() throws {
@@ -95,9 +141,9 @@ public final class LocalStorage: Module, DefaultInitializable, EnvironmentAccess
             }
         }
 
-        let data = try encoder.encode(element)
+        let data = try encoding(element)
 
-        
+
         // Determine if the data should be encrypted or not:
         guard let keys = try settings.keys(from: secureStorage) else {
             // No encryption:
@@ -105,7 +151,7 @@ public final class LocalStorage: Module, DefaultInitializable, EnvironmentAccess
             try setResourceValues()
             return
         }
-        
+
         // Encryption enabled:
         guard SecKeyIsAlgorithmSupported(keys.publicKey, .encrypt, encryptionAlgorithm) else {
             throw LocalStorageError.encryptionNotPossible
@@ -115,13 +161,13 @@ public final class LocalStorage: Module, DefaultInitializable, EnvironmentAccess
         guard let encryptedData = SecKeyCreateEncryptedData(keys.publicKey, encryptionAlgorithm, data as CFData, &encryptError) as Data? else {
             throw LocalStorageError.encryptionNotPossible
         }
-        
+
         try encryptedData.write(to: fileURL)
         try setResourceValues()
     }
+
     
-    
-    /// Read elements on disk which are decoded as defined by  passed in  ``LocalStorageSetting`` instance.
+    /// Read elements from disk.
     ///
     /// ```swift
     /// do {
@@ -144,14 +190,45 @@ public final class LocalStorage: Module, DefaultInitializable, EnvironmentAccess
         storageKey: String? = nil,
         settings: LocalStorageSetting = .encryptedUsingKeyChain()
     ) throws -> C where D.Input == Data {
+        try read(storageKey: storageKey, settings: settings) { data in
+            try decoder.decode(type, from: data)
+        }
+    }
+
+    /// Read elements from disk that require additional configuration for decoding.
+    ///
+    /// - Parameters:
+    ///   - type: The `Decodable` type that is used to decode the data from disk.
+    ///   - configuration: A configuration that provides additional information for decoding.
+    ///   - decoder: The `Decoder` to use to decode the stored data into the provided `type`.
+    ///   - storageKey: An optional storage key to identify the file.
+    ///   - settings: The ``LocalStorageSetting``s used to retrieve the file on disk.
+    /// - Returns: The element conforming to `Decodable`.
+    public func read<C: DecodableWithConfiguration, D: TopLevelDecoder>(
+        _ type: C.Type = C.self,
+        configuration: C.DecodingConfiguration,
+        decoder: D = JSONDecoder(),
+        storageKey: String? = nil,
+        settings: LocalStorageSetting = .encryptedUsingKeyChain()
+    ) throws -> C where D.Input == Data {
+        try read(storageKey: storageKey, settings: settings) { data in
+            try decoder.decode(type, from: data, configuration: configuration)
+        }
+    }
+
+    private func read<C>(
+        storageKey: String?,
+        settings: LocalStorageSetting,
+        decoding: (Data) throws -> C
+    ) throws -> C {
         let fileURL = fileURL(from: storageKey, type: C.self)
         let data = try Data(contentsOf: fileURL)
-        
+
         // Determine if the data should be decrypted or not:
         guard let keys = try settings.keys(from: secureStorage) else {
-            return try decoder.decode(C.self, from: data)
+            return try decoding(data)
         }
-        
+
         guard SecKeyIsAlgorithmSupported(keys.privateKey, .decrypt, encryptionAlgorithm) else {
             throw LocalStorageError.decryptionNotPossible
         }
@@ -160,10 +237,10 @@ public final class LocalStorage: Module, DefaultInitializable, EnvironmentAccess
         guard let decryptedData = SecKeyCreateDecryptedData(keys.privateKey, encryptionAlgorithm, data as CFData, &decryptError) as Data? else {
             throw LocalStorageError.decryptionNotPossible
         }
-        
-        return try decoder.decode(C.self, from: decryptedData)
+
+        return try decoding(decryptedData)
     }
-    
+
     
     /// Deletes a file stored on disk identified by the `storageKey`.
     ///
@@ -185,7 +262,7 @@ public final class LocalStorage: Module, DefaultInitializable, EnvironmentAccess
     
     /// Deletes a file stored on disk defined by a  `Decodable` type that is used to derive the storage key.
     ///
-    /// Use ``delete(storageKey:)`` to manually define the storage key.
+    /// - Note: Use ``delete(storageKey:)`` to manually define the storage key.
     ///
     /// - Parameters:
     ///   - type: The `Encodable` type that is used to store the type originally.

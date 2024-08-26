@@ -32,6 +32,7 @@ let package = Package(
     ],
     dependencies: [
         .package(url: "https://github.com/StanfordSpezi/Spezi", from: "1.2.1"),
+        .package(url: "https://github.com/StanfordSpezi/SpeziFoundation", branch: "feature/encoder-decoder-protocols"),
         .package(url: "https://github.com/StanfordBDHG/XCTRuntimeAssertions", from: "1.0.1")
     ] + swiftLintPackage(),
     targets: [
@@ -39,6 +40,7 @@ let package = Package(
             name: "SpeziLocalStorage",
             dependencies: [
                 .product(name: "Spezi", package: "Spezi"),
+                .product(name: "SpeziFoundation", package: "SpeziFoundation"),
                 .target(name: "SpeziSecureStorage")
             ],
             swiftSettings: [
@@ -83,7 +85,7 @@ func swiftLintPlugin() -> [Target.PluginUsage] {
 
 func swiftLintPackage() -> [PackageDescription.Package.Dependency] {
     if ProcessInfo.processInfo.environment["SPEZI_DEVELOPMENT_SWIFTLINT"] != nil {
-        [.package(url: "https://github.com/realm/SwiftLint.git", .upToNextMinor(from: "0.55.1"))]
+        [.package(url: "https://github.com/realm/SwiftLint.git", from: "0.55.1")]
     } else {
         []
     }

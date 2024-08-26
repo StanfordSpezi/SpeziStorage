@@ -11,14 +11,22 @@ import Security
 
 /// Types of items that can be stored in the secure storage.
 public struct SecureStorageItemTypes: OptionSet {
-    /// Keys as created with (``SecureStorage/createKey(_:size:storageScope:)``).
+    /// Any keys created with the `SecureStorage` module.
+    ///
+    /// Refers to any keys created using ``SecureStorage/createKey(_:size:storageScope:)``.
     public static let keys = SecureStorageItemTypes(rawValue: 1 << 0)
-    /// Credentials as created with (``SecureStorage/store(credentials:server:removeDuplicate:storageScope:)``) by passing in a server name.
+    /// Credentials that are created using a server name.
+    ///
+    /// Refers to any credentials that are stored using a server name using ``SecureStorage/store(credentials:server:removeDuplicate:storageScope:)``.
     public static let serverCredentials = SecureStorageItemTypes(rawValue: 1 << 1)
-    /// Credentials as created with (``SecureStorage/store(credentials:server:removeDuplicate:storageScope:)``) by omitting a server name.
+    /// Credentials that are created without supplying a server name.
+    ///
+    /// Refers to any credentials that are stored without using a server name using ``SecureStorage/store(credentials:server:removeDuplicate:storageScope:)``.
     public static let nonServerCredentials = SecureStorageItemTypes(rawValue: 1 << 2)
-    
-    /// Credentials as created with (``SecureStorage/store(credentials:server:removeDuplicate:storageScope:)``).
+
+    /// Any credentials created with the `SecureStorage` module.
+    ///
+    /// Refers to any credentials that are created using  ``SecureStorage/store(credentials:server:removeDuplicate:storageScope:)``.
     public static let credentials: SecureStorageItemTypes = [.serverCredentials, .nonServerCredentials]
     /// All types of items that can be handled by the secure storage component.
     public static let all: SecureStorageItemTypes = [.keys, .serverCredentials, .nonServerCredentials]

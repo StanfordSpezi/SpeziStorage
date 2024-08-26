@@ -20,10 +20,32 @@ import XCTRuntimeAssertions
 /// [Using the keychain to manage user secrets](https://developer.apple.com/documentation/security/keychain_services/keychain_items/using_the_keychain_to_manage_user_secrets).
 ///
 /// On the macOS platform, the `SecureStorage` uses the [Data protection keychain](https://developer.apple.com/documentation/technotes/tn3137-on-mac-keychains) which mirrors the data protection keychain originated on iOS.
+///
+/// ## Topics
+/// ### Configuration
+/// - ``init()``
+///
+/// ### Credentials
+/// - ``Credentials``
+/// - ``store(credentials:server:removeDuplicate:storageScope:)``
+/// - ``retrieveCredentials(_:server:accessGroup:)``
+/// - ``retrieveAllCredentials(forServer:accessGroup:)``
+/// - ``updateCredentials(_:server:newCredentials:newServer:removeDuplicate:storageScope:)``
+/// - ``deleteCredentials(_:server:accessGroup:)``
+/// - ``deleteAllCredentials(itemTypes:accessGroup:)``
+///
+/// ### Keys
+///
+/// - ``createKey(_:size:storageScope:)``
+/// - ``retrievePublicKey(forTag:)``
+/// - ``retrievePrivateKey(forTag:)``
+/// - ``deleteKeys(forTag:)``
 public final class SecureStorage: Module, DefaultInitializable, EnvironmentAccessible, Sendable {
-    /// The ``SecureStorage`` serves as a reusable `Module` that can be used to store store small chunks of data such as credentials and keys.
+    /// Configure the SecureStorage module.
     ///
-    /// The storing of credentials and keys follows the Keychain documentation provided by Apple:
+    /// The `SecureStorage` serves as a reusable `Module` that can be used to store store small chunks of data such as credentials and keys.
+    ///
+    /// - Note: The storing of credentials and keys follows the Keychain documentation provided by Apple:
     /// [Using the keychain to manage user secrets](https://developer.apple.com/documentation/security/keychain_services/keychain_items/using_the_keychain_to_manage_user_secrets).
     public required init() {}
     

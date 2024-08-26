@@ -49,7 +49,7 @@ class ExampleDelegate: SpeziAppDelegate {
 }
 ```
 
-You can then use the ``SecureStorage`` class in any SwiftUI view.
+You can then use the `SecureStorage` class in any SwiftUI view.
 
 ```swift
 struct ExampleStorageView: View {
@@ -61,17 +61,17 @@ struct ExampleStorageView: View {
 }
 ```
 
-Alternatively, it is common to use the ``SecureStorage`` module in other modules as a dependency: [Spezi Module dependencies](https://swiftpackageindex.com/stanfordspezi/spezi/documentation/spezi/module-dependency).
+Alternatively, it is common to use the `SecureStorage` module in other modules as a dependency: [Spezi Module dependencies](https://swiftpackageindex.com/stanfordspezi/spezi/documentation/spezi/module-dependency).
 
 
 ## Use the SecureStorage Module
 
-You can use the ``SecureStorage`` module to store, update, retrieve, and delete credentials and keys. 
+You can use the `SecureStorage` module to store, update, retrieve, and delete credentials and keys. 
 
 
 ### Storing Credentials
 
-The ``SecureStorage`` module enables the storage of credentials in the Keychain.
+The `SecureStorage` module enables the storage of credentials in the Keychain.
 
 ```swift
 do {
@@ -98,7 +98,7 @@ See ``SecureStorage/store(credentials:server:removeDuplicate:storageScope:)`` fo
 
 ### Retrieving Credentials
 
-The ``SecureStorage`` module enables the retrieval of existing credentials stored in the Keychain.
+The `SecureStorage` module enables the retrieval of existing credentials stored in the Keychain.
 
 ```swift
 guard let serverCredentials = secureStorage.retrieveCredentials("user", server: "stanford.edu") else {
@@ -113,7 +113,7 @@ See ``SecureStorage/retrieveCredentials(_:server:accessGroup:)`` or ``SecureStor
 
 ### Updating Credentials
 
-The ``SecureStorage`` module enables the update of existing credentials found in the Keychain.
+The `SecureStorage` module enables the update of existing credentials found in the Keychain.
 
 ```swift
 do {
@@ -138,7 +138,7 @@ See ``SecureStorage/updateCredentials(_:server:newCredentials:newServer:removeDu
 
 ### Deleting Credentials
 
-The ``SecureStorage`` module enables the deletion of a previously stored set of credentials.
+The `SecureStorage` module enables the deletion of a previously stored set of credentials.
 
 ```swift
 do {
@@ -155,9 +155,9 @@ do {
 See ``SecureStorage/deleteCredentials(_:server:accessGroup:)`` or ``SecureStorage/deleteAllCredentials(itemTypes:accessGroup:)`` for more details.
 
 
-### Handeling Keys
+### Handling Keys
 
-Similiar to ``Credentials`` instances, you can also use the ``SecureStorage`` module to interact with keys.
+Similar to ``Credentials`` instances, you can also use the `SecureStorage` module to interact with keys.
 
 - ``SecureStorage/createKey(_:size:storageScope:)``
 - ``SecureStorage/retrievePublicKey(forTag:)``
@@ -171,21 +171,4 @@ Similiar to ``Credentials`` instances, you can also use the ``SecureStorage`` mo
 - ``SecureStorage``
 - ``SecureStorageError``
 - ``SecureStorageScope``
-
-### Handling Credentials 
-
-- ``Credentials``
-- ``SecureStorage/store(credentials:server:removeDuplicate:storageScope:)``
-- ``SecureStorage/retrieveCredentials(_:server:accessGroup:)``
-- ``SecureStorage/retrieveAllCredentials(forServer:accessGroup:)``
-- ``SecureStorage/updateCredentials(_:server:newCredentials:newServer:removeDuplicate:storageScope:)``
-- ``SecureStorage/deleteCredentials(_:server:accessGroup:)``
-- ``SecureStorage/deleteAllCredentials(itemTypes:accessGroup:)``
 - ``SecureStorageItemTypes``
-
-### Handling Keys 
-
-- ``SecureStorage/createKey(_:size:storageScope:)``
-- ``SecureStorage/retrievePublicKey(forTag:)``
-- ``SecureStorage/retrievePrivateKey(forTag:)``
-- ``SecureStorage/deleteKeys(forTag:)``
