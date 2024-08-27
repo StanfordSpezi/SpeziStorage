@@ -31,9 +31,9 @@ let package = Package(
         .library(name: "SpeziSecureStorage", targets: ["SpeziSecureStorage"])
     ],
     dependencies: [
-        .package(url: "https://github.com/StanfordSpezi/Spezi", from: "1.2.1"),
-        .package(url: "https://github.com/StanfordSpezi/SpeziFoundation", branch: "feature/encoder-decoder-protocols"),
-        .package(url: "https://github.com/StanfordBDHG/XCTRuntimeAssertions", from: "1.0.1")
+        .package(url: "https://github.com/StanfordSpezi/Spezi", from: "1.7.3"),
+        .package(url: "https://github.com/StanfordSpezi/SpeziFoundation", from: "2.0.0-beta.2"),
+        .package(url: "https://github.com/StanfordBDHG/XCTRuntimeAssertions", from: "1.1.1")
     ] + swiftLintPackage(),
     targets: [
         .target(
