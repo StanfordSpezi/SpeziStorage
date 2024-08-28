@@ -9,7 +9,7 @@
 import Security
 
 
-/// The ``SecureStorageScope`` defines how secure data is stored by the ``SecureStorage`` component.
+/// Define how secure data is stored.
 public enum SecureStorageScope: Equatable, Identifiable {
     /// Store the element in the Secure Enclave
     case secureEnclave(userPresence: Bool = false)

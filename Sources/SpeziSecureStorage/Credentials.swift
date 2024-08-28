@@ -7,24 +7,24 @@
 //
 
 
-/// Credentials that can be stored, updated, deleted, and retrieved from a ``SecureStorage`` module.
+/// A pair of username and password credentials.
 public struct Credentials: Equatable, Identifiable {
-    /// The username
+    /// The username.
     public var username: String
-    /// The password associated to the ``Credentials/username``
+    /// The password.
     public var password: String
     
     
-    /// Identifier of the ``Credentials`` representing the ``Credentials/username``
+    /// Identified by the username.
     public var id: String {
         username
     }
     
     
-    /// Credentials that can be stored, updated, deleted, and retrieved from a ``SecureStorage`` module.
+    /// Create new credentials.
     /// - Parameters:
-    ///   - username: The username
-    ///   - password: The password associated to the ``Credentials/username``
+    ///   - username: The username.
+    ///   - password: The password.
     public init(username: String, password: String) {
         self.username = username
         self.password = password
