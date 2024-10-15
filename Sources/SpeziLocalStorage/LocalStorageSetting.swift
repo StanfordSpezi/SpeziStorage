@@ -16,7 +16,7 @@ public enum LocalStorageSetting {
     /// Unencrypted
     case unencrypted(excludedFromBackup: Bool = true)
     /// Encrypted using a `eciesEncryptionCofactorX963SHA256AESGCM` key: private key for encryption and a public key for decryption.
-    case encrypted(keyPair: SecKeyPair, excludedFromBackup: Bool = true)
+    case encrypted(keys: SecKeyPair, excludedFromBackup: Bool = true)
     /// Encrypted using a `eciesEncryptionCofactorX963SHA256AESGCM` key stored in the Secure Enclave.
     case encryptedUsingSecureEnclave(userPresence: Bool = false)
     /// Encrypted using a `eciesEncryptionCofactorX963SHA256AESGCM` key stored in the Keychain.
@@ -40,8 +40,8 @@ public enum LocalStorageSetting {
         switch self {
         case .unencrypted:
             return nil
-        case let .encrypted(pair, _):
-            return pair
+        case let .encrypted(keys, _):
+            return keys
         case let .encryptedUsingSecureEnclave(userPresence):
             secureStorageScope = .secureEnclave(userPresence: userPresence)
         case let .encryptedUsingKeyChain(userPresence, _):
