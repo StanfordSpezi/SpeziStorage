@@ -13,12 +13,6 @@ import SpeziSecureStorage
 
 /// Configure how data can be stored and retrieved.
 public enum LocalStorageSetting {
-    /// Encrypted using a `eciesEncryptionCofactorX963SHA256AESGCM` key: private key for encryption and a public key for decryption.
-    @available(*, deprecated, renamed: "encrypted(keys:excludedFromBackup:)")
-    public static func encrypted(privateKey: SecKey, publicKey: SecKey, excludedFromBackup: Bool = true) -> LocalStorageSetting {
-        .encrypted(keys: (privateKey, publicKey), excludedFromBackup: excludedFromBackup)
-    }
-    
     /// Unencrypted
     case unencrypted(excludedFromBackup: Bool = true)
     /// Encrypted using a `eciesEncryptionCofactorX963SHA256AESGCM` key: private key for encryption and a public key for decryption.
@@ -56,5 +50,11 @@ public enum LocalStorageSetting {
         let tag = "LocalStorage.\(secureStorageScope.id)"
         return try (try? keyStorage.retrieveKeyPair(forTag: tag))
             ?? keyStorage.create(tag)
+    }
+    
+    /// Encrypted using a `eciesEncryptionCofactorX963SHA256AESGCM` key: private key for encryption and a public key for decryption.
+    @available(*, deprecated, renamed: "encrypted(keys:excludedFromBackup:)")
+    public static func encrypted(privateKey: SecKey, publicKey: SecKey, excludedFromBackup: Bool = true) -> LocalStorageSetting {
+        .encrypted(keys: (privateKey, publicKey), excludedFromBackup: excludedFromBackup)
     }
 }
