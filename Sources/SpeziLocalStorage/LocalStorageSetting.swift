@@ -22,6 +22,10 @@ public enum LocalStorageSetting {
     /// Encrypted using a `eciesEncryptionCofactorX963SHA256AESGCM` key stored in the Keychain.
     case encryptedUsingKeyChain(userPresence: Bool = false, excludedFromBackup: Bool = true)
     
+    @available(*, deprecated, renamed: "encrypted(keys:excludedFromBackup:)")
+    static func encrypted(privateKey: SecKey, publicKey: SecKey, excludedFromBackup: Bool = true) -> LocalStorageSetting {
+        .encrypted(keys: (privateKey, publicKey), excludedFromBackup: excludedFromBackup)
+    }
     
     var excludedFromBackup: Bool {
         switch self {
