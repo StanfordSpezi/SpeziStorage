@@ -6,9 +6,12 @@
 // SPDX-License-Identifier: MIT
 //
 
+/// A user's credential containing username and password.
+@available(*, deprecated, renamed: "Credential")
+public typealias Credentials = Credential
 
-/// A pair of username and password credentials.
-public struct Credentials: Equatable, Identifiable {
+/// A user's credential containing username and password.
+public struct Credential: Equatable, Identifiable {
     /// The username.
     public var username: String
     /// The password.
@@ -21,7 +24,7 @@ public struct Credentials: Equatable, Identifiable {
     }
     
     
-    /// Create new credentials.
+    /// Create new credential.
     /// - Parameters:
     ///   - username: The username.
     ///   - password: The password.
@@ -32,4 +35,4 @@ public struct Credentials: Equatable, Identifiable {
 }
 
 
-extension Credentials: Sendable {}
+extension Credential: Sendable {}

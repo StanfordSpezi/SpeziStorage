@@ -30,4 +30,18 @@ public enum SecureStorageError: Error {
     case unexpectedCredentialsData
     /// The `SecureStorage` module encountered a Keychain error when interacting with the Keychain.
     case keychainError(status: OSStatus)
+    
+    static func execute(_ secOperation: @autoclosure () -> OSStatus) throws {
+        let status = secOperation()
+        
+        guard status != errSecItemNotFound else {
+            throw SecureStorageError.notFound
+        }
+        guard status != errSecMissingEntitlement else {
+            throw SecureStorageError.missingEntitlement
+        }
+        guard status == errSecSuccess else {
+            throw SecureStorageError.keychainError(status: status)
+        }
+    }
 }
