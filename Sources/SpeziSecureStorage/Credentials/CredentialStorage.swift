@@ -66,8 +66,6 @@ public final class CredentialStorage: Module, DefaultInitializable, EnvironmentA
         } catch let SecureStorageError.keychainError(status) where status == -25299 && removeDuplicate {
             try delete(credential.username, server: server)
             try store(credential, server: server, removeDuplicate: false)
-        } catch {
-            throw error
         }
     }
     
@@ -207,8 +205,6 @@ public final class CredentialStorage: Module, DefaultInitializable, EnvironmentA
             try SecureStorageError.execute(SecItemCopyMatching(query as CFDictionary, &item))
         } catch SecureStorageError.notFound {
             return []
-        } catch {
-            throw error
         }
         
         guard let existingItems = item as? [[String: Any]] else {

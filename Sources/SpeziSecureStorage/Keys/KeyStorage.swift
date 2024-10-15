@@ -88,8 +88,6 @@ public final class KeyStorage: Module, DefaultInitializable, EnvironmentAccessib
             try SecureStorageError.execute(SecItemCopyMatching(keyQuery(forTag: tag) as CFDictionary, &item))
         } catch SecureStorageError.notFound {
             return nil
-        } catch {
-            throw error
         }
         
         // Unfortunately we have to do a force cast here.
@@ -112,8 +110,6 @@ public final class KeyStorage: Module, DefaultInitializable, EnvironmentAccessib
             try SecureStorageError.execute(SecItemDelete(keyQuery(forTag: tag) as CFDictionary))
         } catch SecureStorageError.notFound {
             return
-        } catch {
-            throw error
         }
     }
     
