@@ -6,6 +6,7 @@
 // SPDX-License-Identifier: MIT
 //
 
+/// A user's credential containing username and password.
 @available(*, deprecated, renamed: "Credential")
 public typealias Credentials = Credential
 

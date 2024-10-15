@@ -10,7 +10,6 @@ import Foundation
 import Spezi
 
 public final class CredentialStorage: Module, DefaultInitializable, EnvironmentAccessible, Sendable {
-    
     public required init() {}
     
     /// Stores credentials in the Keychain.

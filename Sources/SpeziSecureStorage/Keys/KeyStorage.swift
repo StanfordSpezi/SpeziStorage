@@ -10,10 +10,10 @@ import CryptoKit
 import Foundation
 import Spezi
 
+/// A pair of SecKey containing a private and public key.
 public typealias SecKeyPair = (privateKey: SecKey, publicKey: SecKey)
 
 public final class KeyStorage: Module, DefaultInitializable, EnvironmentAccessible, Sendable {
-    
     public required init() {}
     
     // MARK: - Key Handling
@@ -102,7 +102,7 @@ public final class KeyStorage: Module, DefaultInitializable, EnvironmentAccessib
     /// - Parameter tag: The tag used to identify the key in the keychain or the secure enclave.
     /// - Returns: Returns the public `SecKey` generated and stored in the keychain or the secure enclave.
     public func retrievePublicKey(forTag tag: String) throws -> SecKey? {
-        return try retrieveKeyPair(forTag: tag)?.publicKey
+        try retrieveKeyPair(forTag: tag)?.publicKey
     }
     
     /// Deletes the key stored in the keychain or the secure enclave identified by a `tag`.

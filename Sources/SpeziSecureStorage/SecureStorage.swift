@@ -37,7 +37,6 @@ import Spezi
 /// - ``deleteKeys(forTag:)``
 @available(*, deprecated, message: "Please use KeyStorage and/or CredentialStorage directly instead.")
 public final class SecureStorage: Module, DefaultInitializable, EnvironmentAccessible, Sendable {
-    
     private let keyStorage = KeyStorage()
     private let credentialStorage = CredentialStorage()
     
