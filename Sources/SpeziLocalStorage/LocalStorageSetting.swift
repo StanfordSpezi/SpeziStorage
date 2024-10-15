@@ -51,7 +51,9 @@ public enum LocalStorageSetting {
         return try (try? keyStorage.retrieveKeyPair(forTag: tag))
             ?? keyStorage.create(tag)
     }
-    
+}
+
+extension LocalStorageSetting {
     /// Encrypted using a `eciesEncryptionCofactorX963SHA256AESGCM` key: private key for encryption and a public key for decryption.
     @available(*, deprecated, renamed: "encrypted(keys:excludedFromBackup:)")
     public static func encrypted(privateKey: SecKey, publicKey: SecKey, excludedFromBackup: Bool = true) -> LocalStorageSetting {
