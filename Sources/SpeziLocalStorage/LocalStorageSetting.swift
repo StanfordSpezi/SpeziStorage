@@ -16,7 +16,7 @@ public enum LocalStorageSetting {
     /// Unencrypted
     case unencrypted(excludedFromBackup: Bool = true)
     /// Encrypted using a `eciesEncryptionCofactorX963SHA256AESGCM` key: private key for encryption and a public key for decryption.
-    case encrypted(privateKey: SecKey, publicKey: SecKey, excludedFromBackup: Bool = true)
+    case encrypted(keyPair: SecKeyPair, excludedFromBackup: Bool = true)
     /// Encrypted using a `eciesEncryptionCofactorX963SHA256AESGCM` key stored in the Secure Enclave.
     case encryptedUsingSecureEnclave(userPresence: Bool = false)
     /// Encrypted using a `eciesEncryptionCofactorX963SHA256AESGCM` key stored in the Keychain.
@@ -26,7 +26,7 @@ public enum LocalStorageSetting {
     var excludedFromBackup: Bool {
         switch self {
         case let .unencrypted(excludedFromBackup),
-             let .encrypted(_, _, excludedFromBackup),
+             let .encrypted(_, excludedFromBackup),
              let .encryptedUsingKeyChain(_, excludedFromBackup):
             return excludedFromBackup
         case .encryptedUsingSecureEnclave:
@@ -35,13 +35,13 @@ public enum LocalStorageSetting {
     }
     
     
-    func keys(from secureStorage: SecureStorage) throws -> (privateKey: SecKey, publicKey: SecKey)? {
+    func keys(from keyStorage: KeyStorage) throws -> SecKeyPair? {
         let secureStorageScope: SecureStorageScope
         switch self {
         case .unencrypted:
             return nil
-        case let .encrypted(privateKey, publicKey, _):
-            return (privateKey, publicKey)
+        case let .encrypted(pair, _):
+            return pair
         case let .encryptedUsingSecureEnclave(userPresence):
             secureStorageScope = .secureEnclave(userPresence: userPresence)
         case let .encryptedUsingKeyChain(userPresence, _):
@@ -49,17 +49,7 @@ public enum LocalStorageSetting {
         }
         
         let tag = "LocalStorage.\(secureStorageScope.id)"
-        
-        if let privateKey = try? secureStorage.retrievePrivateKey(forTag: tag),
-           let publicKey = try? secureStorage.retrievePublicKey(forTag: tag) {
-            return (privateKey, publicKey)
-        }
-        
-        let privateKey = try secureStorage.createKey(tag)
-        guard let publicKey = try secureStorage.retrievePublicKey(forTag: tag) else {
-            throw LocalStorageError.encryptionNotPossible
-        }
-        
-        return (privateKey, publicKey)
+        return try (try? keyStorage.retrieveKeyPair(forTag: tag))
+            ?? keyStorage.create(tag)
     }
 }

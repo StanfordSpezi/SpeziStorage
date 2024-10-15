@@ -38,7 +38,7 @@ import SpeziSecureStorage
 /// - ``delete(storageKey:)``
 public final class LocalStorage: Module, DefaultInitializable, EnvironmentAccessible, @unchecked Sendable {
     private let encryptionAlgorithm: SecKeyAlgorithm = .eciesEncryptionCofactorX963SHA256AESGCM
-    @Dependency private var secureStorage = SecureStorage()
+    @Dependency private var keyStorage = KeyStorage()
     
     
     private var localStorageDirectory: URL {
@@ -145,7 +145,7 @@ public final class LocalStorage: Module, DefaultInitializable, EnvironmentAccess
 
 
         // Determine if the data should be encrypted or not:
-        guard let keys = try settings.keys(from: secureStorage) else {
+        guard let keys = try settings.keys(from: keyStorage) else {
             // No encryption:
             try data.write(to: fileURL)
             try setResourceValues()
@@ -225,7 +225,7 @@ public final class LocalStorage: Module, DefaultInitializable, EnvironmentAccess
         let data = try Data(contentsOf: fileURL)
 
         // Determine if the data should be decrypted or not:
-        guard let keys = try settings.keys(from: secureStorage) else {
+        guard let keys = try settings.keys(from: keyStorage) else {
             return try decoding(data)
         }
 
