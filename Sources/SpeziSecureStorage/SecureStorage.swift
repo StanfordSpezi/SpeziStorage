@@ -132,11 +132,6 @@ public final class SecureStorage: Module, DefaultInitializable, EnvironmentAcces
         try credentialStorage.store(credential, server: server, removeDuplicate: removeDuplicate, storageScope: storageScope)
     }
     
-    @available(*, deprecated, renamed: "deleteCredential(_:server:accessGroup:)")
-    public func deleteCredentials(_ username: String, server: String? = nil, accessGroup: String? = nil) throws {
-        try deleteCredential(username, server: server, accessGroup: accessGroup)
-    }
-    
     /// Delete existing credentials stored in the Keychain.
     ///
     /// ```swift
@@ -167,26 +162,6 @@ public final class SecureStorage: Module, DefaultInitializable, EnvironmentAcces
     ///   - accessGroup: The access group associated with the credentials.
     public func deleteAllCredentials(itemTypes: SecureStorageItemTypes = .all, accessGroup: String? = nil) throws {
         try credentialStorage.deleteAll(types: itemTypes, accessGroup: accessGroup)
-    }
-    
-    @available(*, deprecated, renamed: "updateCredential(_:server:newCredential:newServer:removeDuplicate:storageScope:)")
-    public func updateCredentials( // swiftlint:disable:this function_default_parameter_at_end
-        // The server parameter belongs to the `username` and therefore should be located next to the `username`.
-        _ username: String,
-        server: String? = nil,
-        newCredentials: Credential,
-        newServer: String? = nil,
-        removeDuplicate: Bool = true,
-        storageScope: SecureStorageScope = .keychain
-    ) throws {
-        try updateCredential(
-            username,
-            server: server,
-            newCredential: newCredentials,
-            newServer: newServer,
-            removeDuplicate: removeDuplicate,
-            storageScope: storageScope
-        )
     }
     
     /// Update existing credentials found in the Keychain.
@@ -236,11 +211,6 @@ public final class SecureStorage: Module, DefaultInitializable, EnvironmentAcces
         )
     }
     
-    @available(*, deprecated, renamed: "retrieveCredential(_:server:accessGroup:)")
-    public func retrieveCredentials(_ username: String, server: String? = nil, accessGroup: String? = nil) throws -> Credential? {
-        try retrieveCredential(username, server: server, accessGroup: accessGroup)
-    }
-    
     /// Retrieve existing credentials stored in the Keychain.
     ///
     /// ```swift
@@ -269,5 +239,38 @@ public final class SecureStorage: Module, DefaultInitializable, EnvironmentAcces
     /// - Returns: Returns all existing credentials stored in the Keychain identified by the `server` and `accessGroup`.
     public func retrieveAllCredentials(forServer server: String? = nil, accessGroup: String? = nil) throws -> [Credential] {
         try credentialStorage.retrieveAll(forServer: server, accessGroup: accessGroup)
+    }
+    
+    
+    // MARK: - Deprecations
+    
+    @available(*, deprecated, renamed: "deleteCredential(_:server:accessGroup:)")
+    public func deleteCredentials(_ username: String, server: String? = nil, accessGroup: String? = nil) throws {
+        try deleteCredential(username, server: server, accessGroup: accessGroup)
+    }
+    
+    @available(*, deprecated, renamed: "updateCredential(_:server:newCredential:newServer:removeDuplicate:storageScope:)")
+    public func updateCredentials( // swiftlint:disable:this function_default_parameter_at_end
+        // The server parameter belongs to the `username` and therefore should be located next to the `username`.
+        _ username: String,
+        server: String? = nil,
+        newCredentials: Credential,
+        newServer: String? = nil,
+        removeDuplicate: Bool = true,
+        storageScope: SecureStorageScope = .keychain
+    ) throws {
+        try updateCredential(
+            username,
+            server: server,
+            newCredential: newCredentials,
+            newServer: newServer,
+            removeDuplicate: removeDuplicate,
+            storageScope: storageScope
+        )
+    }
+    
+    @available(*, deprecated, renamed: "retrieveCredential(_:server:accessGroup:)")
+    public func retrieveCredentials(_ username: String, server: String? = nil, accessGroup: String? = nil) throws -> Credential? {
+        try retrieveCredential(username, server: server, accessGroup: accessGroup)
     }
 }
