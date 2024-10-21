@@ -87,11 +87,10 @@ public final class SecureStorage: Module, DefaultInitializable, EnvironmentAcces
     @available(*, deprecated, renamed: "store(credential:server:removeDuplicate:storageScope:)")
     public func store(
         credentials: Credential,
-        server: String? = nil,
         removeDuplicate: Bool = true,
         storageScope: SecureStorageScope = .keychain
     ) throws {
-        try store(credential: credentials, server: server, removeDuplicate: removeDuplicate, storageScope: storageScope)
+        try store(credential: credentials, removeDuplicate: removeDuplicate, storageScope: storageScope)
     }
     
     /// Stores credentials in the Keychain.
@@ -125,11 +124,10 @@ public final class SecureStorage: Module, DefaultInitializable, EnvironmentAcces
     ///                   The ``SecureStorageScope/secureEnclave(userPresence:)`` option is not supported for credentials.
     public func store(
         credential: Credential,
-        server: String? = nil,
         removeDuplicate: Bool = true,
         storageScope: SecureStorageScope = .keychain
     ) throws {
-        try credentialStorage.store(credential, server: server, removeDuplicate: removeDuplicate, storageScope: storageScope)
+        try credentialStorage.store(credential, removeDuplicate: removeDuplicate, storageScope: storageScope)
     }
     
     /// Delete existing credentials stored in the Keychain.
@@ -205,7 +203,6 @@ public final class SecureStorage: Module, DefaultInitializable, EnvironmentAcces
             username,
             server: server,
             newCredential: newCredential,
-            newServer: newServer,
             removeDuplicate: removeDuplicate,
             storageScope: storageScope
         )

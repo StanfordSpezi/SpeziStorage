@@ -32,25 +32,6 @@ public enum LocalStorageSetting {
             return true
         }
     }
-    
-    
-    func keys(from keyStorage: KeyStorage) throws -> SecKeyPair? {
-        let secureStorageScope: SecureStorageScope
-        switch self {
-        case .unencrypted:
-            return nil
-        case let .encrypted(keys, _):
-            return keys
-        case let .encryptedUsingSecureEnclave(userPresence):
-            secureStorageScope = .secureEnclave(userPresence: userPresence)
-        case let .encryptedUsingKeyChain(userPresence, _):
-            secureStorageScope = .keychain(userPresence: userPresence)
-        }
-        
-        let tag = "LocalStorage.\(secureStorageScope.id)"
-        return try (try? keyStorage.retrieveKeyPair(forTag: tag))
-            ?? keyStorage.create(tag)
-    }
 }
 
 extension LocalStorageSetting {

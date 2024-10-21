@@ -43,16 +43,13 @@ public final class CredentialStorage: Module, DefaultInitializable, EnvironmentA
     ///                   The ``SecureStorageScope/secureEnclave(userPresence:)`` option is not supported for credentials.
     public func store(
         _ credential: Credential,
-        server: String? = nil,
         removeDuplicate: Bool = true,
         storageScope: SecureStorageScope = .keychain
     ) throws {
         // This method uses code provided by the Apple Developer documentation at
         // https://developer.apple.com/documentation/security/keychain_services/keychain_items/adding_a_password_to_the_keychain.
-        
-        assert(!(.secureEnclave ~= storageScope), "Storing of keys in the secure enclave is not supported by Apple.")
-        
-        var query = queryFor(credential.username, server: server, accessGroup: storageScope.accessGroup)
+                
+        var query = queryFor(credential.username, server: credential.server, accessGroup: storageScope.accessGroup)
         query[kSecValueData as String] = Data(credential.password.utf8)
         
         if case .keychainSynchronizable = storageScope {
@@ -64,8 +61,8 @@ public final class CredentialStorage: Module, DefaultInitializable, EnvironmentA
         do {
             try SecureStorageError.execute(SecItemAdd(query as CFDictionary, nil))
         } catch let SecureStorageError.keychainError(status) where status == -25299 && removeDuplicate {
-            try delete(credential.username, server: server)
-            try store(credential, server: server, removeDuplicate: false)
+            try delete(credential.username)
+            try store(credential, removeDuplicate: false)
         }
     }
     
@@ -156,12 +153,11 @@ public final class CredentialStorage: Module, DefaultInitializable, EnvironmentA
         _ username: String,
         server: String? = nil,
         newCredential: Credential,
-        newServer: String? = nil,
         removeDuplicate: Bool = true,
         storageScope: SecureStorageScope = .keychain
     ) throws {
         try delete(username, server: server)
-        try store(newCredential, server: newServer, removeDuplicate: removeDuplicate, storageScope: storageScope)
+        try store(newCredential, removeDuplicate: removeDuplicate, storageScope: storageScope)
     }
     
     /// Retrieve existing credentials stored in the Keychain.

@@ -145,7 +145,7 @@ public final class LocalStorage: Module, DefaultInitializable, EnvironmentAccess
 
 
         // Determine if the data should be encrypted or not:
-        guard let keys = try settings.keys(from: keyStorage) else {
+        guard let keys = try keys(using: settings) else {
             // No encryption:
             try data.write(to: fileURL)
             try setResourceValues()
@@ -225,7 +225,7 @@ public final class LocalStorage: Module, DefaultInitializable, EnvironmentAccess
         let data = try Data(contentsOf: fileURL)
 
         // Determine if the data should be decrypted or not:
-        guard let keys = try settings.keys(from: keyStorage) else {
+        guard let keys = try keys(using: settings) else {
             return try decoding(data)
         }
 
@@ -289,5 +289,23 @@ public final class LocalStorage: Module, DefaultInitializable, EnvironmentAccess
     private func fileURL<C>(from storageKey: String? = nil, type: C.Type = C.self) -> URL {
         let storageKey = storageKey ?? String(describing: C.self)
         return localStorageDirectory.appending(path: storageKey).appendingPathExtension("localstorage")
+    }
+    
+    private func keys(using setting: LocalStorageSetting) throws -> SecKeyPair? {
+        let secureStorageScope: SecureStorageScope
+        switch setting {
+        case .unencrypted:
+            return nil
+        case let .encrypted(keys, _):
+            return keys
+        case let .encryptedUsingSecureEnclave(userPresence):
+            secureStorageScope = .secureEnclave(userPresence: userPresence)
+        case let .encryptedUsingKeyChain(userPresence, _):
+            secureStorageScope = .keychain(userPresence: userPresence)
+        }
+        
+        let tag = "LocalStorage.\(secureStorageScope.id)"
+        return try (try? keyStorage.retrieveKeyPair(forTag: tag))
+            ?? keyStorage.create(tag)
     }
 }
