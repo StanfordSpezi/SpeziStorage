@@ -165,7 +165,27 @@ public final class SecureStorage: Module, DefaultInitializable, EnvironmentAcces
     ///   - itemTypes: The types of items.
     ///   - accessGroup: The access group associated with the credentials.
     public func deleteAllCredentials(itemTypes: SecureStorageItemTypes = .all, accessGroup: String? = nil) throws {
-        try credentialStorage.deleteAll(types: itemTypes, accessGroup: accessGroup)
+        for kSecClassType in itemTypes.kSecClasses {
+            do {
+                var query: [String: Any] = [kSecClass as String: kSecClassType]
+                // Only append the accessGroup attribute if the `CredentialsStore` is configured to use KeyChain access groups
+                if let accessGroup {
+                    query[kSecAttrAccessGroup as String] = accessGroup
+                }
+                
+                // Use Data protection keychain on macOS
+                #if os(macOS)
+                query[kSecUseDataProtectionKeychain as String] = true
+                #endif
+                
+                try SecureStorageError.execute(SecItemDelete(query as CFDictionary))
+            } catch SecureStorageError.notFound {
+                // We are fine it no keychain items have been found and therefore non had been deleted.
+                continue
+            } catch {
+                print(error)
+            }
+        }
     }
     
     /// Update existing credentials found in the Keychain.

@@ -113,6 +113,25 @@ public final class KeyStorage: Module, DefaultInitializable, EnvironmentAccessib
         }
     }
     
+    /// Deletes all keys currently stored in the keychain or the secure enclave.
+    public func deleteAll() throws {
+        do {
+            var query: [String: Any] = [kSecClass as String: kSecClassKey]
+            
+            // Use Data protection keychain on macOS
+            #if os(macOS)
+            query[kSecUseDataProtectionKeychain as String] = true
+            #endif
+            
+            try SecureStorageError.execute(SecItemDelete(query as CFDictionary))
+        } catch SecureStorageError.notFound {
+            // We are fine it no keychain items have been found and therefore non had been deleted.
+            return
+        } catch {
+            print(error)
+        }
+    }
+    
     private func keyQuery(forTag tag: String) -> [String: Any] {
         var query: [String: Any] = [
             kSecClass as String: kSecClassKey,

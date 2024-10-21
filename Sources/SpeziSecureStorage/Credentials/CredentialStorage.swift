@@ -96,8 +96,8 @@ public final class CredentialStorage: Module, DefaultInitializable, EnvironmentA
     /// - Parameters:
     ///   - itemTypes: The types of items.
     ///   - accessGroup: The access group associated with the credentials.
-    public func deleteAll(types itemTypes: SecureStorageItemTypes = .all, accessGroup: String? = nil) throws {
-        for kSecClassType in itemTypes.kSecClass {
+    public func deleteAll(types: CredentialTypes, accessGroup: String? = nil) throws {
+        for kSecClassType in types.kSecClasses {
             do {
                 var query: [String: Any] = [kSecClass as String: kSecClassType]
                 // Only append the accessGroup attribute if the `CredentialsStore` is configured to use KeyChain access groups
