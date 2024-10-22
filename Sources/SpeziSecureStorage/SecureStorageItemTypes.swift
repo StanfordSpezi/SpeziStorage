@@ -10,6 +10,7 @@ import Security
 
 
 /// Types of items that can be stored in the secure storage.
+@available(*, deprecated, message: "Migrate your code to use `CredentialStorage` and `KeyStorage`.")
 public struct SecureStorageItemTypes: OptionSet {
     /// Any keys created with the `SecureStorage` module.
     ///
@@ -34,19 +35,18 @@ public struct SecureStorageItemTypes: OptionSet {
     
     public let rawValue: Int
     
-    
-    var kSecClass: [CFString] {
-        var kSecClass: [CFString] = []
+    var kSecClasses: [CFString] {
+        var kSecClasses: [CFString] = []
         if self.contains(.keys) {
-            kSecClass.append(kSecClassKey)
+            kSecClasses.append(kSecClassKey)
         }
         if self.contains(.serverCredentials) {
-            kSecClass.append(kSecClassGenericPassword)
+            kSecClasses.append(kSecClassGenericPassword)
         }
         if self.contains(.nonServerCredentials) {
-            kSecClass.append(kSecClassInternetPassword)
+            kSecClasses.append(kSecClassInternetPassword)
         }
-        return kSecClass
+        return kSecClasses
     }
     
     
@@ -54,6 +54,5 @@ public struct SecureStorageItemTypes: OptionSet {
         self.rawValue = rawValue
     }
 }
-
 
 extension SecureStorageItemTypes: Sendable {}
