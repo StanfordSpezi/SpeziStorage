@@ -61,7 +61,7 @@ public final class CredentialStorage: Module, DefaultInitializable, EnvironmentA
         do {
             try SecureStorageError.execute(SecItemAdd(query as CFDictionary, nil))
         } catch let SecureStorageError.keychainError(status) where status == -25299 && removeDuplicate {
-            try delete(credential.username)
+            try delete(credential.username, server: credential.server)
             try store(credential, removeDuplicate: false)
         }
     }
