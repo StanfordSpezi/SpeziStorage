@@ -204,8 +204,8 @@ public final class LocalStorage: Module, DefaultInitializable, EnvironmentAccess
     ///   - storageKey: An optional storage key to identify the file.
     ///   - settings: The ``LocalStorageSetting``s used to retrieve the file on disk.
     /// - Returns: The element conforming to `Decodable`.
-    public func read<C: DecodableWithConfiguration, D: TopLevelDecoder>( // swiftlint:disable:this function_default_parameter_at_end
-        _ type: C.Type = C.self,
+    public func read<C: DecodableWithConfiguration, D: TopLevelDecoder>(
+        _ type: C.Type = C.self, // swiftlint:disable:this function_default_parameter_at_end
         configuration: C.DecodingConfiguration,
         decoder: D = JSONDecoder(),
         storageKey: String? = nil,

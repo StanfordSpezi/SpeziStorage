@@ -306,10 +306,10 @@ public final class SecureStorage: Module, DefaultInitializable, EnvironmentAcces
     ///   - removeDuplicate: A flag indicating if any existing key for the `username` of the new credentials and `newServer`
     ///                      combination should be overwritten when storing the credentials.
     ///   - storageScope: The ``SecureStorageScope`` of the newly stored credentials.
-    public func updateCredentials( // swiftlint:disable:this function_default_parameter_at_end
+    public func updateCredentials(
         // The server parameter belongs to the `username` and therefore should be located next to the `username`.
         _ username: String,
-        server: String? = nil,
+        server: String? = nil, // swiftlint:disable:this function_default_parameter_at_end
         newCredentials: Credentials,
         newServer: String? = nil,
         removeDuplicate: Bool = true,
