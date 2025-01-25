@@ -103,4 +103,29 @@ final class LocalStorageTests: XCTestCase {
         try localStorage.store(letter, storageKey: "letter", settings: .unencrypted(excludedFromBackup: false))
         try assertItemAtUrlIsExcludedFromBackupEquals(localStorage.fileURL(from: "letter", type: Letter.self), shouldBeExcluded: false)
     }
+    
+    
+    @MainActor
+    func testDeleteAll() throws {
+        let fileManager = FileManager.default
+        let localStorage = LocalStorage()
+        withDependencyResolution {
+            localStorage
+        }
+        
+        let localStorageDir = localStorage.fileURL(from: "abc", type: Void.self).deletingLastPathComponent()
+        do {
+            var isDirectory: ObjCBool = false
+            let exists = fileManager.fileExists(atPath: localStorageDir.path, isDirectory: &isDirectory)
+            XCTAssertTrue(exists)
+            XCTAssertTrue(isDirectory.boolValue)
+        }
+        
+        XCTAssertTrue(try fileManager.contentsOfDirectory(atPath: localStorageDir.path).isEmpty)
+        
+        try localStorage.store("Servus", storageKey: "myText", settings: .unencrypted())
+        XCTAssertFalse(try fileManager.contentsOfDirectory(atPath: localStorageDir.path).isEmpty)
+        try localStorage.deleteAll()
+        XCTAssertTrue(try fileManager.contentsOfDirectory(atPath: localStorageDir.path).isEmpty)
+    }
 }
