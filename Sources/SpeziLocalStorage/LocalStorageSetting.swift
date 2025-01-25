@@ -23,7 +23,7 @@ public enum LocalStorageSetting {
     case encryptedUsingKeyChain(userPresence: Bool = false, excludedFromBackup: Bool = true)
     
     
-    var excludedFromBackup: Bool {
+    var isExcludedFromBackup: Bool {
         switch self {
         case let .unencrypted(excludedFromBackup),
              let .encrypted(_, _, excludedFromBackup),
