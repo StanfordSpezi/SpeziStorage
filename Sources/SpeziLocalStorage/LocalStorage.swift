@@ -294,9 +294,9 @@ public final class LocalStorage: Module, DefaultInitializable, EnvironmentAccess
         }
     }
     
-    /// Deletes all data ever stored using the `LocalStorage` API.
+    /// Deletes all data currently stored using the `LocalStorage` API.
     ///
-    /// - Warning: This will delete all data ever stored using the `LocalStorage` API.
+    /// - Warning: This will delete all data currently stored using the `LocalStorage` API.
     public func deleteAll() throws {
         try fileManager.removeItem(at: localStorageDirectory)
         try createLocalStorageDirectoryIfNecessary()
