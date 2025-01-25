@@ -120,6 +120,8 @@ do {
 
 See ``LocalStorage/delete(_:)`` or ``LocalStorage/delete(storageKey:)`` for more details.
 
+If you need to fully delete the entire local storage, use ``LocalStorage/deleteAll()``.
+
 
 ## Topics
 
