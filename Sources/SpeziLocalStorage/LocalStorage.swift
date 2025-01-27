@@ -28,7 +28,6 @@ import SpeziSecureStorage
 /// - ``store(_:configuration:encoder:storageKey:settings:)``
 ///
 /// ### Loading Elements
-///
 /// - ``read(_:decoder:storageKey:settings:)``
 /// - ``read(_:configuration:decoder:storageKey:settings:)``
 ///
