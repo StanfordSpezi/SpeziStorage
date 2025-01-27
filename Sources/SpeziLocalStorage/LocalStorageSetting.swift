@@ -11,7 +11,7 @@ import Spezi
 import SpeziSecureStorage
 
 
-/// Configure how data can be stored and retrieved.
+/// Configure how data is encrypyed, stored, and retrieved.
 public enum LocalStorageSetting {
     /// Unencrypted
     case unencrypted(excludedFromBackup: Bool = true)
@@ -23,7 +23,7 @@ public enum LocalStorageSetting {
     case encryptedUsingKeyChain(userPresence: Bool = false, excludedFromBackup: Bool = true)
     
     
-    var excludedFromBackup: Bool {
+    var isExcludedFromBackup: Bool {
         switch self {
         case let .unencrypted(excludedFromBackup),
              let .encrypted(_, _, excludedFromBackup),

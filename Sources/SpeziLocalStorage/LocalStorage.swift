@@ -13,10 +13,10 @@ import SpeziFoundation
 import SpeziSecureStorage
 
 
-/// On-disk storage of data in mobile applications.
+/// Encrypted on-disk storage of data in mobile applications.
 ///
 /// The module relies on the [`SecureStorage`](https://swiftpackageindex.com/StanfordSpezi/SpeziStorage/documentation/spezisecurestorage)
-/// module to enable an encrypted on-disk storage. You configuration encryption using the ``LocalStorageSetting`` type.
+/// module to enable an encrypted on-disk storage. You can define the specifics of how data is stored using the ``LocalStorageSetting`` type.
 ///
 /// ## Topics
 ///
@@ -28,7 +28,6 @@ import SpeziSecureStorage
 /// - ``store(_:configuration:encoder:storageKey:settings:)``
 ///
 /// ### Loading Elements
-///
 /// - ``read(_:decoder:storageKey:settings:)``
 /// - ``read(_:configuration:decoder:storageKey:settings:)``
 ///
@@ -37,28 +36,38 @@ import SpeziSecureStorage
 /// - ``delete(_:)``
 /// - ``delete(storageKey:)``
 public final class LocalStorage: Module, DefaultInitializable, EnvironmentAccessible, @unchecked Sendable {
+    @Dependency(SecureStorage.self) private var secureStorage
+    @Application(\.logger) private var logger
+    
+    private let fileManager = FileManager.default
+    private let localStorageDirectory: URL
     private let encryptionAlgorithm: SecKeyAlgorithm = .eciesEncryptionCofactorX963SHA256AESGCM
-    @Dependency private var secureStorage = SecureStorage()
-    
-    
-    private var localStorageDirectory: URL {
-        // We store the files in the application support directory as described in
-        // [File System Basics](https://developer.apple.com/library/archive/documentation/FileManagement/Conceptual/FileSystemProgrammingGuide/FileSystemOverview/FileSystemOverview.html).
-        let paths = FileManager.default.urls(for: .applicationSupportDirectory, in: .userDomainMask)
-        let localStoragePath = paths[0].appendingPathComponent("edu.stanford.spezi/LocalStorage")
-        if !FileManager.default.fileExists(atPath: localStoragePath.path) {
-            do {
-                try FileManager.default.createDirectory(atPath: localStoragePath.path, withIntermediateDirectories: true, attributes: nil)
-            } catch {
-                print(error.localizedDescription)
-            }
-        }
-        return localStoragePath
-    }
     
     
     /// Configure the `LocalStorage` module.
-    public required init() {}
+    public required init() {
+        // We store the files in the application support directory as described in
+        // [File System Basics](https://developer.apple.com/library/archive/documentation/FileManagement/Conceptual/FileSystemProgrammingGuide/FileSystemOverview/FileSystemOverview.html).
+        let paths = fileManager.urls(for: .applicationSupportDirectory, in: .userDomainMask)
+        localStorageDirectory = paths[0].appendingPathComponent("edu.stanford.spezi/LocalStorage")
+    }
+    
+    
+    public func configure() {
+        do {
+            try createLocalStorageDirectoryIfNecessary()
+        } catch {
+            logger.error("Unable to create LocalStorage directory: \(error)")
+        }
+    }
+    
+    
+    private func createLocalStorageDirectoryIfNecessary() throws {
+        guard !fileManager.fileExists(atPath: localStorageDirectory.path) else {
+            return
+        }
+        try fileManager.createDirectory(atPath: localStorageDirectory.path, withIntermediateDirectories: true, attributes: nil)
+    }
     
     
     /// Store elements on disk.
@@ -121,23 +130,21 @@ public final class LocalStorage: Module, DefaultInitializable, EnvironmentAccess
         encoding: (C) throws -> Data
     ) throws {
         var fileURL = fileURL(from: storageKey, type: C.self)
-        let fileExistsAlready = FileManager.default.fileExists(atPath: fileURL.path)
+        let fileExistsAlready = fileManager.fileExists(atPath: fileURL.path)
 
         // Called at the end of each execution path
         // We can not use defer as the function can potentially throw an error.
         func setResourceValues() throws {
             do {
-                if settings.excludedFromBackup {
-                    var resourceValues = URLResourceValues()
-                    resourceValues.isExcludedFromBackup = true
-                    try fileURL.setResourceValues(resourceValues)
-                }
+                var resourceValues = URLResourceValues()
+                resourceValues.isExcludedFromBackup = settings.isExcludedFromBackup
+                try fileURL.setResourceValues(resourceValues)
             } catch {
                 // Revert a written file if it did not exist before.
                 if !fileExistsAlready {
-                    try FileManager.default.removeItem(atPath: fileURL.path)
+                    try fileManager.removeItem(atPath: fileURL.path)
                 }
-                throw LocalStorageError.couldNotExcludedFromBackup
+                throw LocalStorageError.failedToExcludeFromBackup
             }
         }
 
@@ -277,16 +284,24 @@ public final class LocalStorage: Module, DefaultInitializable, EnvironmentAccess
     ) throws {
         let fileURL = self.fileURL(from: storageKey, type: C.self)
         
-        if FileManager.default.fileExists(atPath: fileURL.path) {
+        if fileManager.fileExists(atPath: fileURL.path) {
             do {
-                try FileManager.default.removeItem(atPath: fileURL.path)
+                try fileManager.removeItem(atPath: fileURL.path)
             } catch {
                 throw LocalStorageError.deletionNotPossible
             }
         }
     }
     
-    private func fileURL<C>(from storageKey: String? = nil, type: C.Type = C.self) -> URL {
+    /// Deletes all data currently stored using the `LocalStorage` API.
+    ///
+    /// - Warning: This will delete all data currently stored using the `LocalStorage` API.
+    public func deleteAll() throws {
+        try fileManager.removeItem(at: localStorageDirectory)
+        try createLocalStorageDirectoryIfNecessary()
+    }
+    
+    func fileURL<C>(from storageKey: String? = nil, type: C.Type = C.self) -> URL {
         let storageKey = storageKey ?? String(describing: C.self)
         return localStorageDirectory.appending(path: storageKey).appendingPathExtension("localstorage")
     }

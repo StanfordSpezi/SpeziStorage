@@ -12,7 +12,7 @@ enum LocalStorageError: Error {
     /// Encryption of the file was not possible, did not store the data on disk.
     case encryptionNotPossible
     /// Adding the file descriptor to exclude the file from backup could not be achieved.
-    case couldNotExcludedFromBackup
+    case failedToExcludeFromBackup
     /// Decrypting the file was not possible with the given ``LocalStorageSetting``, please check that this is the ``LocalStorageSetting`` that you used to store the element.
     case decryptionNotPossible
     /// The file requested to be deleted exists but deleting the file was not possible.
