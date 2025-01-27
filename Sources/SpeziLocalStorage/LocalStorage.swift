@@ -13,10 +13,10 @@ import SpeziFoundation
 import SpeziSecureStorage
 
 
-/// On-disk storage of data in mobile applications.
+/// Encrypted on-disk storage of data in mobile applications.
 ///
 /// The module relies on the [`SecureStorage`](https://swiftpackageindex.com/StanfordSpezi/SpeziStorage/documentation/spezisecurestorage)
-/// module to enable an encrypted on-disk storage. You configuration encryption using the ``LocalStorageSetting`` type.
+/// module to enable an encrypted on-disk storage. You can define the specifics of how data is stored using the ``LocalStorageSetting`` type.
 ///
 /// ## Topics
 ///

@@ -14,7 +14,7 @@ Store data encryped on-disk.
 
 ## Overview
 
-The `LocalStorage` module enables the on-disk storage of data in mobile applications.
+The `LocalStorage` module enables encrypted on-disk storage of data in mobile applications.
 
 The module defaults to storing data encrypted supported by the [`SecureStorage`](https://swiftpackageindex.com/StanfordSpezi/SpeziStorage/documentation/spezisecurestorage) module.
 The ``LocalStorageSetting`` enables configuring how data in the `LocalStorage` module can be stored and retrieved.
