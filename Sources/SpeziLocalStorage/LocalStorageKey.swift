@@ -72,7 +72,7 @@ public final class LocalStorageKey<Value>: LocalStorageKeys, @unchecked Sendable
     private let lock = RWLock()
     private let subject = PassthroughSubject<Value?, Never>()
     
-    var publisher: AnyPublisher<Value?, Never> { subject.eraseToAnyPublisher() }
+    var publisher: some Publisher<Value?, Never> { subject }
     
     /// Creates a Local Storage Key that uses custom encoding and decoding functions.
     public init(
