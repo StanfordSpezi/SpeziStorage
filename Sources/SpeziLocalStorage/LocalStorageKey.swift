@@ -70,7 +70,9 @@ public final class LocalStorageKey<Value>: LocalStorageKeys, @unchecked Sendable
     let encode: @Sendable (Value) throws -> Data
     let decode: @Sendable (Data) throws -> Value?
     private let lock = RWLock()
-    let publisher = PassthroughSubject<Value?, Never>()
+    private let subject = PassthroughSubject<Value?, Never>()
+    
+    var publisher: AnyPublisher<Value?, Never> { subject.eraseToAnyPublisher() }
     
     /// Creates a Local Storage Key that uses custom encoding and decoding functions.
     public init(
@@ -91,6 +93,10 @@ public final class LocalStorageKey<Value>: LocalStorageKeys, @unchecked Sendable
     
     func withWriteLock<Result>(_ block: () throws -> Result) rethrows -> Result {
         try lock.withWriteLock(body: block)
+    }
+    
+    func informSubscribersAboutNewValue(_ newValue: Value?) {
+        subject.send(newValue)
     }
 }
 

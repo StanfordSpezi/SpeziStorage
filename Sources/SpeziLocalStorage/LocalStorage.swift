@@ -130,7 +130,7 @@ public final class LocalStorage: Module, DefaultInitializable, EnvironmentAccess
 
         try encryptedData.write(to: fileURL)
         try setResourceValues()
-        key.publisher.send(value)
+        key.informSubscribersAboutNewValue(value)
     }
     
     
@@ -200,7 +200,7 @@ public final class LocalStorage: Module, DefaultInitializable, EnvironmentAccess
         if fileManager.fileExists(atPath: fileURL.path) {
             do {
                 try fileManager.removeItem(atPath: fileURL.path)
-                key.publisher.send(nil)
+                key.informSubscribersAboutNewValue(nil)
             } catch {
                 throw LocalStorageError.deletionNotPossible
             }

@@ -11,12 +11,12 @@ import SpeziLocalStorage
 import SwiftUI
 
 
-extension LocalStorageKeys {
+extension LocalStorageKeys { // swiftlint:disable:this file_types_order
     static let number = LocalStorageKey<Int>("number")
 }
 
 
-struct LocalStorageLiveUpdateTestView: View {
+struct LocalStorageLiveUpdateTestView: View { // swiftlint:disable:this file_types_order
     @Environment(LocalStorage.self) private var localStorage
     
     var body: some View {
@@ -25,7 +25,7 @@ struct LocalStorageLiveUpdateTestView: View {
             Section {
                 ForEach(0..<5) { number in
                     Button("\(number)") {
-                        try! localStorage.store(number, for: .number)
+                        try? localStorage.store(number, for: .number)
                     }
                 }
             }
@@ -35,11 +35,9 @@ struct LocalStorageLiveUpdateTestView: View {
 
 
 struct RowView: View {
-    @LocalStorageEntry(.number)
-    private var number
+    @LocalStorageEntry(.number) private var number
     
     var body: some View {
         LabeledContent("number", value: number.map(String.init) ?? "–")
     }
 }
-
