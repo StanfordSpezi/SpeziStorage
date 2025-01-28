@@ -10,6 +10,7 @@ import Spezi
 import SwiftUI
 import XCTestApp
 
+
 @main
 struct UITestsApp: App {
     @ApplicationDelegateAdaptor(TestAppDelegate.self) var appDelegate

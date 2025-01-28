@@ -103,7 +103,7 @@ extension LocalStorageKey {
     /// Creates a Local Storage Key that uses a custom encoder and decoder.
     public convenience init<E: TopLevelEncoder & Sendable, D: TopLevelDecoder & Sendable>(
         _ key: String,
-        setting: LocalStorageSetting = .default,
+        setting: LocalStorageSetting = .default, // swiftlint:disable:this function_default_parameter_at_end
         encoder: E,
         decoder: D
     ) where Value: Codable, E.Output == Data, D.Input == Data {

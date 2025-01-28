@@ -16,8 +16,8 @@ private struct Letter: Codable, Equatable {
 }
 
 
-private extension LocalStorageKeys {
-    static let letter = LocalStorageKey<Letter>("letter", setting: .unencrypted())
+extension LocalStorageKeys { // swiftlint:disable:this file_types_order
+    fileprivate static let letter = LocalStorageKey<Letter>("letter", setting: .unencrypted())
 }
 
 
@@ -92,21 +92,36 @@ final class LocalStorageTests: XCTestCase {
         let letter = Letter(greeting: "Hello Lukas 😳😳😳")
         
         try localStorage.store(letter, for: keyNoBackup)
-        try assertItemAtUrlIsExcludedFromBackupEquals(localStorage.fileURL(for: keyNoBackup), shouldBeExcluded: keyNoBackup.setting.isExcludedFromBackup)
+        try assertItemAtUrlIsExcludedFromBackupEquals(
+            localStorage.fileURL(for: keyNoBackup),
+            shouldBeExcluded: keyNoBackup.setting.isExcludedFromBackup
+        )
         
         try localStorage.store(letter, for: keyYesBackup)
-        try assertItemAtUrlIsExcludedFromBackupEquals(localStorage.fileURL(for: keyYesBackup), shouldBeExcluded: keyYesBackup.setting.isExcludedFromBackup)
+        try assertItemAtUrlIsExcludedFromBackupEquals(
+            localStorage.fileURL(for: keyYesBackup),
+            shouldBeExcluded: keyYesBackup.setting.isExcludedFromBackup
+        )
         
         try localStorage.deleteAll()
         
         try localStorage.store(letter, for: keyYesBackup)
-        try assertItemAtUrlIsExcludedFromBackupEquals(localStorage.fileURL(for: keyYesBackup), shouldBeExcluded: keyYesBackup.setting.isExcludedFromBackup)
+        try assertItemAtUrlIsExcludedFromBackupEquals(
+            localStorage.fileURL(for: keyYesBackup),
+            shouldBeExcluded: keyYesBackup.setting.isExcludedFromBackup
+        )
         
         try localStorage.store(letter, for: keyNoBackup)
-        try assertItemAtUrlIsExcludedFromBackupEquals(localStorage.fileURL(for: keyNoBackup), shouldBeExcluded: keyNoBackup.setting.isExcludedFromBackup)
+        try assertItemAtUrlIsExcludedFromBackupEquals(
+            localStorage.fileURL(for: keyNoBackup),
+            shouldBeExcluded: keyNoBackup.setting.isExcludedFromBackup
+        )
         
         try localStorage.store(letter, for: keyYesBackup)
-        try assertItemAtUrlIsExcludedFromBackupEquals(localStorage.fileURL(for: keyYesBackup), shouldBeExcluded: keyYesBackup.setting.isExcludedFromBackup)
+        try assertItemAtUrlIsExcludedFromBackupEquals(
+            localStorage.fileURL(for: keyYesBackup),
+            shouldBeExcluded: keyYesBackup.setting.isExcludedFromBackup
+        )
     }
     
     
