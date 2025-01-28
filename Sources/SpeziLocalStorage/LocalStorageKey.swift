@@ -6,7 +6,7 @@
 // SPDX-License-Identifier: MIT
 //
 
-import Dispatch
+import Combine
 import Foundation
 import SpeziFoundation
 
@@ -70,6 +70,7 @@ public final class LocalStorageKey<Value>: LocalStorageKeys, @unchecked Sendable
     let encode: @Sendable (Value) throws -> Data
     let decode: @Sendable (Data) throws -> Value?
     private let lock = RWLock()
+    let publisher = PassthroughSubject<Value?, Never>()
     
     /// Creates a Local Storage Key that uses custom encoding and decoding functions.
     public init(
@@ -101,7 +102,7 @@ extension LocalStorageKey {
     }
     
     /// Creates a Local Storage Key that uses a custom encoder and decoder.
-    public convenience init<E: TopLevelEncoder & Sendable, D: TopLevelDecoder & Sendable>(
+    public convenience init<E: SpeziFoundation.TopLevelEncoder & Sendable, D: SpeziFoundation.TopLevelDecoder & Sendable>(
         _ key: String,
         setting: LocalStorageSetting = .default, // swiftlint:disable:this function_default_parameter_at_end
         encoder: E,
