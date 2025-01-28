@@ -66,7 +66,7 @@ final class LocalStorageTests: TestAppTestCase {
 
         try localStorage.store(letter, for: key)
         let storedLetter = try localStorage.load(key)
-
+        
         try XCTAssertEqual(letter, storedLetter)
     }
     

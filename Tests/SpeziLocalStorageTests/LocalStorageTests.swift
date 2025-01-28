@@ -64,7 +64,7 @@ final class LocalStorageTests: XCTestCase {
         XCTAssertEqual(letter, storedLetter)
         
         try localStorage.delete(.letter)
-        XCTAssertThrowsError(try localStorage.load(.letter))
+        XCTAssertNil(try localStorage.load(.letter))
         XCTAssertNoThrow(try localStorage.delete(.letter))
     }
     
@@ -143,7 +143,7 @@ final class LocalStorageTests: XCTestCase {
         
         XCTAssertTrue(try fileManager.contentsOfDirectory(atPath: localStorageDir.path).isEmpty)
         
-        try localStorage.store("Servus", for: .init("hmmmm"))
+        try localStorage.store("Servus", for: .init("hmmmm", setting: .unencrypted()))
         XCTAssertFalse(try fileManager.contentsOfDirectory(atPath: localStorageDir.path).isEmpty)
         try localStorage.deleteAll()
         XCTAssertTrue(try fileManager.contentsOfDirectory(atPath: localStorageDir.path).isEmpty)
