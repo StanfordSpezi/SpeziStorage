@@ -49,29 +49,34 @@ final class LocalStorageTests: TestAppTestCase {
         guard let publicKey = try secureStorage.retrievePublicKey(forTag: "LocalStorageTests") else {
             throw XCTestFailure()
         }
+        let key = LocalStorageKey<Letter>("letter1", setting: .encrypted(privateKey: privateKey, publicKey: publicKey))
         
         let letter = Letter(greeting: "Hello Paul 👋\(String(repeating: "🚀", count: Int.random(in: 0...10)))")
         
-        try localStorage.store(letter, settings: .encrypted(privateKey: privateKey, publicKey: publicKey))
-        let storedLetter: Letter = try localStorage.read(settings: .encrypted(privateKey: privateKey, publicKey: publicKey))
+        try localStorage.store(letter, for: key)
+        let storedLetter = try localStorage.load(key)
         
         try XCTAssertEqual(letter, storedLetter)
     }
     
+    
     func testLocalStorageTestEncryptedKeychain() throws {
+        let key = LocalStorageKey<Letter>("letter2", setting: .encryptedUsingKeyChain())
         let letter = Letter(greeting: "Hello Paul 👋\(String(repeating: "🚀", count: Int.random(in: 0...10)))")
 
-        try localStorage.store(letter, settings: .encryptedUsingKeyChain())
-        let storedLetter: Letter = try localStorage.read(settings: .encryptedUsingKeyChain())
+        try localStorage.store(letter, for: key)
+        let storedLetter = try localStorage.load(key)
 
         try XCTAssertEqual(letter, storedLetter)
     }
-
+    
+    
     func testLocalStorageTestEncryptedSecureEnclave() throws {
+        let key = LocalStorageKey<Letter>("letter3", setting: .encryptedUsingSecureEnclave())
         let letter = Letter(greeting: "Hello Paul 👋\(String(repeating: "🚀", count: Int.random(in: 0...10)))")
         
-        try localStorage.store(letter, settings: .encryptedUsingSecureEnclave())
-        let storedLetter: Letter = try localStorage.read(settings: .encryptedUsingSecureEnclave())
+        try localStorage.store(letter, for: key)
+        let storedLetter = try localStorage.load(key)
         
         try XCTAssertEqual(letter, storedLetter)
     }

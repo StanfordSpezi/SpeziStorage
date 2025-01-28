@@ -64,10 +64,23 @@ Alternatively, it is common to use the `LocalStorage` module in other modules as
 
 ## Use the LocalStorage Module
 
-You can use the `LocalStorage` module to store, update, retrieve, and delete element conforming to [`Codable`](https://developer.apple.com/documentation/swift/codable). 
+You can use the `LocalStorage` module to store, update, retrieve, and delete element conforming to [`Codable`](https://developer.apple.com/documentation/swift/codable).
 
 
-### Storing & Update Data
+### Defining Storage Keys
+
+`LocalStorage` uses unique ``LocalStorageKey``s to .
+
+You define storage keys by placing a static non-computed properties of type ``LocalStorageKey`` into an extension on the ``LocalStorageKeys`` type:
+
+```swift
+extension LocalStorageKeys {
+    static let note = LocalStorageKey
+}
+```
+
+
+### Storing and Loading Data
 
 The `LocalStorage` module enables the storage and update of elements conforming to `Codable`.
 

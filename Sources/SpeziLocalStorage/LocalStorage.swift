@@ -24,23 +24,20 @@ import SpeziSecureStorage
 /// - ``init()``
 ///
 /// ### Storing Elements
-/// - ``store(_:encoder:storageKey:settings:)``
-/// - ``store(_:configuration:encoder:storageKey:settings:)``
+/// - ``store(_:for:)``
 ///
 /// ### Loading Elements
-/// - ``read(_:decoder:storageKey:settings:)``
-/// - ``read(_:configuration:decoder:storageKey:settings:)``
+/// - ``load(_:)``
 ///
 /// ### Deleting Entries
-///
 /// - ``delete(_:)``
-/// - ``delete(storageKey:)``
+/// - ``deleteAll()``
 public final class LocalStorage: Module, DefaultInitializable, EnvironmentAccessible, @unchecked Sendable {
     @Dependency(SecureStorage.self) private var secureStorage
     @Application(\.logger) private var logger
     
     private let fileManager = FileManager.default
-    private let localStorageDirectory: URL
+    /* private-but-tests */ let localStorageDirectory: URL
     private let encryptionAlgorithm: SecKeyAlgorithm = .eciesEncryptionCofactorX963SHA256AESGCM
     
     
@@ -53,6 +50,7 @@ public final class LocalStorage: Module, DefaultInitializable, EnvironmentAccess
     }
     
     
+    @_documentation(visibility: internal)
     public func configure() {
         do {
             try createLocalStorageDirectoryIfNecessary()
@@ -70,66 +68,28 @@ public final class LocalStorage: Module, DefaultInitializable, EnvironmentAccess
     }
     
     
-    /// Store elements on disk.
+    // MARK: Store
+    
+    /// Put a value into the `LocalStorage`.
     ///
-    /// ```swift
-    /// struct Note: Codable, Equatable {
-    ///     let text: String
-    ///     let date: Date
-    /// }
+    /// - parameter value: The value which should be persisted. Passing `nil` will delete the most-recently-stored value.
+    /// - parameter key: The ``LocalStorageKey`` with which the value should be associated.
     ///
-    /// let note = Note(text: "Spezi is awesome!", date: Date())
-    ///
-    /// do {
-    ///     try await localStorage.store(note)
-    /// } catch {
-    ///     // Handle storage errors ...
-    /// }
-    /// ```
-    ///
-    /// - Parameters:
-    ///   - element: The element that should be stored conforming to `Encodable`
-    ///   - encoder: The `Encoder` to use for encoding the `element`.
-    ///   - storageKey: An optional storage key to identify the file.
-    ///   - settings: The ``LocalStorageSetting``s applied to the file on disk.
-    public func store<C: Encodable, D: TopLevelEncoder>(
-        _ element: C,
-        encoder: D = JSONEncoder(),
-        storageKey: String? = nil,
-        settings: LocalStorageSetting = .encryptedUsingKeyChain()
-    ) throws where D.Output == Data {
-        try store(element, storageKey: storageKey, settings: settings) { element in
-            try encoder.encode(element)
+    /// - Note: This operation will overwrite any previously-stored values for this key.
+    public func store<Value>(_ value: Value?, for key: LocalStorageKey<Value>) throws {
+        try key.withWriteLock {
+            if let value {
+                try storeImp(value, for: key)
+            } else {
+                try delete(key)
+            }
         }
     }
-
-    /// Store elements on disk that require additional configuration for encoding.
-    ///
-    /// - Parameters:
-    ///   - element: The element that should be stored conforming to `Encodable`
-    ///   - configuration: A configuration that provides additional information for encoding.
-    ///   - encoder: The `Encoder` to use for encoding the `element`.
-    ///   - storageKey: An optional storage key to identify the file.
-    ///   - settings: The ``LocalStorageSetting``s applied to the file on disk.
-    public func store<C: EncodableWithConfiguration, D: TopLevelEncoder>(
-        _ element: C,
-        configuration: C.EncodingConfiguration,
-        encoder: D = JSONEncoder(),
-        storageKey: String? = nil,
-        settings: LocalStorageSetting = .encryptedUsingKeyChain()
-    ) throws where D.Output == Data {
-        try store(element, storageKey: storageKey, settings: settings) { element in
-            try encoder.encode(element, configuration: configuration)
-        }
-    }
-
-    private func store<C>(
-        _ element: C,
-        storageKey: String?,
-        settings: LocalStorageSetting,
-        encoding: (C) throws -> Data
-    ) throws {
-        var fileURL = fileURL(from: storageKey, type: C.self)
+    
+    
+    /// - invariant: assumes that the key's write lock is held.
+    private func storeImp<Value>(_ value: Value, for key: LocalStorageKey<Value>) throws {
+        var fileURL = fileURL(for: key)
         let fileExistsAlready = fileManager.fileExists(atPath: fileURL.path)
 
         // Called at the end of each execution path
@@ -137,7 +97,7 @@ public final class LocalStorage: Module, DefaultInitializable, EnvironmentAccess
         func setResourceValues() throws {
             do {
                 var resourceValues = URLResourceValues()
-                resourceValues.isExcludedFromBackup = settings.isExcludedFromBackup
+                resourceValues.isExcludedFromBackup = key.setting.isExcludedFromBackup
                 try fileURL.setResourceValues(resourceValues)
             } catch {
                 // Revert a written file if it did not exist before.
@@ -148,11 +108,10 @@ public final class LocalStorage: Module, DefaultInitializable, EnvironmentAccess
             }
         }
 
-        let data = try encoding(element)
-
+        let data = try key.encode(value)
 
         // Determine if the data should be encrypted or not:
-        guard let keys = try settings.keys(from: secureStorage) else {
+        guard let keys = try key.setting.keys(from: secureStorage) else {
             // No encryption:
             try data.write(to: fileURL)
             try setResourceValues()
@@ -172,68 +131,32 @@ public final class LocalStorage: Module, DefaultInitializable, EnvironmentAccess
         try encryptedData.write(to: fileURL)
         try setResourceValues()
     }
-
     
-    /// Read elements from disk.
+    
+    // MARK: Load
+    
+    /// Load a value from the `LocalStorage`.
     ///
-    /// ```swift
-    /// do {
-    ///     let storedNote: Note = try await localStorage.read()
-    ///     // Do something with `storedNote`.
-    /// } catch {
-    ///     // Handle read errors ...
-    /// }
-    /// ```
-    ///
-    /// - Parameters:
-    ///   - type: The `Decodable` type that is used to decode the data from disk.
-    ///   - decoder: The `Decoder` to use to decode the stored data into the provided `type`.
-    ///   - storageKey: An optional storage key to identify the file.
-    ///   - settings: The ``LocalStorageSetting``s used to retrieve the file on disk.
-    /// - Returns: The element conforming to `Decodable`.
-    public func read<C: Decodable, D: TopLevelDecoder>(
-        _ type: C.Type = C.self,
-        decoder: D = JSONDecoder(),
-        storageKey: String? = nil,
-        settings: LocalStorageSetting = .encryptedUsingKeyChain()
-    ) throws -> C where D.Input == Data {
-        try read(storageKey: storageKey, settings: settings) { data in
-            try decoder.decode(type, from: data)
+    /// - parameter key: The ``LocalStorageKey`` associated with the to-be-retrieved value.
+    /// - returns: The most recent stored value associated with the key; `nil` if no such value exists.
+    public func load<Value>(_ key: LocalStorageKey<Value>) throws -> Value? {
+        try key.withReadLock {
+            try readImp(key)
         }
     }
-
-    /// Read elements from disk that require additional configuration for decoding.
-    ///
-    /// - Parameters:
-    ///   - type: The `Decodable` type that is used to decode the data from disk.
-    ///   - configuration: A configuration that provides additional information for decoding.
-    ///   - decoder: The `Decoder` to use to decode the stored data into the provided `type`.
-    ///   - storageKey: An optional storage key to identify the file.
-    ///   - settings: The ``LocalStorageSetting``s used to retrieve the file on disk.
-    /// - Returns: The element conforming to `Decodable`.
-    public func read<C: DecodableWithConfiguration, D: TopLevelDecoder>(
-        _ type: C.Type = C.self, // swiftlint:disable:this function_default_parameter_at_end
-        configuration: C.DecodingConfiguration,
-        decoder: D = JSONDecoder(),
-        storageKey: String? = nil,
-        settings: LocalStorageSetting = .encryptedUsingKeyChain()
-    ) throws -> C where D.Input == Data {
-        try read(storageKey: storageKey, settings: settings) { data in
-            try decoder.decode(type, from: data, configuration: configuration)
+    
+    
+    /// - invariant: assumes that the key's read lock is held.
+    private func readImp<Value>(_ key: LocalStorageKey<Value>) throws -> Value? {
+        let fileURL = fileURL(for: key)
+        guard fileManager.fileExists(atPath: fileURL.path) else {
+            return nil
         }
-    }
-
-    private func read<C>(
-        storageKey: String?,
-        settings: LocalStorageSetting,
-        decoding: (Data) throws -> C
-    ) throws -> C {
-        let fileURL = fileURL(from: storageKey, type: C.self)
         let data = try Data(contentsOf: fileURL)
 
         // Determine if the data should be decrypted or not:
-        guard let keys = try settings.keys(from: secureStorage) else {
-            return try decoding(data)
+        guard let keys = try key.setting.keys(from: secureStorage) else {
+            return try key.decode(data)
         }
 
         guard SecKeyIsAlgorithmSupported(keys.privateKey, .decrypt, encryptionAlgorithm) else {
@@ -245,45 +168,34 @@ public final class LocalStorage: Module, DefaultInitializable, EnvironmentAccess
             throw LocalStorageError.decryptionNotPossible
         }
 
-        return try decoding(decryptedData)
+        return try key.decode(decryptedData)
     }
-
     
-    /// Deletes a file stored on disk identified by the `storageKey`.
+    
+    // MARK: Delete
+    
+    /// Deletes the `LocalStorage` entry associated with `key`.
     ///
     /// ```swift
     /// do {
-    ///     try await localStorage.delete(storageKey: "MyNote")
+    ///     try localStorage.delete(.myStorageKey)
     /// } catch {
     ///     // Handle delete errors ...
     /// }
     /// ```
     ///
-    /// Use ``delete(_:)`` as an automatically define the `storageKey` if the type conforms to `Encodable`.
-    ///
     /// - Parameters:
-    ///   - storageKey: An optional storage key to identify the file.
-    public func delete(storageKey: String) throws {
-        try delete(String.self, storageKey: storageKey)
-    }
-    
-    /// Deletes a file stored on disk defined by a  `Decodable` type that is used to derive the storage key.
-    ///
-    /// - Note: Use ``delete(storageKey:)`` to manually define the storage key.
-    ///
-    /// - Parameters:
-    ///   - type: The `Encodable` type that is used to store the type originally.
-    public func delete<C: Encodable>(_ type: C.Type = C.self) throws {
-        try delete(C.self, storageKey: nil)
+    ///   - key: An optional storage key to identify the file.
+    public func delete(_ key: LocalStorageKey<some Any>) throws {
+        try key.withWriteLock {
+            try deleteImp(key)
+        }
     }
     
     
-    private func delete<C: Encodable>(
-        _ type: C.Type = C.self,
-        storageKey: String? = nil
-    ) throws {
-        let fileURL = self.fileURL(from: storageKey, type: C.self)
-        
+    /// - invariant: assumes that the key's write lock is held
+    private func deleteImp(_ key: LocalStorageKey<some Any>) throws {
+        let fileURL = fileURL(for: key)
         if fileManager.fileExists(atPath: fileURL.path) {
             do {
                 try fileManager.removeItem(atPath: fileURL.path)
@@ -293,16 +205,47 @@ public final class LocalStorage: Module, DefaultInitializable, EnvironmentAccess
         }
     }
     
+    
     /// Deletes all data currently stored using the `LocalStorage` API.
     ///
     /// - Warning: This will delete all data currently stored using the `LocalStorage` API.
+    /// - Note: This operation is not synchronized with reads or writes on individual storage keys.
     public func deleteAll() throws {
         try fileManager.removeItem(at: localStorageDirectory)
         try createLocalStorageDirectoryIfNecessary()
     }
     
-    func fileURL<C>(from storageKey: String? = nil, type: C.Type = C.self) -> URL {
-        let storageKey = storageKey ?? String(describing: C.self)
+    
+    // MARK: Other
+    
+    
+    /// Modify a stored value in place
+    ///
+    /// Use this function to perform an atomic mutation of an entry in the `LocalStorage`.
+    ///
+    /// - parameter key: The ``LocalStorageKey`` whose value should be mutated.
+    /// - parameter transform: A mapping closure, which will be called with the current value stored for `key` (or `nil`, if no value is stored).
+    ///     The closure's return value will be stored into the `LocalStorage`, for the entry identified by `key`.
+    ///     If the closure returns `nil`, the entry will be removed from the `LocalStorage`.
+    ///
+    /// - throws: if `transform` throws,
+    public func modify<Value>(_ key: LocalStorageKey<Value>, transform: (Value?) throws -> Value?) throws {
+        try key.withWriteLock {
+            var value = try readImp(key)
+            value = try transform(value)
+            if let value {
+                try storeImp(value, for: key)
+            } else {
+                try deleteImp(key)
+            }
+        }
+    }
+    
+    
+    // MARK: File Handling
+    
+    func fileURL(for storageKey: LocalStorageKey<some Any>) -> URL {
+        let storageKey = storageKey.key
         return localStorageDirectory.appending(path: storageKey).appendingPathExtension("localstorage")
     }
 }
