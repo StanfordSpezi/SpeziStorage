@@ -12,11 +12,16 @@ import SwiftUI
 
 /// Access ``LocalStorage`` entries within a SwiftUI View.
 @propertyWrapper
-public struct LocalStorageEntry<Value>: DynamicProperty {
+public struct LocalStorageEntry<Value>: DynamicProperty { // swiftlint:disable:this file_types_order
     private let key: LocalStorageKey<Value>
     
     @Environment(LocalStorage.self) private var localStorage
     @State private var internals = LocalStorageEntryInternals<Value>()
+    
+    public var wrappedValue: Value? {
+        get { internals.value }
+        set { try? localStorage.store(newValue, for: key) }
+    }
     
     public init(_ key: LocalStorageKey<Value>) {
         self.key = key
@@ -25,19 +30,14 @@ public struct LocalStorageEntry<Value>: DynamicProperty {
     public func update() {
         internals.subscribe(to: key, in: localStorage)
     }
-    
-    public var wrappedValue: Value? {
-        get { internals.value }
-        set { try? localStorage.store(newValue, for: key) }
-    }
 }
 
 
-@Observable private final class LocalStorageEntryInternals<Value> {
+@Observable
+private final class LocalStorageEntryInternals<Value> {
     fileprivate var value: Value?
     
-    @ObservationIgnored
-    private var cancellable: AnyCancellable?
+    @ObservationIgnored private var cancellable: AnyCancellable?
     
     func subscribe(to key: LocalStorageKey<Value>, in localStorage: LocalStorage) {
         cancellable?.cancel()
