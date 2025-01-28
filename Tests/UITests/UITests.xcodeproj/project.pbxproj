@@ -20,6 +20,7 @@
 		2F2D338729DE52EA00081B1D /* SpeziStorageTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2F2D338629DE52EA00081B1D /* SpeziStorageTests.swift */; };
 		2F6D139A28F5F386007C25D6 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 2F6D139928F5F386007C25D6 /* Assets.xcassets */; };
 		2FA7382C290ADFAA007ACEB9 /* TestApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2FA7382B290ADFAA007ACEB9 /* TestApp.swift */; };
+		80F81BC22D492A2100F513C3 /* LocalStorageLiveUpdateTestView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 80F81BC12D492A2100F513C3 /* LocalStorageLiveUpdateTestView.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -47,6 +48,7 @@
 		2F6D13AC28F5F386007C25D6 /* TestAppUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = TestAppUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		2FA7382B290ADFAA007ACEB9 /* TestApp.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TestApp.swift; sourceTree = "<group>"; };
 		2FB0758A299DDB9000C0B37F /* TestApp.xctestplan */ = {isa = PBXFileReference; lastKnownFileType = text; path = TestApp.xctestplan; sourceTree = "<group>"; };
+		80F81BC12D492A2100F513C3 /* LocalStorageLiveUpdateTestView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocalStorageLiveUpdateTestView.swift; sourceTree = "<group>"; };
 		971B61432B9849C100C0B0E2 /* TestApp.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = TestApp.entitlements; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -84,6 +86,7 @@
 			isa = PBXGroup;
 			children = (
 				2F2D336929DE0E7900081B1D /* LocalStorageTestsView.swift */,
+				80F81BC12D492A2100F513C3 /* LocalStorageLiveUpdateTestView.swift */,
 				2F2D336A29DE0E7900081B1D /* LocalStorageTests.swift */,
 			);
 			path = LocalStorageTests;
@@ -255,6 +258,7 @@
 				2FA7382C290ADFAA007ACEB9 /* TestApp.swift in Sources */,
 				2F2D336B29DE0E7900081B1D /* SecureStorageTestsView.swift in Sources */,
 				2F2D336C29DE0E7900081B1D /* SecureStorageTests.swift in Sources */,
+				80F81BC22D492A2100F513C3 /* LocalStorageLiveUpdateTestView.swift in Sources */,
 				2F2D338729DE52EA00081B1D /* SpeziStorageTests.swift in Sources */,
 				2F2D336E29DE0E7900081B1D /* LocalStorageTests.swift in Sources */,
 			);
