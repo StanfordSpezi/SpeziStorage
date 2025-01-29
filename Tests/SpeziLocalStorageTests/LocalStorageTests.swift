@@ -160,13 +160,13 @@ final class LocalStorageTests: XCTestCase {
         let key = LocalStorageKey<String>("abcabc", setting: .unencrypted())
         XCTAssertFalse(localStorage.hasEntry(for: key))
         try localStorage.modify(key) { value in
-            XCTAssertTrue(value == nil)
+            XCTAssertNil(value)
             value = "heyyy"
         }
         XCTAssertTrue(localStorage.hasEntry(for: key))
         XCTAssertEqual(try localStorage.load(key), "heyyy")
         try localStorage.modify(key) { value in
-            XCTAssertFalse(value == nil)
+            XCTAssertNotNil(value)
             XCTAssertEqual(value, "heyyy")
             value = nil
         }
