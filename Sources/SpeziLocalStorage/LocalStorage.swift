@@ -147,6 +147,14 @@ public final class LocalStorage: Module, DefaultInitializable, EnvironmentAccess
     }
     
     
+    /// Determines whether the `LocalStorage` contains a value for the specified key.
+    public func hasEntry(for key: LocalStorageKey<some Any>) -> Bool {
+        key.withReadLock {
+            fileManager.fileExists(atPath: fileURL(for: key).path)
+        }
+    }
+    
+    
     /// - invariant: assumes that the key's read lock is held.
     private func readImp<Value>(_ key: LocalStorageKey<Value>) throws -> Value? {
         let fileURL = fileURL(for: key)
@@ -227,14 +235,14 @@ public final class LocalStorage: Module, DefaultInitializable, EnvironmentAccess
     ///
     /// - parameter key: The ``LocalStorageKey`` whose value should be mutated.
     /// - parameter transform: A mapping closure, which will be called with the current value stored for `key` (or `nil`, if no value is stored).
-    ///     The closure's return value will be stored into the `LocalStorage`, for the entry identified by `key`.
-    ///     If the closure returns `nil`, the entry will be removed from the `LocalStorage`.
+    ///     The value after the closure invocation will be stored into the `LocalStorage`, for the entry identified by `key`.
+    ///     If the closure sets `value` to `nil`, the entry will be removed from the `LocalStorage`.
     ///
     /// - throws: if `transform` throws,
-    public func modify<Value>(_ key: LocalStorageKey<Value>, transform: (Value?) throws -> Value?) throws {
+    public func modify<Value>(_ key: LocalStorageKey<Value>, transform: (_ value: inout Value?) throws -> Void) throws {
         try key.withWriteLock {
             var value = try readImp(key)
-            value = try transform(value)
+            try transform(&value)
             if let value {
                 try storeImp(value, for: key)
             } else {

@@ -148,4 +148,28 @@ final class LocalStorageTests: XCTestCase {
         try localStorage.deleteAll()
         XCTAssertTrue(try fileManager.contentsOfDirectory(atPath: localStorageDir.path).isEmpty)
     }
+    
+    
+    @MainActor
+    func testModify() throws {
+        let localStorage = LocalStorage()
+        withDependencyResolution {
+            localStorage
+        }
+        
+        let key = LocalStorageKey<String>("abcabc", setting: .unencrypted())
+        XCTAssertFalse(localStorage.hasEntry(for: key))
+        try localStorage.modify(key) { value in
+            XCTAssertTrue(value == nil)
+            value = "heyyy"
+        }
+        XCTAssertTrue(localStorage.hasEntry(for: key))
+        XCTAssertEqual(try localStorage.load(key), "heyyy")
+        try localStorage.modify(key) { value in
+            XCTAssertFalse(value == nil)
+            XCTAssertEqual(value, "heyyy")
+            value = nil
+        }
+        XCTAssertFalse(localStorage.hasEntry(for: key))
+    }
 }
