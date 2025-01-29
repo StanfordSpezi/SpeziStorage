@@ -20,7 +20,13 @@ public struct LocalStorageEntry<Value>: DynamicProperty { // swiftlint:disable:t
     
     public var wrappedValue: Value? {
         get { internals.value }
-        set { try? localStorage.store(newValue, for: key) }
+        nonmutating set {
+            if let newValue = newValue as? any Equatable, newValue.isEqual(internals.value as Any) {
+                // don't persist the same value again
+            } else {
+                try? localStorage.store(newValue, for: key)
+            }
+        }
     }
     
     public init(_ key: LocalStorageKey<Value>) {
@@ -45,5 +51,16 @@ private final class LocalStorageEntryInternals<Value> {
             self?.value = newValue
         }
         value = try? localStorage.load(key)
+    }
+}
+
+
+extension Equatable {
+    func isEqual(_ other: Any) -> Bool {
+        if let other = other as? Self {
+            self == other
+        } else {
+            false
+        }
     }
 }

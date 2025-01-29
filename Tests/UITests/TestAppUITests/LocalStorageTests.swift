@@ -22,6 +22,12 @@ final class LocalStorageTests: XCTestCase {
     @MainActor
     func testLocalStorageLiveUpdates() async throws {
         let app = XCUIApplication()
+        
+        func assertNumberEquals(_ expected: Int, file: StaticString = #filePath, line: UInt = #line) {
+            let pred = NSPredicate(format: "label MATCHES %@", "Number.*\(expected)")
+            XCTAssertTrue(app.staticTexts.matching(pred).element.waitForExistence(timeout: 0.5), file: file, line: line)
+        }
+        
         app.launch()
         app.buttons["Local Storage (Live Update)"].tap()
         try await Task.sleep(for: .seconds(0.5))
@@ -29,7 +35,9 @@ final class LocalStorageTests: XCTestCase {
         let numbers = (0..<17).map { _ in Int.random(in: 0..<5) }
         for number in numbers {
             app.buttons["\(number)"].tap()
-            XCTAssertTrue(app.staticTexts.matching(NSPredicate(format: "label MATCHES %@", "number.*\(number)")).element.waitForExistence(timeout: 0.5))
+            assertNumberEquals(number)
         }
+        app.buttons["Double Number"].tap()
+        assertNumberEquals(numbers[numbers.endIndex - 1] * 2)
     }
 }

@@ -38,6 +38,11 @@ struct RowView: View {
     @LocalStorageEntry(.number) private var number
     
     var body: some View {
-        LabeledContent("number", value: number.map(String.init) ?? "–")
+        LabeledContent("Number", value: number.map(String.init) ?? "–")
+        Button("Double Number") {
+            if let number {
+                self.number = number * 2
+            }
+        }
     }
 }
