@@ -58,12 +58,18 @@ final class LocalStorageTests: XCTestCase {
         }
         
         let letter = Letter(greeting: "Hello Paul 👋\(String(repeating: "🚀", count: Int.random(in: 0...10)))")
+        
+        // 1: test "normal" deletion
         try localStorage.store(letter, for: .letter)
-        let storedLetter = try localStorage.load(.letter)
-        
-        XCTAssertEqual(letter, storedLetter)
-        
+        XCTAssertEqual(letter, try localStorage.load(.letter))
         try localStorage.delete(.letter)
+        XCTAssertNil(try localStorage.load(.letter))
+        XCTAssertNoThrow(try localStorage.delete(.letter))
+        
+        // 2: test deletion by storing nil
+        try localStorage.store(letter, for: .letter)
+        XCTAssertEqual(letter, try localStorage.load(.letter))
+        try localStorage.store(nil, for: .letter)
         XCTAssertNil(try localStorage.load(.letter))
         XCTAssertNoThrow(try localStorage.delete(.letter))
     }

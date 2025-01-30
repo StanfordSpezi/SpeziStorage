@@ -81,7 +81,7 @@ public final class LocalStorage: Module, DefaultInitializable, EnvironmentAccess
             if let value {
                 try storeImp(value, for: key)
             } else {
-                try delete(key)
+                try deleteImp(key)
             }
         }
     }
