@@ -49,8 +49,8 @@ public class LocalStorageKeys {
 /// }
 ///
 /// extension LocalStorageKeys {
-///     static let note = LocalStorageKey<Note>("note")
-///     static let person = LocalStorageKey<Person>("person", encoder: PropertyListEncoder(), decoder: PropertyListDecoder())
+///     static let note = LocalStorageKey<Note>("edu.stanford.spezi.exampleNote")
+///     static let person = LocalStorageKey<Person>("edu.stanford.spezi.examplePerson", encoder: PropertyListEncoder(), decoder: PropertyListDecoder())
 /// }
 /// ```
 ///
