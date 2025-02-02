@@ -47,17 +47,8 @@ class ExampleDelegate: SpeziAppDelegate {
 }
 ```
 
-You can then use the `LocalStorage` module in any SwiftUI view.
 
-```swift
-struct ExampleStorageView: View {
-    @Environment(LocalStorage.self) var localStorage
-
-    var body: some View {
-        // ...
-    }
-}
-```
+You can interact with the `LocalStorage` module from within SwiftUI views, either using the ``LocalStorageEntry`` property wrapper or by accessing the module directly (see below). 
 
 Alternatively, it is common to use the `LocalStorage` module in other modules as a dependency: [Spezi Module dependencies](https://swiftpackageindex.com/stanfordspezi/spezi/documentation/spezi/module-dependency).
 
@@ -74,8 +65,22 @@ You can use the `LocalStorage` module to store, update, retrieve, and delete ele
 You define storage keys by placing a static non-computed properties of type ``LocalStorageKey`` into an extension on the ``LocalStorageKeys`` type:
 
 ```swift
+struct Note: Codable, Equatable {
+    let text: String
+    let date: Date
+}
+
 extension LocalStorageKeys {
-    static let note = LocalStorageKey
+    // By default, storage keys are encoded using JSON and stored encrypted.
+    static let note = LocalStorageKey<Note>("edu.stanford.spezi.note")
+    
+    // You can customize these aspects:
+    static let plistNote = LocalStorageKey<Note>(
+        "edu.stanford.spezi.note2",
+        setting: .encryptedUsingSecureEnclave(),
+        encoder: PropertyListEncoder(),
+        decoder: PropertyListDecoder()
+    )
 }
 ```
 
@@ -85,15 +90,10 @@ extension LocalStorageKeys {
 The `LocalStorage` module enables the storage and update of elements conforming to `Codable`.
 
 ```swift
-struct Note: Codable, Equatable {
-    let text: String
-    let date: Date
-}
-
 let note = Note(text: "Spezi is awesome!", date: Date())
 
 do {
-    try await localStorage.store(note)
+    try localStorage.store(note, for: .note)
 } catch {
     // Handle storage errors ...
 }
@@ -103,13 +103,13 @@ See ``LocalStorage/store(_:encoder:storageKey:settings:)`` for more details.
 
 
 
-### Read Data
+### Reading Data
 
 The `LocalStorage` module enables the retrieval of elements conforming to [`Codable`](https://developer.apple.com/documentation/swift/codable).
 
 ```swift
 do {
-    let storedNote: Note = try await localStorage.read()
+    let storedNote = try localStorage.load(.note)
     // Do something with `storedNote`.
 } catch {
     // Handle read errors ...
@@ -119,13 +119,13 @@ do {
 See ``LocalStorage/read(_:decoder:storageKey:settings:)`` for more details.
 
 
-### Deleting Element
+### Deleting Data
 
 The `LocalStorage` module enables the deletion of a previously stored elements.
 
 ```swift
 do {
-    try await localStorage.delete(storageKey: "MyNote")
+    try localStorage.delete(.note)
 } catch {
     // Handle delete errors ...
 }
@@ -136,10 +136,42 @@ See ``LocalStorage/delete(_:)`` or ``LocalStorage/delete(storageKey:)`` for more
 If you need to fully delete the entire local storage, use ``LocalStorage/deleteAll()``.
 
 
+### SwiftUI
+
+Use the ``LocalStorageEntry`` property wrapper to access individual entries of the `LocalStorage` within a SwiftUI view:
+```swift
+struct ExampleView: View {
+    @LocalStorageEntry(.note)
+    private var note
+    
+    var body: some View {
+        // Use note within the view.
+        // Assigning a new value to the property wrapper will automatically store it into the LocalStorage.
+        // Furthermore, if some other part of your app stores a new value for the `.note` key,
+        // the property wrapper will automatically update the view.
+    }
+}
+```
+
+Alternatively, you can also access the `LocalStorage` module directly:
+
+```swift
+struct ExampleStorageView: View {
+    @Environment(LocalStorage.self) var localStorage
+
+    var body: some View {
+        // ...
+    }
+}
+```
+
+
+
 ## Topics
 
 ### LocalStorage
 
 - ``LocalStorage``
+- ``LocalStorageKey``
 - ``LocalStorageSetting``
 
