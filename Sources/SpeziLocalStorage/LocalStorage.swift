@@ -256,7 +256,7 @@ public final class LocalStorage: Module, DefaultInitializable, EnvironmentAccess
     
     // MARK: File Handling
     
-    private func fileURL(for storageKey: LocalStorageKey<some Any>) -> URL {
+    func fileURL(for storageKey: LocalStorageKey<some Any>) -> URL {
         let storageKey = storageKey.key
         return localStorageDirectory.appending(path: storageKey).appendingPathExtension("localstorage")
     }
