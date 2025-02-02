@@ -11,6 +11,33 @@ import SwiftUI
 
 
 /// Access ``LocalStorage`` entries within a SwiftUI View.
+///
+/// The property wrapper will automatically trigger a view update when the key's value in the ``LocalStorage`` changes.
+///
+/// Example:
+/// ```swift
+/// struct Person: Codable {
+///     let age: Int
+///     let name: String
+/// }
+///
+/// extension LocalStorageKeys {
+///     static let lastUser = LocalStorageKey<Person>("edu.stanford.spezi.app.lastUser")
+/// }
+///
+/// struct ExampleView: View {
+///     @LocalStorageEntry(.lastUser)
+///     private var lastUser
+///
+///     var body: some View {
+///         if let lastUser {
+///             UserDetailsView(lastUser)
+///         } else {
+///             ContentUnavailableView("No last user", image: "person.slash")
+///         }
+///     }
+/// }
+/// ```
 @propertyWrapper
 public struct LocalStorageEntry<Value>: DynamicProperty { // swiftlint:disable:this file_types_order
     private let key: LocalStorageKey<Value>
@@ -29,10 +56,12 @@ public struct LocalStorageEntry<Value>: DynamicProperty { // swiftlint:disable:t
         }
     }
     
+    /// Creates a new `LocalStorageEntry` for the specified storage key
     public init(_ key: LocalStorageKey<Value>) {
         self.key = key
     }
     
+    @_documentation(visibility: internal)
     public func update() {
         internals.subscribe(to: key, in: localStorage)
     }

@@ -16,7 +16,9 @@ import SpeziSecureStorage
 /// Encrypted on-disk storage of data in mobile applications.
 ///
 /// The module relies on the [`SecureStorage`](https://swiftpackageindex.com/StanfordSpezi/SpeziStorage/documentation/spezisecurestorage)
-/// module to enable an encrypted on-disk storage. You can define the specifics of how data is stored using the ``LocalStorageSetting`` type.
+/// module to enable an encrypted on-disk storage.
+/// You interact with the ``LocalStorage`` API by defining custom ``LocalStorageKey``s, which are used to store values into the storage, and fetch them.
+/// The key also allows you to define how each individual entry should be stored: e.g., which encoding and encryption settings should be used.
 ///
 /// ## Topics
 ///
@@ -25,6 +27,7 @@ import SpeziSecureStorage
 ///
 /// ### Storing Elements
 /// - ``store(_:for:)``
+/// - ``modify(_:_:)``
 ///
 /// ### Loading Elements
 /// - ``load(_:)``
@@ -194,7 +197,7 @@ public final class LocalStorage: Module, DefaultInitializable, EnvironmentAccess
     /// ```
     ///
     /// - Parameters:
-    ///   - key: An optional storage key to identify the file.
+    ///   - key: The ``LocalStorageKey`` identifying the entry which should be deleted.
     public func delete(_ key: LocalStorageKey<some Any>) throws {
         try key.withWriteLock {
             try deleteImp(key)
@@ -228,7 +231,6 @@ public final class LocalStorage: Module, DefaultInitializable, EnvironmentAccess
     
     // MARK: Other
     
-    
     /// Modify a stored value in place
     ///
     /// Use this function to perform an atomic mutation of an entry in the `LocalStorage`.
@@ -239,7 +241,7 @@ public final class LocalStorage: Module, DefaultInitializable, EnvironmentAccess
     ///     If the closure sets `value` to `nil`, the entry will be removed from the `LocalStorage`.
     ///
     /// - throws: if `transform` throws,
-    public func modify<Value>(_ key: LocalStorageKey<Value>, transform: (_ value: inout Value?) throws -> Void) throws {
+    public func modify<Value>(_ key: LocalStorageKey<Value>, _ transform: (_ value: inout Value?) throws -> Void) throws {
         try key.withWriteLock {
             var value = try readImp(key)
             try transform(&value)
@@ -254,7 +256,7 @@ public final class LocalStorage: Module, DefaultInitializable, EnvironmentAccess
     
     // MARK: File Handling
     
-    func fileURL(for storageKey: LocalStorageKey<some Any>) -> URL {
+    private func fileURL(for storageKey: LocalStorageKey<some Any>) -> URL {
         let storageKey = storageKey.key
         return localStorageDirectory.appending(path: storageKey).appendingPathExtension("localstorage")
     }
