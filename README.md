@@ -74,10 +74,10 @@ Alternatively, it is common to use the `LocalStorage` or `SecureStorage` module 
 The `LocalStorage` module enables the on-disk storage of data in mobile applications.
 
 The `LocalStorage` module defaults to storing data encrypted supported by the `SecureStorage` module.
-The [`LocalStorageSetting`](https://swiftpackageindex.com/stanfordspezi/spezistorage/documentation/spezilocalstorage/localstoragesetting) enables configuring how data in the `LocalStorage` module can be stored and retrieved.
+The [`LocalStorageKey`](https://swiftpackageindex.com/stanfordspezi/spezistorage/documentation/spezilocalstorage/localstoragekey) type is used to define storage entries, and specify how data should be persisted.
 
-- Store or update new elements: [`store(_:encoder:storageKey:settings:)`](https://swiftpackageindex.com/stanfordspezi/spezistorage/documentation/spezilocalstorage/localstorage/store(_:encoder:storagekey:settings:))
-- Retrieve existing elements: [`read(_:decoder:storageKey:settings:)`](https://swiftpackageindex.com/stanfordspezi/spezistorage/documentation/spezilocalstorage/localstorage/read(_:decoder:storagekey:settings:))
+- Store or update new elements: [`store(_:for:)`](https://swiftpackageindex.com/stanfordspezi/spezistorage/documentation/spezilocalstorage/localstorage/store(_:for:))
+- Retrieve existing elements: [`load(_:)`](https://swiftpackageindex.com/stanfordspezi/spezistorage/documentation/spezilocalstorage/localstorage/load(_:))
 - Delete existing elements: [`delete(_:)`](https://swiftpackageindex.com/stanfordspezi/spezistorage/documentation/spezilocalstorage/localstorage/delete(_:))
 
 
