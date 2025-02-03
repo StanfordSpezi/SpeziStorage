@@ -178,4 +178,19 @@ final class LocalStorageTests: XCTestCase {
         }
         XCTAssertFalse(localStorage.hasEntry(for: key))
     }
+    
+    
+    @MainActor
+    func testStoreData() throws {
+        let localStorage = LocalStorage()
+        withDependencyResolution {
+            localStorage
+        }
+        
+        let key = LocalStorageKey<Data>("ayoooo", setting: .unencrypted())
+        let data = Data([83, 112, 101, 122, 105, 32, 105, 115, 32, 99, 111, 111, 108])
+        try localStorage.store(data, for: key)
+        XCTAssertEqual(try Data(contentsOf: localStorage.fileURL(for: key)), data)
+        XCTAssertEqual(try localStorage.load(key), data)
+    }
 }
