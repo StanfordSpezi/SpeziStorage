@@ -187,10 +187,26 @@ final class LocalStorageTests: XCTestCase {
             localStorage
         }
         
+        // Test that raw data is not run through an extra encoding/decoding step, and instead simply encoded/decoded as-is.
         let key = LocalStorageKey<Data>("ayoooo", setting: .unencrypted())
         let data = Data([83, 112, 101, 122, 105, 32, 105, 115, 32, 99, 111, 111, 108])
         try localStorage.store(data, for: key)
         XCTAssertEqual(try Data(contentsOf: localStorage.fileURL(for: key)), data)
         XCTAssertEqual(try localStorage.load(key), data)
+    }
+    
+    
+    @MainActor
+    func testNSSecureCoding() throws {
+        let localStorage = LocalStorage()
+        withDependencyResolution {
+            localStorage
+        }
+        
+        let key = LocalStorageKey<NSArray>("testTest123", setting: .unencrypted())
+        let array = NSArray(array: ["hello", "spezi"])
+        try localStorage.store(array, for: key)
+        XCTAssertTrue(array.isEqual(try localStorage.load(key)))
+        XCTAssertFalse(array is Codable) // make sure we're actually using the NSSecureCoding path here...
     }
 }
