@@ -12,6 +12,7 @@ import XCTestApp
 
 enum SpeziStorageTests: String, TestAppTests {
     case localStorage = "Local Storage"
+    case localStorageLiveUpdate = "Local Storage (Live Update)"
     case secureStorage = "Secure Storage"
     
     
@@ -19,6 +20,8 @@ enum SpeziStorageTests: String, TestAppTests {
         switch self {
         case .localStorage:
             LocalStorageTestsView()
+        case .localStorageLiveUpdate:
+            LocalStorageLiveUpdateTestView()
         case .secureStorage:
             SecureStorageTestsView()
         }

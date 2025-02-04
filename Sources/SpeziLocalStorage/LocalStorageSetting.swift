@@ -14,21 +14,21 @@ import SpeziSecureStorage
 /// Configure how data is encrypyed, stored, and retrieved.
 public enum LocalStorageSetting {
     /// Unencrypted
-    case unencrypted(excludedFromBackup: Bool = true)
+    case unencrypted(excludeFromBackup: Bool = true)
     /// Encrypted using a `eciesEncryptionCofactorX963SHA256AESGCM` key: private key for encryption and a public key for decryption.
-    case encrypted(privateKey: SecKey, publicKey: SecKey, excludedFromBackup: Bool = true)
+    case encrypted(privateKey: SecKey, publicKey: SecKey, excludeFromBackup: Bool = true)
     /// Encrypted using a `eciesEncryptionCofactorX963SHA256AESGCM` key stored in the Secure Enclave.
     case encryptedUsingSecureEnclave(userPresence: Bool = false)
     /// Encrypted using a `eciesEncryptionCofactorX963SHA256AESGCM` key stored in the Keychain.
-    case encryptedUsingKeyChain(userPresence: Bool = false, excludedFromBackup: Bool = true)
+    case encryptedUsingKeyChain(userPresence: Bool = false, excludeFromBackup: Bool = true)
     
     
     var isExcludedFromBackup: Bool {
         switch self {
-        case let .unencrypted(excludedFromBackup),
-             let .encrypted(_, _, excludedFromBackup),
-             let .encryptedUsingKeyChain(_, excludedFromBackup):
-            return excludedFromBackup
+        case let .unencrypted(excludeFromBackup),
+             let .encrypted(_, _, excludeFromBackup),
+             let .encryptedUsingKeyChain(_, excludeFromBackup):
+            return excludeFromBackup
         case .encryptedUsingSecureEnclave:
             return true
         }
