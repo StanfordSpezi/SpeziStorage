@@ -7,8 +7,8 @@
 //
 
 import Spezi
-import SpeziLocalStorage
 import SpeziCredentialsStorage
+import SpeziLocalStorage
 
 
 class TestAppDelegate: SpeziAppDelegate {

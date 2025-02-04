@@ -7,8 +7,8 @@
 //
 
 import CryptoKit
-import SpeziLocalStorage
 import SpeziCredentialsStorage
+import SpeziLocalStorage
 import XCTestApp
 import XCTRuntimeAssertions
 

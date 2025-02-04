@@ -9,8 +9,8 @@
 import Foundation
 import Security
 import Spezi
-import SpeziFoundation
 import SpeziCredentialsStorage
+import SpeziFoundation
 
 
 /// Encrypted on-disk storage of data in mobile applications.

@@ -6,8 +6,8 @@
 // SPDX-License-Identifier: MIT
 //
 
-import SpeziLocalStorage
 import SpeziCredentialsStorage
+import SpeziLocalStorage
 import SwiftUI
 import XCTestApp
 
