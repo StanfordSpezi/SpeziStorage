@@ -7,17 +7,17 @@
 //
 
 import SpeziLocalStorage
-import SpeziSecureStorage
+import SpeziCredentialsStorage
 import SwiftUI
 import XCTestApp
 
 
 struct LocalStorageTestsView: View {
     @Environment(LocalStorage.self) var localStorage
-    @Environment(SecureStorage.self) var secureStorage
+    @Environment(CredentialsStorage.self) var credentialsStorage
 
     
     var body: some View {
-        TestAppView(testCase: LocalStorageTests(localStorage: localStorage, secureStorage: secureStorage))
+        TestAppView(testCase: LocalStorageTests(localStorage: localStorage, credentialsStorage: credentialsStorage))
     }
 }

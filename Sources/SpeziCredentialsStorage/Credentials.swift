@@ -8,28 +8,20 @@
 
 
 /// A pair of username and password credentials.
-public struct Credentials: Equatable, Identifiable {
+public struct Credentials: Hashable, Identifiable, Sendable {
     /// The username.
     public var username: String
     /// The password.
     public var password: String
-    
     
     /// Identified by the username.
     public var id: String {
         username
     }
     
-    
-    /// Create new credentials.
-    /// - Parameters:
-    ///   - username: The username.
-    ///   - password: The password.
+    /// Create a new credentials pair.
     public init(username: String, password: String) {
         self.username = username
         self.password = password
     }
 }
-
-
-extension Credentials: Sendable {}

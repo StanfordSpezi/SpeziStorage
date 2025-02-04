@@ -8,7 +8,7 @@
 
 import Security
 import Spezi
-import SpeziSecureStorage
+import SpeziCredentialsStorage
 
 
 /// Configure how data is encrypyed, stored, and retrieved.
@@ -35,28 +35,28 @@ public enum LocalStorageSetting {
     }
     
     
-    func keys(from secureStorage: SecureStorage) throws -> (privateKey: SecKey, publicKey: SecKey)? {
-        let secureStorageScope: SecureStorageScope
+    func keys(from credentialsStorage: CredentialsStorage) throws -> (privateKey: SecKey, publicKey: SecKey)? {
+        let storageScope: CredentialsStorageScope
         switch self {
         case .unencrypted:
             return nil
         case let .encrypted(privateKey, publicKey, _):
             return (privateKey, publicKey)
         case let .encryptedUsingSecureEnclave(userPresence):
-            secureStorageScope = .secureEnclave(userPresence: userPresence)
+            storageScope = .secureEnclave(userPresence: userPresence)
         case let .encryptedUsingKeyChain(userPresence, _):
-            secureStorageScope = .keychain(userPresence: userPresence)
+            storageScope = .keychain(userPresence: userPresence)
         }
         
-        let tag = "LocalStorage.\(secureStorageScope.id)"
+        let tag = "LocalStorage.\(storageScope.id)" // TODO is this a good idea? ALSO: why does it say "LocalStorage"?
         
-        if let privateKey = try? secureStorage.retrievePrivateKey(forTag: tag),
-           let publicKey = try? secureStorage.retrievePublicKey(forTag: tag) {
+        if let privateKey = try? credentialsStorage.retrievePrivateKey(forTag: tag),
+           let publicKey = try? credentialsStorage.retrievePublicKey(forTag: tag) {
             return (privateKey, publicKey)
         }
         
-        let privateKey = try secureStorage.createKey(tag)
-        guard let publicKey = try secureStorage.retrievePublicKey(forTag: tag) else {
+        let privateKey = try credentialsStorage.createKey(tag)
+        guard let publicKey = try credentialsStorage.retrievePublicKey(forTag: tag) else {
             throw LocalStorageError.encryptionNotPossible
         }
         

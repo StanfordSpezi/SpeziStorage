@@ -10,8 +10,8 @@ import CryptoKit
 import Security
 
 
-/// An `Error` thrown by the `SecureStorage` module.
-public enum SecureStorageError: Error {
+/// An `Error` thrown by the `CredentialsStorage` module.
+public enum CredentialsStorageError: Error {
     /// Creation of a new element failed with a `CFError`.
     case createFailed(CFError? = nil)
     case notFound
@@ -24,10 +24,10 @@ public enum SecureStorageError: Error {
     /// Please refer to
     /// [Sharing access to keychain items among a collection of apps](https://developer.apple.com/documentation/security/keychain_services/keychain_items/sharing_access_to_keychain_items_among_a_collection_of_apps)
     /// for more information about KeyChain access groups.
-    /// Remove the  ``SecureStorageScope``'s `accessGroup` configuration value if you do not intend to use KeyChain access groups.
+    /// Remove the  ``CredentialsStorageScope``'s `accessGroup` configuration value if you do not intend to use KeyChain access groups.
     case missingEntitlement
-    /// The `SecureStorage` module is unable to decode the information obtained into a credentials.
+    /// The `CredentialsStorage` module is unable to decode the information obtained into a credentials.
     case unexpectedCredentialsData
-    /// The `SecureStorage` module encountered a Keychain error when interacting with the Keychain.
+    /// The `CredentialsStorage` module encountered a Keychain error when interacting with the Keychain.
     case keychainError(status: OSStatus)
 }

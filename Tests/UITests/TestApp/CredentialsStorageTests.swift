@@ -13,7 +13,7 @@ import XCTestApp
 enum SpeziStorageTests: String, TestAppTests {
     case localStorage = "Local Storage"
     case localStorageLiveUpdate = "Local Storage (Live Update)"
-    case secureStorage = "Secure Storage"
+    case credentialsStorage = "Credentials Storage"
     
     
     func view(withNavigationPath path: Binding<NavigationPath>) -> some View {
@@ -22,8 +22,8 @@ enum SpeziStorageTests: String, TestAppTests {
             LocalStorageTestsView()
         case .localStorageLiveUpdate:
             LocalStorageLiveUpdateTestView()
-        case .secureStorage:
-            SecureStorageTestsView()
+        case .credentialsStorage:
+            CredentialsStorageTestsView()
         }
     }
 }

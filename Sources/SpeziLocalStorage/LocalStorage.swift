@@ -10,13 +10,11 @@ import Foundation
 import Security
 import Spezi
 import SpeziFoundation
-import SpeziSecureStorage
+import SpeziCredentialsStorage
 
 
 /// Encrypted on-disk storage of data in mobile applications.
 ///
-/// The module relies on the [`SecureStorage`](https://swiftpackageindex.com/StanfordSpezi/SpeziStorage/documentation/spezisecurestorage)
-/// module to enable an encrypted on-disk storage.
 /// You interact with the ``LocalStorage`` API by defining custom ``LocalStorageKey``s, which are used to store values into the storage, and fetch them.
 /// The key also allows you to define how each individual entry should be stored: e.g., which encoding and encryption settings should be used.
 ///
@@ -36,7 +34,7 @@ import SpeziSecureStorage
 /// - ``delete(_:)``
 /// - ``deleteAll()``
 public final class LocalStorage: Module, DefaultInitializable, EnvironmentAccessible, @unchecked Sendable {
-    @Dependency(SecureStorage.self) private var secureStorage
+    @Dependency(CredentialsStorage.self) private var credentialsStorage
     @Application(\.logger) private var logger
     
     private let fileManager = FileManager.default
@@ -114,7 +112,7 @@ public final class LocalStorage: Module, DefaultInitializable, EnvironmentAccess
         let data = try key.encode(value)
 
         // Determine if the data should be encrypted or not:
-        guard let keys = try key.setting.keys(from: secureStorage) else {
+        guard let keys = try key.setting.keys(from: credentialsStorage) else {
             // No encryption:
             try data.write(to: fileURL)
             try setResourceValues()
@@ -167,7 +165,7 @@ public final class LocalStorage: Module, DefaultInitializable, EnvironmentAccess
         let data = try Data(contentsOf: fileURL)
 
         // Determine if the data should be decrypted or not:
-        guard let keys = try key.setting.keys(from: secureStorage) else {
+        guard let keys = try key.setting.keys(from: credentialsStorage) else {
             return try key.decode(data)
         }
 

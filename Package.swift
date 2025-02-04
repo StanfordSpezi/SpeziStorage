@@ -21,7 +21,7 @@ let package = Package(
     ],
     products: [
         .library(name: "SpeziLocalStorage", targets: ["SpeziLocalStorage"]),
-        .library(name: "SpeziSecureStorage", targets: ["SpeziSecureStorage"])
+        .library(name: "SpeziCredentialsStorage", targets: ["SpeziCredentialsStorage"])
     ],
     dependencies: [
         .package(url: "https://github.com/StanfordSpezi/Spezi", from: "1.7.3"),
@@ -34,7 +34,7 @@ let package = Package(
             dependencies: [
                 .product(name: "Spezi", package: "Spezi"),
                 .product(name: "SpeziFoundation", package: "SpeziFoundation"),
-                .target(name: "SpeziSecureStorage")
+                .target(name: "SpeziCredentialsStorage")
             ],
             plugins: [] + swiftLintPlugin()
         ),
@@ -47,7 +47,7 @@ let package = Package(
             plugins: [] + swiftLintPlugin()
         ),
         .target(
-            name: "SpeziSecureStorage",
+            name: "SpeziCredentialsStorage",
             dependencies: [
                 .product(name: "Spezi", package: "Spezi"),
                 .product(name: "XCTRuntimeAssertions", package: "XCTRuntimeAssertions")

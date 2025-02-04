@@ -18,8 +18,8 @@
         },
         {
           "containerPath" : "container:..\/..",
-          "identifier" : "SpeziSecureStorage",
-          "name" : "SpeziSecureStorage"
+          "identifier" : "SpeziCredentialsStorage",
+          "name" : "SpeziCredentialsStorage"
         }
       ]
     },

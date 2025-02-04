@@ -8,7 +8,7 @@
 
 import CryptoKit
 import SpeziLocalStorage
-import SpeziSecureStorage
+import SpeziCredentialsStorage
 import XCTestApp
 import XCTRuntimeAssertions
 
@@ -20,15 +20,15 @@ final class LocalStorageTests: TestAppTestCase {
     
     
     let localStorage: LocalStorage
-    let secureStorage: SecureStorage
+    let credentialsStorage: CredentialsStorage
     
     
     init(
         localStorage: LocalStorage,
-        secureStorage: SecureStorage
+        credentialsStorage: CredentialsStorage
     ) {
         self.localStorage = localStorage
-        self.secureStorage = secureStorage
+        self.credentialsStorage = credentialsStorage
     }
     
     
@@ -45,8 +45,8 @@ final class LocalStorageTests: TestAppTestCase {
     }
     
     func testLocalStorageTestEncryptedManualKeys() throws {
-        let privateKey = try secureStorage.retrievePrivateKey(forTag: "LocalStorageTests") ?? secureStorage.createKey("LocalStorageTests")
-        guard let publicKey = try secureStorage.retrievePublicKey(forTag: "LocalStorageTests") else {
+        let privateKey = try credentialsStorage.retrievePrivateKey(forTag: "LocalStorageTests") ?? credentialsStorage.createKey("LocalStorageTests")
+        guard let publicKey = try credentialsStorage.retrievePublicKey(forTag: "LocalStorageTests") else {
             throw XCTestFailure()
         }
         let key = LocalStorageKey<Letter>("letter1", setting: .encrypted(privateKey: privateKey, publicKey: publicKey))

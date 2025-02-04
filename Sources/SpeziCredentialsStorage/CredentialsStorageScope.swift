@@ -10,7 +10,7 @@ import Security
 
 
 /// Define how secure data is stored.
-public enum SecureStorageScope: Equatable, Identifiable {
+public enum CredentialsStorageScope: Hashable, Identifiable, Sendable {
     /// Store the element in the Secure Enclave
     case secureEnclave(userPresence: Bool = false)
     /// Store the element in the Keychain
@@ -96,12 +96,9 @@ public enum SecureStorageScope: Equatable, Identifiable {
                 secAccessControlCreateFlags,
                 nil
             ) else {
-                throw SecureStorageError.createFailed()
+                throw CredentialsStorageError.createFailed()
             }
             return access
         }
     }
 }
-
-
-extension SecureStorageScope: Sendable {}

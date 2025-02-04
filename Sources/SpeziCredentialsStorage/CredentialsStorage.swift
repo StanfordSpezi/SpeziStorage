@@ -19,7 +19,7 @@ import XCTRuntimeAssertions
 /// The storing of credentials and keys follows the Keychain documentation provided by Apple: 
 /// [Using the keychain to manage user secrets](https://developer.apple.com/documentation/security/keychain_services/keychain_items/using_the_keychain_to_manage_user_secrets).
 ///
-/// On the macOS platform, the `SecureStorage` uses the [Data protection keychain](https://developer.apple.com/documentation/technotes/tn3137-on-mac-keychains) which mirrors the data protection keychain originated on iOS.
+/// On the macOS platform, the `CredentialsStorage` uses the [Data protection keychain](https://developer.apple.com/documentation/technotes/tn3137-on-mac-keychains) which mirrors the data protection keychain originated on iOS.
 ///
 /// ## Topics
 /// ### Configuration
@@ -40,10 +40,10 @@ import XCTRuntimeAssertions
 /// - ``retrievePublicKey(forTag:)``
 /// - ``retrievePrivateKey(forTag:)``
 /// - ``deleteKeys(forTag:)``
-public final class SecureStorage: Module, DefaultInitializable, EnvironmentAccessible, Sendable {
-    /// Configure the SecureStorage module.
+public final class CredentialsStorage: Module, DefaultInitializable, EnvironmentAccessible, Sendable {
+    /// Configure the `CredentialsStorage` module.
     ///
-    /// The `SecureStorage` serves as a reusable `Module` that can be used to store store small chunks of data such as credentials and keys.
+    /// The `CredentialsStorage` serves as a reusable `Module` that can be used to store store small chunks of data such as credentials and keys.
     ///
     /// - Note: The storing of credentials and keys follows the Keychain documentation provided by Apple:
     /// [Using the keychain to manage user secrets](https://developer.apple.com/documentation/security/keychain_services/keychain_items/using_the_keychain_to_manage_user_secrets).
@@ -56,10 +56,10 @@ public final class SecureStorage: Module, DefaultInitializable, EnvironmentAcces
     /// - Parameters:
     ///   - tag: The tag used to identify the key in the keychain or the secure enclave.
     ///   - size: The size of the key in bits. The default value is 256 bits.
-    ///   - storageScope: The  ``SecureStorageScope`` used to store the newly generate key.
+    ///   - storageScope: The  ``CredentialsStorageScope`` used to store the newly generate key.
     /// - Returns: Returns the `SecKey` private key generated and stored in the keychain or the secure enclave.
     @discardableResult
-    public func createKey(_ tag: String, size: Int = 256, storageScope: SecureStorageScope = .secureEnclave) throws -> SecKey {
+    public func createKey(_ tag: String, size: Int = 256, storageScope: CredentialsStorageScope = .secureEnclave) throws -> SecKey {
         // The key generation code follows
         // https://developer.apple.com/documentation/security/certificate_key_and_trust_services/keys/protecting_keys_with_the_secure_enclave
         // and
@@ -94,7 +94,7 @@ public final class SecureStorage: Module, DefaultInitializable, EnvironmentAcces
         var error: Unmanaged<CFError>?
         guard let privateKey = SecKeyCreateRandomKey(attributes as CFDictionary, &error),
               SecKeyCopyPublicKey(privateKey) != nil else {
-            throw SecureStorageError.createFailed(error?.takeRetainedValue())
+            throw CredentialsStorageError.createFailed(error?.takeRetainedValue())
         }
         
         return privateKey
@@ -111,7 +111,7 @@ public final class SecureStorage: Module, DefaultInitializable, EnvironmentAcces
         var item: CFTypeRef?
         do {
             try execute(SecItemCopyMatching(keyQuery(forTag: tag) as CFDictionary, &item))
-        } catch SecureStorageError.notFound {
+        } catch CredentialsStorageError.notFound {
             return nil
         } catch {
             throw error
@@ -140,7 +140,7 @@ public final class SecureStorage: Module, DefaultInitializable, EnvironmentAcces
     public func deleteKeys(forTag tag: String) throws {
         do {
             try execute(SecItemDelete(keyQuery(forTag: tag) as CFDictionary))
-        } catch SecureStorageError.notFound {
+        } catch CredentialsStorageError.notFound {
             return
         } catch {
             throw error
@@ -173,7 +173,7 @@ public final class SecureStorage: Module, DefaultInitializable, EnvironmentAcces
     ///         username: "user",
     ///         password: "password"
     ///     )
-    ///     try secureStorage.store(
+    ///     try credentialsStorage.store(
     ///         credentials: serverCredentials,
     ///         server: "stanford.edu",
     ///         storageScope: .keychainSynchronizable
@@ -192,13 +192,13 @@ public final class SecureStorage: Module, DefaultInitializable, EnvironmentAcces
     ///   - server: The server associated with the credentials.
     ///   - removeDuplicate: A flag indicating if any existing key for the `username` and `server`
     ///                      combination should be overwritten when storing the credentials.
-    ///   - storageScope: The ``SecureStorageScope`` of the stored credentials.
-    ///                   The ``SecureStorageScope/secureEnclave(userPresence:)`` option is not supported for credentials.
+    ///   - storageScope: The ``CredentialsStorageScope`` of the stored credentials.
+    ///                   The ``CredentialsStorageScope/secureEnclave(userPresence:)`` option is not supported for credentials.
     public func store(
         credentials: Credentials,
         server: String? = nil,
         removeDuplicate: Bool = true,
-        storageScope: SecureStorageScope = .keychain
+        storageScope: CredentialsStorageScope = .keychain
     ) throws {
         // This method uses code provided by the Apple Developer documentation at
         // https://developer.apple.com/documentation/security/keychain_services/keychain_items/adding_a_password_to_the_keychain.
@@ -216,7 +216,7 @@ public final class SecureStorage: Module, DefaultInitializable, EnvironmentAcces
         
         do {
             try execute(SecItemAdd(query as CFDictionary, nil))
-        } catch let SecureStorageError.keychainError(status) where status == -25299 && removeDuplicate {
+        } catch let CredentialsStorageError.keychainError(status) where status == -25299 && removeDuplicate {
             try deleteCredentials(credentials.username, server: server)
             try store(credentials: credentials, server: server, removeDuplicate: false)
         } catch {
@@ -228,7 +228,7 @@ public final class SecureStorage: Module, DefaultInitializable, EnvironmentAcces
     ///
     /// ```swift
     /// do {
-    ///     try secureStorage.deleteCredentials(
+    ///     try credentialsStorage.deleteCredentials(
     ///         "user",
     ///         server: "spezi.stanford.edu"
     ///     )
@@ -254,7 +254,7 @@ public final class SecureStorage: Module, DefaultInitializable, EnvironmentAcces
     /// - Parameters:
     ///   - itemTypes: The types of items.
     ///   - accessGroup: The access group associated with the credentials.
-    public func deleteAllCredentials(itemTypes: SecureStorageItemTypes = .all, accessGroup: String? = nil) throws {
+    public func deleteAllCredentials(itemTypes: CredentialsStorageItemTypes = .all, accessGroup: String? = nil) throws {
         for kSecClassType in itemTypes.kSecClass {
             do {
                 var query: [String: Any] = [kSecClass as String: kSecClassType]
@@ -269,7 +269,7 @@ public final class SecureStorage: Module, DefaultInitializable, EnvironmentAcces
                 #endif
                 
                 try execute(SecItemDelete(query as CFDictionary))
-            } catch SecureStorageError.notFound {
+            } catch CredentialsStorageError.notFound {
                 // We are fine it no keychain items have been found and therefore non had been deleted.
                 continue
             } catch {
@@ -286,7 +286,7 @@ public final class SecureStorage: Module, DefaultInitializable, EnvironmentAcces
     ///         username: "user",
     ///         password: "newPassword"
     ///     )
-    ///     try secureStorage.updateCredentials(
+    ///     try credentialsStorage.updateCredentials(
     ///         "user",
     ///         server: "stanford.edu",
     ///         newCredentials: newCredentials,
@@ -305,7 +305,7 @@ public final class SecureStorage: Module, DefaultInitializable, EnvironmentAcces
     ///   - newServer: The server associated with the new credentials.
     ///   - removeDuplicate: A flag indicating if any existing key for the `username` of the new credentials and `newServer`
     ///                      combination should be overwritten when storing the credentials.
-    ///   - storageScope: The ``SecureStorageScope`` of the newly stored credentials.
+    ///   - storageScope: The ``CredentialsStorageScope`` of the newly stored credentials.
     public func updateCredentials(
         // The server parameter belongs to the `username` and therefore should be located next to the `username`.
         _ username: String,
@@ -313,7 +313,7 @@ public final class SecureStorage: Module, DefaultInitializable, EnvironmentAcces
         newCredentials: Credentials,
         newServer: String? = nil,
         removeDuplicate: Bool = true,
-        storageScope: SecureStorageScope = .keychain
+        storageScope: CredentialsStorageScope = .keychain
     ) throws {
         try deleteCredentials(username, server: server)
         try store(credentials: newCredentials, server: newServer, removeDuplicate: removeDuplicate, storageScope: storageScope)
@@ -322,7 +322,7 @@ public final class SecureStorage: Module, DefaultInitializable, EnvironmentAcces
     /// Retrieve existing credentials stored in the Keychain.
     ///
     /// ```swift
-    /// guard let serverCredentials = secureStorage.retrieveCredentials("user", server: "stanford.edu") else {
+    /// guard let serverCredentials = credentialsStorage.retrieveCredentials("user", server: "stanford.edu") else {
     ///     // Handle errors here.
     /// }
     ///
@@ -360,14 +360,14 @@ public final class SecureStorage: Module, DefaultInitializable, EnvironmentAcces
         var item: CFTypeRef?
         do {
             try execute(SecItemCopyMatching(query as CFDictionary, &item))
-        } catch SecureStorageError.notFound {
+        } catch CredentialsStorageError.notFound {
             return []
         } catch {
             throw error
         }
         
         guard let existingItems = item as? [[String: Any]] else {
-            throw SecureStorageError.unexpectedCredentialsData
+            throw CredentialsStorageError.unexpectedCredentialsData
         }
         
         var credentials: [Credentials] = []
@@ -390,13 +390,13 @@ public final class SecureStorage: Module, DefaultInitializable, EnvironmentAcces
         let status = secOperation()
         
         guard status != errSecItemNotFound else {
-            throw SecureStorageError.notFound
+            throw CredentialsStorageError.notFound
         }
         guard status != errSecMissingEntitlement else {
-            throw SecureStorageError.missingEntitlement
+            throw CredentialsStorageError.missingEntitlement
         }
         guard status == errSecSuccess else {
-            throw SecureStorageError.keychainError(status: status)
+            throw CredentialsStorageError.keychainError(status: status)
         }
     }
     
