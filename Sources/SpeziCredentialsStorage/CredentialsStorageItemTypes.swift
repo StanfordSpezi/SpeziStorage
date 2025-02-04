@@ -13,7 +13,7 @@ import Security
 public struct CredentialsStorageItemTypes: OptionSet {
     /// Any keys created with the `CredentialsStorage` module.
     ///
-    /// Refers to any keys created using ``CredentialsStorage/createKey(_:size:storageScope:)``.
+    /// Refers to any keys created using ``CredentialsStorage/createKey(for:size:storageScope:)``.
     public static let keys = CredentialsStorageItemTypes(rawValue: 1 << 0)
     /// Credentials that are created using a server name.
     ///

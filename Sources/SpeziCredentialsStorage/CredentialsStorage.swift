@@ -35,11 +35,10 @@ import XCTRuntimeAssertions
 /// - ``deleteAllCredentials(itemTypes:accessGroup:)``
 ///
 /// ### Keys
-///
-/// - ``createKey(_:size:storageScope:)``
-/// - ``retrievePublicKey(forTag:)``
-/// - ``retrievePrivateKey(forTag:)``
-/// - ``deleteKeys(forTag:)``
+/// - ``createKey(for:size:storageScope:)``
+/// - ``retrievePublicKey(for:)``
+/// - ``retrievePrivateKey(for:)``
+/// - ``deleteKeys(for:)``
 public final class CredentialsStorage: Module, DefaultInitializable, EnvironmentAccessible, Sendable {
     /// Configure the `CredentialsStorage` module.
     ///
@@ -54,12 +53,12 @@ public final class CredentialsStorage: Module, DefaultInitializable, Environment
     
     /// Create a `ECSECPrimeRandom` key for a specified size.
     /// - Parameters:
-    ///   - tag: The tag used to identify the key in the keychain or the secure enclave.
+    ///   - keyTag: The tag used to identify the key in the keychain or the secure enclave.
     ///   - size: The size of the key in bits. The default value is 256 bits.
     ///   - storageScope: The  ``CredentialsStorageScope`` used to store the newly generate key.
     /// - Returns: Returns the `SecKey` private key generated and stored in the keychain or the secure enclave.
     @discardableResult
-    public func createKey(_ tag: String, size: Int = 256, storageScope: CredentialsStorageScope = .secureEnclave) throws -> SecKey {
+    public func createKey(for keyTag: KeyTag, size: Int = 256, storageScope: CredentialsStorageScope = .secureEnclave) throws -> SecKey {
         // The key generation code follows
         // https://developer.apple.com/documentation/security/certificate_key_and_trust_services/keys/protecting_keys_with_the_secure_enclave
         // and
@@ -67,7 +66,7 @@ public final class CredentialsStorage: Module, DefaultInitializable, Environment
         
         var privateKeyAttrs: [String: Any] = [
             kSecAttrIsPermanent as String: true,
-            kSecAttrApplicationTag as String: Data(tag.utf8)
+            kSecAttrApplicationTag as String: Data(keyTag.rawValue.utf8)
         ]
         if let accessControl = try storageScope.accessControl {
             privateKeyAttrs[kSecAttrAccessControl as String] = accessControl
@@ -101,22 +100,20 @@ public final class CredentialsStorage: Module, DefaultInitializable, Environment
     }
     
     /// Retrieves a private key stored in the keychain or the secure enclave identified by a `tag`.
-    /// - Parameter tag: The tag used to identify the key in the keychain or the secure enclave.
+    /// - Parameter keyTag: The tag used to identify the key in the keychain or the secure enclave.
     /// - Returns: Returns the private `SecKey` generated and stored in the keychain or the secure enclave.
-    public func retrievePrivateKey(forTag tag: String) throws -> SecKey? {
+    public func retrievePrivateKey(for keyTag: KeyTag) throws -> SecKey? {
         // This method follows
         // https://developer.apple.com/documentation/security/certificate_key_and_trust_services/keys/storing_keys_in_the_keychain
         // for guidance.
-        
         var item: CFTypeRef?
         do {
-            try execute(SecItemCopyMatching(keyQuery(forTag: tag) as CFDictionary, &item))
+            try execute(SecItemCopyMatching(keyQuery(for: keyTag) as CFDictionary, &item))
         } catch CredentialsStorageError.notFound {
             return nil
         } catch {
             throw error
         }
-        
         // Unfortunately we have to do a force cast here.
         // The compiler complains that "Conditional downcast to CoreFoundation type 'SecKey' will always succeed"
         // if we use `item as? SecKey`.
@@ -124,22 +121,21 @@ public final class CredentialsStorage: Module, DefaultInitializable, Environment
     }
     
     /// Retrieves a public key stored in the keychain or the secure enclave identified by a `tag`.
-    /// - Parameter tag: The tag used to identify the key in the keychain or the secure enclave.
+    /// - Parameter keyTag: The tag used to identify the key in the keychain or the secure enclave.
     /// - Returns: Returns the public `SecKey` generated and stored in the keychain or the secure enclave.
-    public func retrievePublicKey(forTag tag: String) throws -> SecKey? {
-        guard let privateKey = try retrievePrivateKey(forTag: tag),
-              let publicKey = SecKeyCopyPublicKey(privateKey) else {
+    public func retrievePublicKey(for keyTag: KeyTag) throws -> SecKey? {
+        if let privateKey = try retrievePrivateKey(for: keyTag) {
+            return SecKeyCopyPublicKey(privateKey)
+        } else {
             return nil
         }
-        
-        return publicKey
     }
     
     /// Deletes the key stored in the keychain or the secure enclave identified by a `tag`.
-    /// - Parameter tag: The tag used to identify the key in the keychain or the secure enclave.
-    public func deleteKeys(forTag tag: String) throws {
+    /// - Parameter keyTag: The tag used to identify the key in the keychain or the secure enclave.
+    public func deleteKeys(for keyTag: KeyTag) throws {
         do {
-            try execute(SecItemDelete(keyQuery(forTag: tag) as CFDictionary))
+            try execute(SecItemDelete(keyQuery(for: keyTag) as CFDictionary))
         } catch CredentialsStorageError.notFound {
             return
         } catch {
@@ -147,10 +143,10 @@ public final class CredentialsStorage: Module, DefaultInitializable, Environment
         }
     }
     
-    private func keyQuery(forTag tag: String) -> [String: Any] {
+    private func keyQuery(for keyTag: KeyTag) -> [String: Any] {
         var query: [String: Any] = [
             kSecClass as String: kSecClassKey,
-            kSecAttrApplicationTag as String: tag,
+            kSecAttrApplicationTag as String: keyTag.rawValue,
             kSecAttrKeyType as String: kSecAttrKeyTypeECSECPrimeRandom,
             kSecReturnRef as String: true
         ]
@@ -246,7 +242,6 @@ public final class CredentialsStorage: Module, DefaultInitializable, Environment
     ///   - accessGroup: The access group associated with the credentials.
     public func deleteCredentials(_ username: String, server: String? = nil, accessGroup: String? = nil) throws {
         let query = queryFor(username, server: server, accessGroup: accessGroup)
-        
         try execute(SecItemDelete(query as CFDictionary))
     }
     
@@ -262,12 +257,10 @@ public final class CredentialsStorage: Module, DefaultInitializable, Environment
                 if let accessGroup {
                     query[kSecAttrAccessGroup as String] = accessGroup
                 }
-                
                 // Use Data protection keychain on macOS
                 #if os(macOS)
                 query[kSecUseDataProtectionKeychain as String] = true
                 #endif
-                
                 try execute(SecItemDelete(query as CFDictionary))
             } catch CredentialsStorageError.notFound {
                 // We are fine it no keychain items have been found and therefore non had been deleted.

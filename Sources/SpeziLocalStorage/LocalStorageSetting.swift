@@ -48,15 +48,15 @@ public enum LocalStorageSetting {
             storageScope = .keychain(userPresence: userPresence)
         }
         
-        let tag = "LocalStorage.\(storageScope.id)" // TODO is this a good idea? ALSO: why does it say "LocalStorage"?
+        let keyTag = KeyTag("LocalStorage.\(storageScope.id)")
         
-        if let privateKey = try? credentialsStorage.retrievePrivateKey(forTag: tag),
-           let publicKey = try? credentialsStorage.retrievePublicKey(forTag: tag) {
+        if let privateKey = try? credentialsStorage.retrievePrivateKey(for: keyTag),
+           let publicKey = try? credentialsStorage.retrievePublicKey(for: keyTag) {
             return (privateKey, publicKey)
         }
         
-        let privateKey = try credentialsStorage.createKey(tag)
-        guard let publicKey = try credentialsStorage.retrievePublicKey(forTag: tag) else {
+        let privateKey = try credentialsStorage.createKey(for: keyTag)
+        guard let publicKey = try credentialsStorage.retrievePublicKey(for: keyTag) else {
             throw LocalStorageError.encryptionNotPossible
         }
         

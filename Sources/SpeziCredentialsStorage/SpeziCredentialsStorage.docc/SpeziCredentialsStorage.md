@@ -159,16 +159,17 @@ See ``CredentialsStorage/deleteCredentials(_:server:accessGroup:)`` or ``Credent
 
 Similar to ``Credentials`` instances, you can also use the `CredentialsStorage` module to interact with keys.
 
-- ``CredentialsStorage/createKey(_:size:storageScope:)``
-- ``CredentialsStorage/retrievePublicKey(forTag:)``
-- ``CredentialsStorage/retrievePrivateKey(forTag:)``
-- ``CredentialsStorage/deleteKeys(forTag:)``
+- ``CredentialsStorage/createKey(for:size:storageScope:)``
+- ``CredentialsStorage/retrievePublicKey(for:)``
+- ``CredentialsStorage/retrievePrivateKey(for:)``
+- ``CredentialsStorage/deleteKeys(for:)``
 
 
 ## Topics
 
 ### Credentials Storage
 - ``CredentialsStorage``
+- ``KeyTag``
 - ``CredentialsStorageError``
 - ``CredentialsStorageScope``
 - ``CredentialsStorageItemTypes``
