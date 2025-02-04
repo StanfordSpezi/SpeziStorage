@@ -99,6 +99,7 @@ public final class CredentialsStorage: Module, DefaultInitializable, Environment
         return privateKey
     }
     
+    
     /// Retrieves a private key stored in the keychain or the secure enclave identified by a `tag`.
     /// - Parameter keyTag: The tag used to identify the key in the keychain or the secure enclave.
     /// - Returns: Returns the private `SecKey` generated and stored in the keychain or the secure enclave.
@@ -120,6 +121,7 @@ public final class CredentialsStorage: Module, DefaultInitializable, Environment
         return (item as! SecKey) // swiftlint:disable:this force_cast
     }
     
+    
     /// Retrieves a public key stored in the keychain or the secure enclave identified by a `tag`.
     /// - Parameter keyTag: The tag used to identify the key in the keychain or the secure enclave.
     /// - Returns: Returns the public `SecKey` generated and stored in the keychain or the secure enclave.
@@ -130,6 +132,7 @@ public final class CredentialsStorage: Module, DefaultInitializable, Environment
             return nil
         }
     }
+    
     
     /// Deletes the key stored in the keychain or the secure enclave identified by a `tag`.
     /// - Parameter keyTag: The tag used to identify the key in the keychain or the secure enclave.
@@ -143,6 +146,7 @@ public final class CredentialsStorage: Module, DefaultInitializable, Environment
         }
     }
     
+    
     private func keyQuery(for keyTag: KeyTag) -> [String: Any] {
         var query: [String: Any] = [
             kSecClass as String: kSecClassKey,
@@ -150,11 +154,9 @@ public final class CredentialsStorage: Module, DefaultInitializable, Environment
             kSecAttrKeyType as String: kSecAttrKeyTypeECSECPrimeRandom,
             kSecReturnRef as String: true
         ]
-        
         #if os(macOS)
         query[kSecUseDataProtectionKeychain as String] = true
         #endif
-        
         return query
     }
     
@@ -220,6 +222,7 @@ public final class CredentialsStorage: Module, DefaultInitializable, Environment
         }
     }
     
+    
     /// Delete existing credentials stored in the Keychain.
     ///
     /// ```swift
@@ -244,6 +247,7 @@ public final class CredentialsStorage: Module, DefaultInitializable, Environment
         let query = queryFor(username, server: server, accessGroup: accessGroup)
         try execute(SecItemDelete(query as CFDictionary))
     }
+    
     
     /// Delete all existing credentials stored in the Keychain.
     /// - Parameters:
@@ -270,6 +274,7 @@ public final class CredentialsStorage: Module, DefaultInitializable, Environment
             }
         }
     }
+    
     
     /// Update existing credentials found in the Keychain.
     ///
@@ -312,6 +317,7 @@ public final class CredentialsStorage: Module, DefaultInitializable, Environment
         try store(credentials: newCredentials, server: newServer, removeDuplicate: removeDuplicate, storageScope: storageScope)
     }
     
+    
     /// Retrieve existing credentials stored in the Keychain.
     ///
     /// ```swift
@@ -335,6 +341,7 @@ public final class CredentialsStorage: Module, DefaultInitializable, Environment
                 credentials.username == username
             }
     }
+    
     
     /// Retrieve all existing credentials stored in the Keychain for a specific server.
     /// - Parameters:
@@ -392,6 +399,7 @@ public final class CredentialsStorage: Module, DefaultInitializable, Environment
             throw CredentialsStorageError.keychainError(status: status)
         }
     }
+    
     
     private func queryFor(_ account: String?, server: String?, accessGroup: String?) -> [String: Any] {
         // This method uses code provided by the Apple Developer documentation at
