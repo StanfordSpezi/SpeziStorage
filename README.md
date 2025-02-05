@@ -91,7 +91,7 @@ Use the `CredentialsStorage` module to store a set of [`Credentials`](https://sw
 
 ### Handling Keys
 
-Similar to `Credentials` instances, you can also use the `CredentialsStorage` module to interact with keys.
+Similar to `Credentials` instances, you can also use the `CredentialsStorage` module to interact with cryptographic keys.
 
 
 
