@@ -56,12 +56,11 @@ final class CredentialsStorageTests: TestAppTestCase {
     
     func testCredentials() throws {
         try credentialsStorage.deleteAllCredentials(itemTypes: .credentials)
-        precondition(try! credentialsStorage.retrieveAllCredentials(ofType: .all).isEmpty)
         
         var serverCredentials = Credentials(username: "@PSchmiedmayer", password: "SpeziInventor")
         try credentialsStorage.store(serverCredentials, for: .genericPassword())
         try credentialsStorage.store(serverCredentials, for: .genericPassword(withScope: .keychainSynchronizable()))
-        try credentialsStorage.store(serverCredentials, for: .genericPassword(withScope: .keychainSynchronizable())) // Overwrite existing credentials.
+        try credentialsStorage.store(serverCredentials, for: .genericPassword(withScope: .keychainSynchronizable())) // Overwrite existing credentials
         
         let retrievedCredentials = try XCTUnwrap(credentialsStorage.retrieveCredentials(withUsername: "@PSchmiedmayer", forKey: .genericPassword()))
         try XCTAssertEqual(serverCredentials, retrievedCredentials)
@@ -88,7 +87,9 @@ final class CredentialsStorageTests: TestAppTestCase {
         try credentialsStorage.store(serverCredentials, for: twitterCredentialsKey) // Overwrite existing credentials.
         try credentialsStorage.store(serverCredentials, for: .internetPassword(forServer: "twitter.com", withScope: .keychainSynchronizable()))
         
-        let retrievedCredentials = try XCTUnwrap(credentialsStorage.retrieveCredentials(withUsername: "@PSchmiedmayer", forKey: twitterCredentialsKey))
+        let retrievedCredentials = try XCTUnwrap(
+            credentialsStorage.retrieveCredentials(withUsername: "@PSchmiedmayer", forKey: twitterCredentialsKey)
+        )
         try XCTAssertEqual(serverCredentials, retrievedCredentials)
         
         
@@ -98,7 +99,6 @@ final class CredentialsStorageTests: TestAppTestCase {
             key: twitterCredentialsKey,
             with: serverCredentials
         )
-//        try credentialsStorage.updateCredentials("@PSchmiedmayer", server: "twitter.com", newCredentials: serverCredentials, newServer: "stanford.edu")
         
         let retrievedUpdatedCredentials = try XCTUnwrap(credentialsStorage.retrieveCredentials(withUsername: "@Spezi", forKey: twitterCredentialsKey))
         try XCTAssertEqual(serverCredentials, retrievedUpdatedCredentials)

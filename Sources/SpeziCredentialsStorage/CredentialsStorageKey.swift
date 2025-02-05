@@ -13,7 +13,20 @@
 ///
 /// Example:
 /// ```swift
-/// TODO!!!
+/// extension CredentialsStorageKey {
+///     static let accountLogin = CredentialsStorageKey(
+///         kind: .internetPassword(server: "stanford.edu"),
+///         storageScope: .keychainSynchronizable()
+///     )
+/// }
+///
+/// // storing:
+/// try credentialsStorage.store(Credentials(username: "lukas", password: "isThisSecure?123"), for: .accountLogin)
+///
+/// // loading:
+/// if let credentials = try credentialsStorage.retrieveCredentials(withUsername: "lukas", forKey: .accountLogin) {
+///     // ...
+/// }
 /// ```
 public struct CredentialsStorageKey: Hashable, Sendable {
     /// The kind of the credentials being stored, i.e. whether this is a generic credentials pair, or one associated with some specific website.

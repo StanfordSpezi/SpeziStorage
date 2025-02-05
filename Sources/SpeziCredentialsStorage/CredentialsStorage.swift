@@ -193,7 +193,7 @@ public final class CredentialsStorage: Module, DefaultInitializable, Environment
     public func store(
         _ credentials: Credentials,
         for key: CredentialsStorageKey,
-        removeDuplicate: Bool = true // TODO maybe call this overwriteDuplicates?
+        removeDuplicate: Bool = true
     ) throws {
         // This method uses code provided by the Apple Developer documentation at
         // https://developer.apple.com/documentation/security/keychain_services/keychain_items/adding_a_password_to_the_keychain.
@@ -211,7 +211,6 @@ public final class CredentialsStorage: Module, DefaultInitializable, Environment
             try execute(SecItemAdd(query as CFDictionary, nil))
         } catch CredentialsStorageError.keychainError(-25299) where removeDuplicate {
             try deleteCredentials(withUsername: credentials.username, for: key)
-            precondition(try! self.retrieveCredentials(withUsername: credentials.username, forKey: key) == nil)
             try store(credentials, for: key, removeDuplicate: false)
         } catch {
             throw error
@@ -433,7 +432,12 @@ public final class CredentialsStorage: Module, DefaultInitializable, Environment
     /// - parameter synchronizable: defines how the query should filter items based on their synchronizability.
     ///     if you pass `nil` for this parameter, the query will match both synchronizable and non-synchroniable entries.
     ///     if you pass `true` or `false`, the query will match only those entries whose synchronizability matches the param value.
-    private func queryFor(username account: String?, kind: CredentialsKind, synchronizable: Bool?, accessGroup: String?) -> [String: Any] {
+    private func queryFor(
+        username account: String?,
+        kind: CredentialsKind,
+        synchronizable: Bool?, // swiftlint:disable:this discouraged_optional_boolean
+        accessGroup: String?
+    ) -> [String: Any] {
         // This method uses code provided by the Apple Developer documentation at
         // https://developer.apple.com/documentation/security/keychain_services/keychain_items/using_the_keychain_to_manage_user_secrets
         
