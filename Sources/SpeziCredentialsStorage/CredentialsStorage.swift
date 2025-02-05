@@ -25,16 +25,16 @@ import XCTRuntimeAssertions
 /// ### Configuration
 /// - ``init()``
 ///
-/// ### Credentials
+/// ### Credential Storage
 /// - ``Credentials``
-/// - ``store(credentials:server:removeDuplicate:storageScope:)``
-/// - ``retrieveCredentials(_:server:accessGroup:)``
-/// - ``retrieveAllCredentials(forServer:accessGroup:)``
-/// - ``updateCredentials(_:server:newCredentials:newServer:removeDuplicate:storageScope:)``
-/// - ``deleteCredentials(_:server:accessGroup:)``
+/// - ``store(_:for:removeDuplicate:)``
+/// - ``retrieveCredentials(withUsername:forKey:)``
+/// - ``retrieveAllCredentials(for:)``
+/// - ``updateCredentials(forUsername:key:with:removeDuplicate:)``
+/// - ``deleteKeys(for:)``
 /// - ``deleteAllCredentials(itemTypes:accessGroup:)``
 ///
-/// ### Keys
+/// ### Key Storage
 /// - ``createKey(for:size:storageScope:)``
 /// - ``retrievePublicKey(for:)``
 /// - ``retrievePrivateKey(for:)``
@@ -58,7 +58,7 @@ public final class CredentialsStorage: Module, DefaultInitializable, Environment
     ///   - storageScope: The  ``CredentialsStorageScope`` used to store the newly generate key.
     /// - Returns: Returns the `SecKey` private key generated and stored in the keychain or the secure enclave.
     @discardableResult
-    public func createKey(for keyTag: KeyTag, size: Int = 256, storageScope: CredentialsStorageScope = .secureEnclave) throws -> SecKey {
+    public func createKey(for keyTag: KeyTag, size: Int = 256, storageScope: CredentialsStorageScope = .secureEnclave()) throws -> SecKey {
         // The key generation code follows
         // https://developer.apple.com/documentation/security/certificate_key_and_trust_services/keys/protecting_keys_with_the_secure_enclave
         // and
@@ -173,7 +173,7 @@ public final class CredentialsStorage: Module, DefaultInitializable, Environment
     ///     )
     ///     try credentialsStorage.store(
     ///         credentials: serverCredentials,
-    ///         server: "stanford.edu",
+    ///         ofKind: .internetPassword("stanford.edu"),
     ///         storageScope: .keychainSynchronizable
     ///     )
     ///
@@ -187,36 +187,32 @@ public final class CredentialsStorage: Module, DefaultInitializable, Environment
     ///
     /// - Parameters:
     ///   - credentials: The ``Credentials`` stored in the Keychain.
-    ///   - server: The server associated with the credentials.
-    ///   - removeDuplicate: A flag indicating if any existing key for the `username` and `server`
+    ///   - key: The key identifying the credentials entry.
+    ///   - removeDuplicate: A flag indicating if any existing key for the `username` and `credentialsKind`
     ///                      combination should be overwritten when storing the credentials.
-    ///   - storageScope: The ``CredentialsStorageScope`` of the stored credentials.
-    ///                   The ``CredentialsStorageScope/secureEnclave(userPresence:)`` option is not supported for credentials.
     public func store(
-        credentials: Credentials,
-        server: String? = nil,
-        removeDuplicate: Bool = true,
-        storageScope: CredentialsStorageScope = .keychain
+        _ credentials: Credentials,
+        for key: CredentialsStorageKey,
+        removeDuplicate: Bool = true // TODO maybe call this overwriteDuplicates?
     ) throws {
         // This method uses code provided by the Apple Developer documentation at
         // https://developer.apple.com/documentation/security/keychain_services/keychain_items/adding_a_password_to_the_keychain.
         
-        assert(!(.secureEnclave ~= storageScope), "Storing of keys in the secure enclave is not supported by Apple.")
-        
-        var query = queryFor(credentials.username, server: server, accessGroup: storageScope.accessGroup)
+        var query = queryFor(username: credentials.username, key: key)
         query[kSecValueData as String] = Data(credentials.password.utf8)
         
-        if case .keychainSynchronizable = storageScope {
+        if case .keychainSynchronizable = key.storageScope {
             query[kSecAttrSynchronizable as String] = true
-        } else if let accessControl = try storageScope.accessControl {
+        } else if let accessControl = try key.storageScope.accessControl {
             query[kSecAttrAccessControl as String] = accessControl
         }
         
         do {
             try execute(SecItemAdd(query as CFDictionary, nil))
-        } catch let CredentialsStorageError.keychainError(status) where status == -25299 && removeDuplicate {
-            try deleteCredentials(credentials.username, server: server)
-            try store(credentials: credentials, server: server, removeDuplicate: false)
+        } catch CredentialsStorageError.keychainError(-25299) where removeDuplicate {
+            try deleteCredentials(withUsername: credentials.username, for: key)
+            precondition(try! self.retrieveCredentials(withUsername: credentials.username, forKey: key) == nil)
+            try store(credentials, for: key, removeDuplicate: false)
         } catch {
             throw error
         }
@@ -241,10 +237,9 @@ public final class CredentialsStorage: Module, DefaultInitializable, Environment
     ///
     /// - Parameters:
     ///   - username: The username associated with the credentials.
-    ///   - server: The server associated with the credentials.
-    ///   - accessGroup: The access group associated with the credentials.
-    public func deleteCredentials(_ username: String, server: String? = nil, accessGroup: String? = nil) throws {
-        let query = queryFor(username, server: server, accessGroup: accessGroup)
+    ///   - key: The key identifying the credentials entry.
+    public func deleteCredentials(withUsername username: String, for key: CredentialsStorageKey) throws {
+        let query = queryFor(username: username, key: key)
         try execute(SecItemDelete(query as CFDictionary))
     }
     
@@ -256,7 +251,10 @@ public final class CredentialsStorage: Module, DefaultInitializable, Environment
     public func deleteAllCredentials(itemTypes: CredentialsStorageItemTypes = .all, accessGroup: String? = nil) throws {
         for kSecClassType in itemTypes.kSecClass {
             do {
-                var query: [String: Any] = [kSecClass as String: kSecClassType]
+                var query: [String: Any] = [
+                    kSecClass as String: kSecClassType,
+                    kSecAttrSynchronizable as String: kSecAttrSynchronizableAny
+                ]
                 // Only append the accessGroup attribute if the `CredentialsStore` is configured to use KeyChain access groups
                 if let accessGroup {
                     query[kSecAttrAccessGroup as String] = accessGroup
@@ -270,14 +268,19 @@ public final class CredentialsStorage: Module, DefaultInitializable, Environment
                 // We are fine it no keychain items have been found and therefore non had been deleted.
                 continue
             } catch {
-                print(error)
+                throw error
             }
         }
     }
     
     
-    /// Update existing credentials found in the Keychain.
+    /// Update existing credentials associated with a specific ``CredentialsStorageKey``.
     ///
+    /// Use this function if you want to update e.g. the username or password of an entry in the ``CredentialsStorage``.
+    ///
+    /// - Note: Do not use this function if you want to change the server address associated with a stored credentials entry. In that case, simply delete the old entry and create a new one.
+    ///
+    /// Example:
     /// ```swift
     /// do {
     ///     let newCredentials = Credentials(
@@ -297,24 +300,19 @@ public final class CredentialsStorage: Module, DefaultInitializable, Environment
     /// ```
     ///
     /// - Parameters:
-    ///   - username: The username associated with the old credentials.
-    ///   - server: The server associated with the old credentials.
+    ///   - oldUsername: The username associated with the old credentials.
+    ///   - key: Key identifying the credentials entry.
     ///   - newCredentials: The new ``Credentials`` that should be stored in the Keychain.
-    ///   - newServer: The server associated with the new credentials.
     ///   - removeDuplicate: A flag indicating if any existing key for the `username` of the new credentials and `newServer`
     ///                      combination should be overwritten when storing the credentials.
-    ///   - storageScope: The ``CredentialsStorageScope`` of the newly stored credentials.
     public func updateCredentials(
-        // The server parameter belongs to the `username` and therefore should be located next to the `username`.
-        _ username: String,
-        server: String? = nil, // swiftlint:disable:this function_default_parameter_at_end
-        newCredentials: Credentials,
-        newServer: String? = nil,
-        removeDuplicate: Bool = true,
-        storageScope: CredentialsStorageScope = .keychain
+        forUsername oldUsername: String,
+        key: CredentialsStorageKey,
+        with newCredentials: Credentials,
+        removeDuplicate: Bool = true
     ) throws {
-        try deleteCredentials(username, server: server)
-        try store(credentials: newCredentials, server: newServer, removeDuplicate: removeDuplicate, storageScope: storageScope)
+        try deleteCredentials(withUsername: oldUsername, for: key)
+        try store(newCredentials, for: key, removeDuplicate: removeDuplicate)
     }
     
     
@@ -328,35 +326,27 @@ public final class CredentialsStorage: Module, DefaultInitializable, Environment
     /// // Use the credentials
     /// ```
     ///
-    /// Use ``retrieveAllCredentials(forServer:accessGroup:)`` to retrieve all existing credentials stored in the Keychain for a specific server.
+    /// Use ``retrieveAllCredentials(for:)`` to retrieve all existing credentials stored in the Keychain for a specific server.
     ///
     /// - Parameters:
     ///   - username: The username associated with the credentials.
-    ///   - server: The server associated with the credentials.
-    ///   - accessGroup: The access group associated with the credentials.
-    /// - Returns: Returns the credentials stored in the Keychain identified by the `username`, `server`, and `accessGroup`.
-    public func retrieveCredentials(_ username: String, server: String? = nil, accessGroup: String? = nil) throws -> Credentials? {
-        try retrieveAllCredentials(forServer: server, accessGroup: accessGroup)
-            .first { credentials in
-                credentials.username == username
-            }
+    ///   - key: The key identifying the credentials.
+    /// - Returns: Returns the first ``Credentials`` stored in the Keychain identified by `key`, matching `username`.
+    public func retrieveCredentials(withUsername username: String, forKey key: CredentialsStorageKey) throws -> Credentials? {
+        try retrieveAllCredentials(for: key).first { $0.username == username }
     }
     
     
     /// Retrieve all existing credentials stored in the Keychain for a specific server.
-    /// - Parameters:
-    ///   - server: The server associated with the credentials.
-    ///   - accessGroup: The access group associated with the credentials.
-    /// - Returns: Returns all existing credentials stored in the Keychain identified by the `server` and `accessGroup`.
-    public func retrieveAllCredentials(forServer server: String? = nil, accessGroup: String? = nil) throws -> [Credentials] {
+    /// - parameter key: the key identifying the credentials which should be retrieved.
+    /// - Returns: Returns all existing credentials stored in the Keychain identified by `key`.
+    public func retrieveAllCredentials(for key: CredentialsStorageKey) throws -> [Credentials] {
         // This method uses code provided by the Apple Developer documentation at
         // https://developer.apple.com/documentation/security/keychain_services/keychain_items/searching_for_keychain_items
-        
-        var query: [String: Any] = queryFor(nil, server: server, accessGroup: accessGroup)
+        var query: [String: Any] = queryFor(username: nil, key: key)
         query[kSecMatchLimit as String] = kSecMatchLimitAll
         query[kSecReturnAttributes as String] = true
         query[kSecReturnData as String] = true
-        
         var item: CFTypeRef?
         do {
             try execute(SecItemCopyMatching(query as CFDictionary, &item))
@@ -365,43 +355,85 @@ public final class CredentialsStorage: Module, DefaultInitializable, Environment
         } catch {
             throw error
         }
-        
         guard let existingItems = item as? [[String: Any]] else {
             throw CredentialsStorageError.unexpectedCredentialsData
         }
-        
         var credentials: [Credentials] = []
-        
         for existingItem in existingItems {
             guard let passwordData = existingItem[kSecValueData as String] as? Data,
                   let password = String(data: passwordData, encoding: String.Encoding.utf8),
                   let account = existingItem[kSecAttrAccount as String] as? String else {
                 continue
             }
-            
             credentials.append(Credentials(username: account, password: password))
         }
-        
         return credentials
     }
     
     
-    private func execute(_ secOperation: @autoclosure () -> (OSStatus)) throws {
-        let status = secOperation()
-        
-        guard status != errSecItemNotFound else {
+    public func retrieveAllCredentials(ofType itemTypes: CredentialsStorageItemTypes) throws -> [Credentials] {
+        var results: [Credentials] = []
+        var query: [String: Any] = [
+            kSecReturnAttributes as String: true,
+            kSecReturnData as String: true,
+            kSecMatchLimit as String: kSecMatchLimitAll,
+            kSecAttrSynchronizable as String: kSecAttrSynchronizableAny
+        ]
+        for cls in itemTypes.kSecClass {
+            query[kSecClass as String] = cls as String
+            var items: CFTypeRef?
+            do {
+                try execute(SecItemCopyMatching(query as CFDictionary, &items))
+            } catch CredentialsStorageError.notFound {
+                continue
+            } catch {
+                throw error
+            }
+            guard let items = items as? [[String: Any]] else {
+                throw CredentialsStorageError.unexpectedCredentialsData
+            }
+            for item in items {
+                guard let account = item[kSecAttrAccount as String] as? String,
+                      let password = item[kSecValueData as String] as? Data,
+                      let password = String(data: password, encoding: .utf8) else {
+                    continue
+                }
+                results.append(.init(username: account, password: password))
+            }
+        }
+        return results
+    }
+    
+    
+    private func execute(_ secOperation: @autoclosure () -> OSStatus) throws {
+        switch secOperation() {
+        case errSecSuccess:
+            // it's fine
+            return
+        case errSecItemNotFound:
             throw CredentialsStorageError.notFound
-        }
-        guard status != errSecMissingEntitlement else {
+        case  errSecMissingEntitlement:
             throw CredentialsStorageError.missingEntitlement
-        }
-        guard status == errSecSuccess else {
+        case let status:
             throw CredentialsStorageError.keychainError(status: status)
         }
     }
     
     
-    private func queryFor(_ account: String?, server: String?, accessGroup: String?) -> [String: Any] {
+    private func queryFor(username: String?, key: CredentialsStorageKey) -> [String: Any] {
+        queryFor(
+            username: username,
+            kind: key.kind,
+            synchronizable: key.storageScope.isSynchronizable,
+            accessGroup: key.storageScope.accessGroup
+        )
+    }
+    
+    
+    /// - parameter synchronizable: defines how the query should filter items based on their synchronizability.
+    ///     if you pass `nil` for this parameter, the query will match both synchronizable and non-synchroniable entries.
+    ///     if you pass `true` or `false`, the query will match only those entries whose synchronizability matches the param value.
+    private func queryFor(username account: String?, kind: CredentialsKind, synchronizable: Bool?, accessGroup: String?) -> [String: Any] {
         // This method uses code provided by the Apple Developer documentation at
         // https://developer.apple.com/documentation/security/keychain_services/keychain_items/using_the_keychain_to_manage_user_secrets
         
@@ -415,15 +447,25 @@ public final class CredentialsStorage: Module, DefaultInitializable, Environment
             query[kSecAttrAccessGroup as String] = accessGroup
         }
         
+        switch synchronizable {
+        case .none:
+            // if the `synchronizable` parameter is set to nil, we do not filter for this field, and instead wanna fetch all entried (both synchronizable and non-synchronizable)
+            query[kSecAttrSynchronizable as String] = kSecAttrSynchronizableAny
+        case .some(let value):
+            // if the parameter is set, we want to filter for that value
+            query[kSecAttrSynchronizable as String] = value
+        }
+        
         // Use Data protection keychain on macOS
         #if os(macOS)
         query[kSecUseDataProtectionKeychain as String] = true
         #endif
         
         // If the user provided us with a server associated with the credentials we assume it is an internet password.
-        if server == nil {
+        switch kind {
+        case .genericPassword:
             query[kSecClass as String] = kSecClassGenericPassword
-        } else {
+        case .internetPassword(let server):
             query[kSecClass as String] = kSecClassInternetPassword
             // Only append the server attribute if we assume the credentials to be an internet password.
             query[kSecAttrServer as String] = server

@@ -14,7 +14,6 @@ import XCTestApp
 struct CredentialsStorageTestsView: View {
     @Environment(CredentialsStorage.self) var credentialsStorage
     
-    
     var body: some View {
         TestAppView(testCase: CredentialsStorageTests(credentialsStorage: credentialsStorage))
     }

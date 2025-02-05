@@ -45,8 +45,9 @@ final class LocalStorageTests: TestAppTestCase {
     }
     
     func testLocalStorageTestEncryptedManualKeys() throws {
-        let privateKey = try credentialsStorage.retrievePrivateKey(forTag: "LocalStorageTests") ?? credentialsStorage.createKey("LocalStorageTests")
-        guard let publicKey = try credentialsStorage.retrievePublicKey(forTag: "LocalStorageTests") else {
+        let keyTag = KeyTag("LocalStorageTests")
+        let privateKey = try credentialsStorage.retrievePrivateKey(for: keyTag) ?? credentialsStorage.createKey(for: keyTag)
+        guard let publicKey = try credentialsStorage.retrievePublicKey(for: keyTag) else {
             throw XCTestFailure()
         }
         let key = LocalStorageKey<Letter>("letter1", setting: .encrypted(privateKey: privateKey, publicKey: publicKey))

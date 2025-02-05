@@ -9,17 +9,16 @@
 /* Begin PBXBuildFile section */
 		2F2D336229DE0E5A00081B1D /* SpeziLocalStorage in Frameworks */ = {isa = PBXBuildFile; productRef = 2F2D336129DE0E5A00081B1D /* SpeziLocalStorage */; };
 		2F2D336B29DE0E7900081B1D /* CredentialsStorageTestsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2F2D336629DE0E7900081B1D /* CredentialsStorageTestsView.swift */; };
-		2F2D336C29DE0E7900081B1D /* CredentialsStorageTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2F2D336729DE0E7900081B1D /* CredentialsStorageTests.swift */; };
 		2F2D336D29DE0E7900081B1D /* LocalStorageTestsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2F2D336929DE0E7900081B1D /* LocalStorageTestsView.swift */; };
 		2F2D336E29DE0E7900081B1D /* LocalStorageTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2F2D336A29DE0E7900081B1D /* LocalStorageTests.swift */; };
-		2F2D337129DE0E8600081B1D /* LocalStorageTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2F2D336F29DE0E8600081B1D /* LocalStorageTests.swift */; };
-		2F2D337229DE0E8600081B1D /* CredentialsStorageTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2F2D337029DE0E8600081B1D /* CredentialsStorageTests.swift */; };
+		2F2D337129DE0E8600081B1D /* LocalStorageTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2F2D336F29DE0E8600081B1D /* LocalStorageTest.swift */; };
+		2F2D337229DE0E8600081B1D /* CredentialsStorageTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2F2D337029DE0E8600081B1D /* CredentialsStorageTest.swift */; };
 		2F2D338129DE4A6000081B1D /* XCTestApp in Frameworks */ = {isa = PBXBuildFile; productRef = 2F2D338029DE4A6000081B1D /* XCTestApp */; };
 		2F2D338529DE525000081B1D /* TestAppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2F2D338429DE525000081B1D /* TestAppDelegate.swift */; };
-		2F2D338729DE52EA00081B1D /* CredentialsStorageTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2F2D338629DE52EA00081B1D /* CredentialsStorageTests.swift */; };
+		2F2D338729DE52EA00081B1D /* SpeziStorageTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2F2D338629DE52EA00081B1D /* SpeziStorageTests.swift */; };
 		2F6D139A28F5F386007C25D6 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 2F6D139928F5F386007C25D6 /* Assets.xcassets */; };
 		2FA7382C290ADFAA007ACEB9 /* TestApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2FA7382B290ADFAA007ACEB9 /* TestApp.swift */; };
-		80F546B22D5263670038AD46 /* SpeziCredentialsStorage in Frameworks */ = {isa = PBXBuildFile; productRef = 80F546B12D5263670038AD46 /* SpeziCredentialsStorage */; };
+		80CC46A22D53B1CB005BDFEE /* CredentialsStorageTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 80CC46A12D53B1CB005BDFEE /* CredentialsStorageTests.swift */; };
 		80F81BC22D492A2100F513C3 /* LocalStorageLiveUpdateTestView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 80F81BC12D492A2100F513C3 /* LocalStorageLiveUpdateTestView.swift */; };
 /* End PBXBuildFile section */
 
@@ -35,19 +34,19 @@
 
 /* Begin PBXFileReference section */
 		2F2D336629DE0E7900081B1D /* CredentialsStorageTestsView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CredentialsStorageTestsView.swift; sourceTree = "<group>"; };
-		2F2D336729DE0E7900081B1D /* CredentialsStorageTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CredentialsStorageTests.swift; sourceTree = "<group>"; };
 		2F2D336929DE0E7900081B1D /* LocalStorageTestsView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LocalStorageTestsView.swift; sourceTree = "<group>"; };
 		2F2D336A29DE0E7900081B1D /* LocalStorageTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LocalStorageTests.swift; sourceTree = "<group>"; };
-		2F2D336F29DE0E8600081B1D /* LocalStorageTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LocalStorageTests.swift; sourceTree = "<group>"; };
-		2F2D337029DE0E8600081B1D /* CredentialsStorageTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CredentialsStorageTests.swift; sourceTree = "<group>"; };
+		2F2D336F29DE0E8600081B1D /* LocalStorageTest.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LocalStorageTest.swift; sourceTree = "<group>"; };
+		2F2D337029DE0E8600081B1D /* CredentialsStorageTest.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CredentialsStorageTest.swift; sourceTree = "<group>"; };
 		2F2D338429DE525000081B1D /* TestAppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TestAppDelegate.swift; sourceTree = "<group>"; };
-		2F2D338629DE52EA00081B1D /* CredentialsStorageTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CredentialsStorageTests.swift; sourceTree = "<group>"; };
+		2F2D338629DE52EA00081B1D /* SpeziStorageTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SpeziStorageTests.swift; sourceTree = "<group>"; };
 		2F61BDC129DD023E00D71D33 /* SpeziStorage */ = {isa = PBXFileReference; lastKnownFileType = wrapper; name = SpeziStorage; path = ../..; sourceTree = "<group>"; };
 		2F6D139228F5F384007C25D6 /* TestApp.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = TestApp.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		2F6D139928F5F386007C25D6 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		2F6D13AC28F5F386007C25D6 /* TestAppUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = TestAppUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		2FA7382B290ADFAA007ACEB9 /* TestApp.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TestApp.swift; sourceTree = "<group>"; };
 		2FB0758A299DDB9000C0B37F /* TestApp.xctestplan */ = {isa = PBXFileReference; lastKnownFileType = text; path = TestApp.xctestplan; sourceTree = "<group>"; };
+		80CC46A12D53B1CB005BDFEE /* CredentialsStorageTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CredentialsStorageTests.swift; sourceTree = "<group>"; };
 		80F81BC12D492A2100F513C3 /* LocalStorageLiveUpdateTestView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocalStorageLiveUpdateTestView.swift; sourceTree = "<group>"; };
 		971B61432B9849C100C0B0E2 /* TestApp.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = TestApp.entitlements; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -57,7 +56,6 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				80F546B22D5263670038AD46 /* SpeziCredentialsStorage in Frameworks */,
 				2F2D336229DE0E5A00081B1D /* SpeziLocalStorage in Frameworks */,
 				2F2D338129DE4A6000081B1D /* XCTestApp in Frameworks */,
 			);
@@ -77,7 +75,7 @@
 			isa = PBXGroup;
 			children = (
 				2F2D336629DE0E7900081B1D /* CredentialsStorageTestsView.swift */,
-				2F2D336729DE0E7900081B1D /* CredentialsStorageTests.swift */,
+				80CC46A12D53B1CB005BDFEE /* CredentialsStorageTests.swift */,
 			);
 			path = CredentialsStorageTests;
 			sourceTree = "<group>";
@@ -119,7 +117,7 @@
 				971B61432B9849C100C0B0E2 /* TestApp.entitlements */,
 				2FA7382B290ADFAA007ACEB9 /* TestApp.swift */,
 				2F2D338429DE525000081B1D /* TestAppDelegate.swift */,
-				2F2D338629DE52EA00081B1D /* CredentialsStorageTests.swift */,
+				2F2D338629DE52EA00081B1D /* SpeziStorageTests.swift */,
 				2F2D336829DE0E7900081B1D /* LocalStorageTests */,
 				2F2D336529DE0E7900081B1D /* CredentialsStorageTests */,
 				2F6D139928F5F386007C25D6 /* Assets.xcassets */,
@@ -130,8 +128,8 @@
 		2F6D13AF28F5F386007C25D6 /* TestAppUITests */ = {
 			isa = PBXGroup;
 			children = (
-				2F2D336F29DE0E8600081B1D /* LocalStorageTests.swift */,
-				2F2D337029DE0E8600081B1D /* CredentialsStorageTests.swift */,
+				2F2D336F29DE0E8600081B1D /* LocalStorageTest.swift */,
+				2F2D337029DE0E8600081B1D /* CredentialsStorageTest.swift */,
 			);
 			path = TestAppUITests;
 			sourceTree = "<group>";
@@ -162,7 +160,6 @@
 			packageProductDependencies = (
 				2F2D336129DE0E5A00081B1D /* SpeziLocalStorage */,
 				2F2D338029DE4A6000081B1D /* XCTestApp */,
-				80F546B12D5263670038AD46 /* SpeziCredentialsStorage */,
 			);
 			productName = Example;
 			productReference = 2F6D139228F5F384007C25D6 /* TestApp.app */;
@@ -257,9 +254,9 @@
 				2F2D336D29DE0E7900081B1D /* LocalStorageTestsView.swift in Sources */,
 				2FA7382C290ADFAA007ACEB9 /* TestApp.swift in Sources */,
 				2F2D336B29DE0E7900081B1D /* CredentialsStorageTestsView.swift in Sources */,
-				2F2D336C29DE0E7900081B1D /* CredentialsStorageTests.swift in Sources */,
 				80F81BC22D492A2100F513C3 /* LocalStorageLiveUpdateTestView.swift in Sources */,
-				2F2D338729DE52EA00081B1D /* CredentialsStorageTests.swift in Sources */,
+				2F2D338729DE52EA00081B1D /* SpeziStorageTests.swift in Sources */,
+				80CC46A22D53B1CB005BDFEE /* CredentialsStorageTests.swift in Sources */,
 				2F2D336E29DE0E7900081B1D /* LocalStorageTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -268,8 +265,8 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				2F2D337129DE0E8600081B1D /* LocalStorageTests.swift in Sources */,
-				2F2D337229DE0E8600081B1D /* CredentialsStorageTests.swift in Sources */,
+				2F2D337129DE0E8600081B1D /* LocalStorageTest.swift in Sources */,
+				2F2D337229DE0E8600081B1D /* CredentialsStorageTest.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -701,10 +698,6 @@
 			isa = XCSwiftPackageProductDependency;
 			package = 2F2D337F29DE4A6000081B1D /* XCRemoteSwiftPackageReference "XCTestExtensions" */;
 			productName = XCTestApp;
-		};
-		80F546B12D5263670038AD46 /* SpeziCredentialsStorage */ = {
-			isa = XCSwiftPackageProductDependency;
-			productName = SpeziCredentialsStorage;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};

@@ -92,7 +92,7 @@ do {
 }
 ```
 
-See ``CredentialsStorage/store(credentials:server:removeDuplicate:storageScope:)`` for more details.
+See ``CredentialsStorage/store(_:for:removeDuplicate:)`` for more details.
 
 
 
@@ -108,7 +108,7 @@ guard let serverCredentials = credentialsStorage.retrieveCredentials("user", ser
 // Use the credentials
 ```
 
-See ``CredentialsStorage/retrieveCredentials(_:server:accessGroup:)`` or ``CredentialsStorage/retrieveAllCredentials(forServer:accessGroup:)`` for more details.
+See ``CredentialsStorage/retrieveCredentials(withUsername:forKey:)`` or ``CredentialsStorage/retrieveAllCredentials(for:)`` for more details.
 
 
 ### Updating Credentials
@@ -133,7 +133,7 @@ do {
 }
 ```
 
-See ``CredentialsStorage/updateCredentials(_:server:newCredentials:newServer:removeDuplicate:storageScope:)`` for more details.
+See ``CredentialsStorage/updateCredentials(forUsername:key:with:removeDuplicate:)`` for more details.
 
 
 ### Deleting Credentials
@@ -152,7 +152,7 @@ do {
 }
 ```
 
-See ``CredentialsStorage/deleteCredentials(_:server:accessGroup:)`` or ``CredentialsStorage/deleteAllCredentials(itemTypes:accessGroup:)`` for more details.
+See ``CredentialsStorage/deleteCredentials(withUsername:for:)`` or ``CredentialsStorage/deleteAllCredentials(itemTypes:accessGroup:)`` for more details.
 
 
 ### Handling Keys

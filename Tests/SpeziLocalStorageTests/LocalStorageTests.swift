@@ -203,10 +203,10 @@ final class LocalStorageTests: XCTestCase {
             localStorage
         }
         
-        let key = LocalStorageKey<NSArray>("testTest123", setting: .unencrypted())
-        let array = NSArray(array: ["hello", "spezi"])
-        try localStorage.store(array, for: key)
-        XCTAssertTrue(array.isEqual(try localStorage.load(key)))
-        XCTAssertFalse(array is Codable) // make sure we're actually using the NSSecureCoding path here...
+        let key = LocalStorageKey<NSString>("testTest123", setting: .unencrypted())
+        let string = "hello, spezi" as NSString
+        try localStorage.store(string, for: key)
+        XCTAssertTrue(string.isEqual(try localStorage.load(key)))
+        XCTAssertFalse(string is Codable) // make sure we're actually using the NSSecureCoding path here...
     }
 }

@@ -15,18 +15,20 @@ public struct CredentialsStorageItemTypes: OptionSet {
     ///
     /// Refers to any keys created using ``CredentialsStorage/createKey(for:size:storageScope:)``.
     public static let keys = CredentialsStorageItemTypes(rawValue: 1 << 0)
+    
     /// Credentials that are created using a server name.
     ///
-    /// Refers to any credentials that are stored using a server name using ``CredentialsStorage/store(credentials:server:removeDuplicate:storageScope:)``.
+    /// Refers to any credentials that are stored using a server name using ``CredentialsStorage/store(_:for:removeDuplicate:)``.
     public static let serverCredentials = CredentialsStorageItemTypes(rawValue: 1 << 1)
+    
     /// Credentials that are created without supplying a server name.
     ///
-    /// Refers to any credentials that are stored without using a server name using ``CredentialsStorage/store(credentials:server:removeDuplicate:storageScope:)``.
+    /// Refers to any credentials that are stored without using a server name using ``CredentialsStorage/store(_:for:removeDuplicate:)``.
     public static let nonServerCredentials = CredentialsStorageItemTypes(rawValue: 1 << 2)
 
     /// Any credentials created with the `CredentialsStorage` module.
     ///
-    /// Refers to any credentials that are created using  ``CredentialsStorage/store(credentials:server:removeDuplicate:storageScope:)``.
+    /// Refers to any credentials that are created using  ``CredentialsStorage/store(_:for:removeDuplicate:)``.
     public static let credentials: CredentialsStorageItemTypes = [.serverCredentials, .nonServerCredentials]
     
     /// All types of items that can be handled by the credentials storage component.
