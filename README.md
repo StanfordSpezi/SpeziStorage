@@ -76,10 +76,6 @@ The `LocalStorage` module enables the on-disk storage of data in mobile applicat
 The `LocalStorage` module defaults to storing data encrypted supported by the `CredentialsStorage` module.
 The [`LocalStorageKey`](https://swiftpackageindex.com/stanfordspezi/spezistorage/documentation/spezilocalstorage/localstoragekey) type is used to define storage entries, and specify how data should be persisted.
 
-- Store or update new elements: [`store(_:for:)`](https://swiftpackageindex.com/stanfordspezi/spezistorage/documentation/spezilocalstorage/localstorage/store(_:for:))
-- Retrieve existing elements: [`load(_:)`](https://swiftpackageindex.com/stanfordspezi/spezistorage/documentation/spezilocalstorage/localstorage/load(_:))
-- Delete existing elements: [`delete(_:)`](https://swiftpackageindex.com/stanfordspezi/spezistorage/documentation/spezilocalstorage/localstorage/delete(_:))
-
 
 ## Credentials Storage
 
@@ -91,22 +87,13 @@ Credentials can be stored in the Secure Enclave (if available) or the Keychain. 
 
 Use the `CredentialsStorage` module to store a set of [`Credentials`](https://swiftpackageindex.com/stanfordspezi/spezistorage/documentation/spezicredentialsstorage/credentials) instances in the Keychain associated with a server that is synchronizable between different devices.
 
-- Store new credentials: [`store(credentials:server:removeDuplicate:storageScope:)`](https://swiftpackageindex.com/stanfordspezi/spezistorage/documentation/spezicredentialsstorage/credentialsstorage/store(credentials:server:removeduplicate:storagescope:))
-- Retrieve existing credentials: [`retrieveCredentials(_:server:accessGroup:)`](https://swiftpackageindex.com/stanfordspezi/spezistorage/documentation/spezicredentialsstorage/credentialsstorage/retrievecredentials(_:server:accessgroup:))
-- Retrieve all matching existing credentials: [`retrieveAllCredentials(forServer:accessGroup:)`](https://swiftpackageindex.com/stanfordspezi/spezistorage/documentation/spezicredentialsstorage/credentialsstorage/retrieveallcredentials(forserver:accessgroup:))
-- Update existing credentials: [`updateCredentials(_:server:newCredentials:newServer:removeDuplicate:storageScope:)`](https://swiftpackageindex.com/stanfordspezi/spezistorage/documentation/spezicredentialsstorage/credentialsstorage/updatecredentials(_:server:newcredentials:newserver:removeduplicate:storagescope:))
-- Delete existing credentials: [`deleteCredentials(_:server:accessGroup:)`](https://swiftpackageindex.com/stanfordspezi/spezistorage/documentation/spezicredentialsstorage/credentialsstorage/deletecredentials(_:server:accessgroup:))
-- Delete all matching existing credentials: [`deleteAllCredentials(itemTypes:accessGroup:)`](https://swiftpackageindex.com/stanfordspezi/spezistorage/documentation/spezicredentialsstorage/credentialsstorage/deleteallcredentials(itemtypes:accessgroup:))
 
 
 ### Handling Keys
 
 Similar to `Credentials` instances, you can also use the `CredentialsStorage` module to interact with keys.
 
-- Create new keys: [`createKey(_:size:storageScope:)`](https://swiftpackageindex.com/stanfordspezi/spezistorage/documentation/spezicredentialsstorage/credentialsstorage/createkey(_:size:storagescope:))
-- Retrieve existing public keys: [`retrievePublicKey(forTag:)`](https://swiftpackageindex.com/stanfordspezi/spezistorage/documentation/spezicredentialsstorage/credentialsstorage/retrievepublickey(fortag:))
-- Retrieve existing private keys: [`retrievePrivateKey(forTag:)`](https://swiftpackageindex.com/stanfordspezi/spezistorage/documentation/spezicredentialsstorage/credentialsstorage/retrieveprivatekey(fortag:))
-- Delete existing keys: [`deleteKeys(forTag:)`](https://swiftpackageindex.com/stanfordspezi/spezistorage/documentation/spezicredentialsstorage/credentialsstorage/deletekeys(fortag:))
+
 
 For more information, please refer to the [API documentation](https://swiftpackageindex.com/StanfordSpezi/SpeziStorage/documentation).
 
