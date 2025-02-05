@@ -19,7 +19,6 @@ The `CredentialsStorage` module allows for the encrypted storage of small chunks
 using Apple's [Keychain](https://developer.apple.com/documentation/security/keychain_services/keychain_items/using_the_keychain_to_manage_user_secrets). 
 
 Credentials can be stored in the Secure Enclave (if available) or the Keychain. Credentials stored in the Keychain can be made synchronizable between different instances of user devices.
-Credentials can be stored in the Secure Enclave (if available) or the Keychain. Credentials stored in the Keychain can be made synchronizable between different instances of user devices.
 
 
 ## Setup
@@ -49,7 +48,7 @@ class ExampleDelegate: SpeziAppDelegate {
 }
 ```
 
-You can then use the `CredentialsStorage` class in any SwiftUI view.
+You can then access the `CredentialsStorage` class in any SwiftUI view.
 
 ```swift
 struct ExampleStorageView: View {
@@ -73,86 +72,50 @@ You can use the `CredentialsStorage` module to store, update, retrieve, and dele
 
 The `CredentialsStorage` module enables the storage of credentials in the Keychain.
 
-```swift
-do {
-    let serverCredentials = Credentials(
-        username: "user",
-        password: "password"
-    )
-    try credentialsStorage.store(
-        credentials: serverCredentials,
-        server: "stanford.edu",
-        storageScope: .keychainSynchronizable
-    )
+Teo kinds of credentials can be stored:
+1. internet passwords, i.e., credentials that are associated with some specific hostname;
+2. generic passwords, which are just a username-password pair and not associated with a hostname.
 
-    // ...
-} catch {
-    // Handle creation error here.
-    // ...
-}
-```
+You use the ``CredentialsStorageKey`` type to define how individual entries are persisted in the `CredentialsStorage`.
 
-See ``CredentialsStorage/store(_:for:removeDuplicate:)`` for more details.
-
-
-
-### Retrieving Credentials
-
-The `CredentialsStorage` module enables the retrieval of existing credentials stored in the Keychain.
+Credentials cannot be mutated once they are stored in the database, but they can be updated by replacing an old entry with a new one.
 
 ```swift
-guard let serverCredentials = credentialsStorage.retrieveCredentials("user", server: "stanford.edu") else {
-    // Handle errors here.
+extension CredentialsStorageKey {
+    static let accountLogin = CredentialsStorageKey(
+        kind: .internetPassword(server: "stanford.edu"),
+        storageScope: .keychainSynchronizable()
+    )
 }
 
-// Use the credentials
-```
 
-See ``CredentialsStorage/retrieveCredentials(withUsername:forKey:)`` or ``CredentialsStorage/retrieveAllCredentials(for:)`` for more details.
+// storing credentials:
+try credentialsStorage.store(
+    Credentials(username: "lukas", password: "isThisSecure?123"),
+    for: .accountLogin
+)
 
-
-### Updating Credentials
-
-The `CredentialsStorage` module enables the update of existing credentials found in the Keychain.
-
-```swift
-do {
-    let newCredentials = Credentials(
-        username: "user",
-        password: "newPassword"
-    )
-    try credentialsStorage.updateCredentials(
-        "user",
-        server: "stanford.edu",
-        newCredentials: newCredentials,
-        newServer: "spezi.stanford.edu"
-    )
-} catch {
-    // Handle update error here.
+// loading credentials:
+if let credentials = try credentialsStorage.retrieveCredentials(withUsername: "lukas", forKey: .accountLogin) {
     // ...
 }
+
+// updating credentials:
+try credentialsStorage.updateCredentials(
+    forUsername: "lukas",
+    key: .accountLogin,
+    with: Credentials(username: "lukas", password: "newAndBetterPassword")
+)
 ```
 
-See ``CredentialsStorage/updateCredentials(forUsername:key:with:removeDuplicate:)`` for more details.
+See also:
+- ``CredentialsStorage/store(_:for:removeDuplicate:)``
+- ``CredentialsStorage/retrieveCredentials(withUsername:forKey:)``
+- ``CredentialsStorage/retrieveAllCredentials(for:)``
+- ``CredentialsStorage/retrieveAllCredentials(ofType:)``
+- ``CredentialsStorage/updateCredentials(forUsername:key:with:removeDuplicate:)``
+- ``CredentialsStorage/deleteCredentials(withUsername:for:)``
 
-
-### Deleting Credentials
-
-The `CredentialsStorage` module enables the deletion of a previously stored set of credentials.
-
-```swift
-do {
-    try credentialsStorage.deleteCredentials(
-        "user",
-        server: "spezi.stanford.edu"
-    )
-} catch {
-    // Handle deletion error here.
-    // ...
-}
-```
-
-See ``CredentialsStorage/deleteCredentials(withUsername:for:)`` or ``CredentialsStorage/deleteAllCredentials(itemTypes:accessGroup:)`` for more details.
 
 
 ### Handling Keys
@@ -169,7 +132,5 @@ Similar to ``Credentials`` instances, you can also use the `CredentialsStorage` 
 
 ### Credentials Storage
 - ``CredentialsStorage``
+- ``CredentialsStorageKey``
 - ``KeyTag``
-- ``CredentialsStorageError``
-- ``CredentialsStorageScope``
-- ``CredentialsStorageItemTypes``

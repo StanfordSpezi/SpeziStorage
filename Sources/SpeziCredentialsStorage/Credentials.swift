@@ -10,9 +10,9 @@
 /// A pair of username and password credentials.
 public struct Credentials: Hashable, Identifiable, Sendable {
     /// The username.
-    public var username: String
+    public let username: String
     /// The password.
-    public var password: String
+    public let password: String
     
     /// Identified by the username.
     public var id: String {

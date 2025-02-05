@@ -39,6 +39,12 @@ import XCTRuntimeAssertions
 /// - ``retrievePublicKey(for:)``
 /// - ``retrievePrivateKey(for:)``
 /// - ``deleteKeys(for:)``
+///
+/// ### Other
+/// - ``CredentialsKind``
+/// - ``CredentialsStorageScope``
+/// - ``CredentialsStorageError``
+/// - ``CredentialsStorageItemTypes``
 public final class CredentialsStorage: Module, DefaultInitializable, EnvironmentAccessible, Sendable {
     /// Configure the `CredentialsStorage` module.
     ///
