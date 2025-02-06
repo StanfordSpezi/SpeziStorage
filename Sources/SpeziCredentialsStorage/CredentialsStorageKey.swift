@@ -16,7 +16,7 @@
 /// extension CredentialsStorageKey {
 ///     static let accountLogin = CredentialsStorageKey(
 ///         kind: .internetPassword(server: "stanford.edu"),
-///         storageScope: .keychainSynchronizable()
+///         storageScope: .keychainSynchronizable
 ///     )
 /// }
 ///
@@ -44,7 +44,10 @@ public struct CredentialsStorageKey: Hashable, Sendable {
     /// - parameter server: The domain name of the server for which this account is.
     /// - parameter scope: How an entry for this key should be persisted using the ``CredentialsStorage``.
     /// - Important: Such credentials cannot be stored in the secure enclave; you must specify one of the keychan options for the storage scope,
-    public static func internetPassword(forServer server: String, withScope scope: CredentialsStorageScope = .keychain()) -> Self {
+    public static func internetPassword(
+        forServer server: String,
+        withScope scope: CredentialsStorageScope = .keychain(userPresence: false, accessGroup: nil)
+    ) -> Self {
         precondition(!scope.isSecureEnclave, "Storing credentials in the secure enclave is not supported by Apple.")
         return .init(kind: .internetPassword(server: server), storageScope: scope)
     }
@@ -52,7 +55,9 @@ public struct CredentialsStorageKey: Hashable, Sendable {
     /// Creates a new Storage Key for storing a generic password, which is not associated with any particular website or server.
     /// - parameter scope: How an entry for this key should be persisted using the ``CredentialsStorage``.
     /// - Important: Such credentials cannot be stored in the secure enclave; you must specify one of the keychan options for the storage scope,
-    public static func genericPassword(withScope scope: CredentialsStorageScope = .keychain()) -> Self {
+    public static func genericPassword(
+        withScope scope: CredentialsStorageScope = .keychain(userPresence: false, accessGroup: nil)
+    ) -> Self {
         precondition(!scope.isSecureEnclave, "Storing credentials in the secure enclave is not supported by Apple.")
         return .init(kind: .genericPassword, storageScope: scope)
     }

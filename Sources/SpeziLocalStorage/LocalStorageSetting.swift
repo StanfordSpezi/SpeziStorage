@@ -45,7 +45,7 @@ public enum LocalStorageSetting {
         case let .encryptedUsingSecureEnclave(userPresence):
             storageScope = .secureEnclave(userPresence: userPresence)
         case let .encryptedUsingKeyChain(userPresence, _):
-            storageScope = .keychain(userPresence: userPresence)
+            storageScope = .keychain(userPresence: userPresence, accessGroup: nil)
         }
         
         let keyTag = KeyTag("LocalStorage.\(storageScope.id)")

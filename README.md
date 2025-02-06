@@ -40,7 +40,6 @@ import Spezi
 import SpeziLocalStorage
 import SpeziCredentialsStorage
 
-
 class ExampleDelegate: SpeziAppDelegate {
     override var configuration: Configuration {
         Configuration {
@@ -58,7 +57,6 @@ You can then use the `LocalStorage` or `CredentialsStorage` class in any SwiftUI
 struct ExampleStorageView: View {
     @Environment(LocalStorage.self) var localStorage
     @Environment(CredentialsStorage.self) var credentialsStorage
-    
     
     var body: some View {
         // ...

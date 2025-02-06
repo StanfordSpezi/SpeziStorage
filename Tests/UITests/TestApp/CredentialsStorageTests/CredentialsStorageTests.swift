@@ -43,7 +43,7 @@ final class CredentialsStorageTests: TestAppTestCase {
         let serverCredentials2 = Credentials(username: "Stanford Spezi", password: "Paul")
         try credentialsStorage.store(serverCredentials2, for: .genericPassword())
         
-        try credentialsStorage.createKey(for: testKeyTag, storageScope: .keychain())
+        try credentialsStorage.createKey(for: testKeyTag, storageScope: .keychain)
         
         try credentialsStorage.deleteAllCredentials()
         
@@ -59,8 +59,8 @@ final class CredentialsStorageTests: TestAppTestCase {
         
         var serverCredentials = Credentials(username: "@PSchmiedmayer", password: "SpeziInventor")
         try credentialsStorage.store(serverCredentials, for: .genericPassword())
-        try credentialsStorage.store(serverCredentials, for: .genericPassword(withScope: .keychainSynchronizable()))
-        try credentialsStorage.store(serverCredentials, for: .genericPassword(withScope: .keychainSynchronizable())) // Overwrite existing credentials
+        try credentialsStorage.store(serverCredentials, for: .genericPassword(withScope: .keychainSynchronizable))
+        try credentialsStorage.store(serverCredentials, for: .genericPassword(withScope: .keychainSynchronizable)) // Overwrite existing credentials
         
         let retrievedCredentials = try XCTUnwrap(credentialsStorage.retrieveCredentials(withUsername: "@PSchmiedmayer", forKey: .genericPassword()))
         try XCTAssertEqual(serverCredentials, retrievedCredentials)
@@ -79,13 +79,13 @@ final class CredentialsStorageTests: TestAppTestCase {
     
     
     func testInternetCredentials() throws {
-        let twitterCredentialsKey = CredentialsStorageKey.internetPassword(forServer: "twitter.com", withScope: .keychain())
+        let twitterCredentialsKey = CredentialsStorageKey.internetPassword(forServer: "twitter.com", withScope: .keychain)
         try credentialsStorage.deleteAllCredentials(itemTypes: .credentials)
         
         var serverCredentials = Credentials(username: "@PSchmiedmayer", password: "SpeziInventor")
         try credentialsStorage.store(serverCredentials, for: twitterCredentialsKey)
         try credentialsStorage.store(serverCredentials, for: twitterCredentialsKey) // Overwrite existing credentials.
-        try credentialsStorage.store(serverCredentials, for: .internetPassword(forServer: "twitter.com", withScope: .keychainSynchronizable()))
+        try credentialsStorage.store(serverCredentials, for: .internetPassword(forServer: "twitter.com", withScope: .keychainSynchronizable))
         
         let retrievedCredentials = try XCTUnwrap(
             credentialsStorage.retrieveCredentials(withUsername: "@PSchmiedmayer", forKey: twitterCredentialsKey)
@@ -158,10 +158,10 @@ final class CredentialsStorageTests: TestAppTestCase {
         
         try XCTAssertNil(try credentialsStorage.retrievePublicKey(for: keyTag))
         
-        try credentialsStorage.createKey(for: keyTag, storageScope: .keychain())
-        try credentialsStorage.createKey(for: keyTag, storageScope: .keychainSynchronizable())
+        try credentialsStorage.createKey(for: keyTag, storageScope: .keychain)
+        try credentialsStorage.createKey(for: keyTag, storageScope: .keychainSynchronizable)
         if SecureEnclave.isAvailable {
-            try credentialsStorage.createKey(for: keyTag, storageScope: .secureEnclave())
+            try credentialsStorage.createKey(for: keyTag, storageScope: .secureEnclave)
         }
         
         let privateKey = try XCTUnwrap(credentialsStorage.retrievePrivateKey(for: keyTag))

@@ -84,7 +84,7 @@ Credentials cannot be mutated once they are stored in the database, but they can
 extension CredentialsStorageKey {
     static let accountLogin = CredentialsStorageKey(
         kind: .internetPassword(server: "stanford.edu"),
-        storageScope: .keychainSynchronizable()
+        storageScope: .keychainSynchronizable
     )
 }
 

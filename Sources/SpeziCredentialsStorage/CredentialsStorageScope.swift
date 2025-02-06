@@ -9,9 +9,10 @@
 import Security
 
 
-/// Define how secure data is stored.
+/// Define how data is stored.
 public enum CredentialsStorageScope: Hashable, Identifiable, Sendable {
     /// Store the element in the Secure Enclave
+    /// - parameter userPresence: indicates whether retrieval of the item requires user presence.
     case secureEnclave(userPresence: Bool = false)
     
     /// Store the element in the Keychain
@@ -31,6 +32,16 @@ public enum CredentialsStorageScope: Hashable, Identifiable, Sendable {
     /// The `accessGroup` defines the access group used to store the element and share it across different applications:
     /// [Sharing access to keychain items among a collection of apps](https://developer.apple.com/documentation/security/keychain_services/keychain_items/sharing_access_to_keychain_items_among_a_collection_of_apps).
     case keychainSynchronizable(accessGroup: String? = nil)
+    
+    
+    /// Store the data in the secure enclave.
+    public static let secureEnclave = Self.secureEnclave(userPresence: false)
+    
+    /// Store the data in the keychain
+    public static let keychain = Self.keychain(userPresence: false, accessGroup: nil)
+    
+    /// Store the data in the keychain, and allow it be synchronized between multiple devices belonging to the user.
+    public static let keychainSynchronizable = Self.keychainSynchronizable(accessGroup: nil)
     
     
     public var id: String {
