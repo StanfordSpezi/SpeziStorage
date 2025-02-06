@@ -64,7 +64,11 @@ public final class CredentialsStorage: Module, DefaultInitializable, Environment
     ///   - storageScope: The  ``CredentialsStorageScope`` used to store the newly generate key.
     /// - Returns: Returns the `SecKey` private key generated and stored in the keychain or the secure enclave.
     @discardableResult
-    public func createKey(for keyTag: KeyTag, size: Int = 256, storageScope: CredentialsStorageScope = .secureEnclave(userPresence: false)) throws -> SecKey {
+    public func createKey(
+        for keyTag: KeyTag,
+        size: Int = 256,
+        storageScope: CredentialsStorageScope = .secureEnclave(userPresence: false)
+    ) throws -> SecKey {
         // The key generation code follows
         // https://developer.apple.com/documentation/security/certificate_key_and_trust_services/keys/protecting_keys_with_the_secure_enclave
         // and
