@@ -24,7 +24,7 @@ func XCTAssertCredentialsMainPropertiesEqual(
     case (.none, .none):
         // ok
         break
-    case (.some(let lhsKind), .some(let rhsKind)):
+    case let (.some(lhsKind), .some(rhsKind)):
         try XCTAssertEqual(lhsKind, rhsKind, file: file, line: line)
     case (.none, .some), (.some, .none):
         // We need to allow this, since it means that one of the two credentials was manually created and the other was obtained via a query,
@@ -60,7 +60,6 @@ final class KeychainStorageTests: TestAppTestCase {
     func runTests() async throws {
         #if os(macOS)
         guard ProcessInfo.processInfo.environment["GITHUB_ACTIONS"] == "true" else {
-            // TODO is this an actual worry we need to have?
             print("Skipping bc running this on a local mac would mess up the keychain and likely delete stuff from other applications")
             return
         }
@@ -70,6 +69,7 @@ final class KeychainStorageTests: TestAppTestCase {
         try testInternetCredentials()
         try testMultipleInternetCredentials()
         try testMultipleCredentials()
+        try testKeys0()
         try testKeys()
         try testKeys2()
     }
@@ -102,7 +102,10 @@ final class KeychainStorageTests: TestAppTestCase {
         
         try XCTAssertEqual(try XCTUnwrap(keychainStorage.retrieveAllCredentials(withUsername: nil, for: appleCredentialsTag)).count, 0)
         try XCTAssertEqual(try XCTUnwrap(keychainStorage.retrieveAllInternetCredentials()).count, 0)
-        try XCTAssertEqual(try XCTUnwrap(keychainStorage.retrieveAllCredentials(withUsername: nil, for: .genericPassword(forService: "speziLogin"))).count, 0)
+        try XCTAssertEqual(
+            try XCTUnwrap(keychainStorage.retrieveAllCredentials(withUsername: nil, for: .genericPassword(forService: "speziLogin"))).count,
+            0
+        )
         try XCTAssertEqual(try XCTUnwrap(keychainStorage.retrieveAllGenericCredentials()).count, 0)
         
         try keychainStorage.deleteAllKeys(accessGroup: .any)
@@ -218,18 +221,15 @@ final class KeychainStorageTests: TestAppTestCase {
     
     
     func testKeys0() throws {
-        print(#function, "ENTER")
-        defer { print(#function, "LEAVE") }
         let tag = CryptographicKeyTag("edu.stanford.spezi.testKey", storage: .keychain, label: "TestKey Label")
         
         let key = try keychainStorage.createKey(for: tag)
         defer {
-            try! keychainStorage.deleteKey(key)
+            try! keychainStorage.deleteKey(key) // swiftlint:disable:this force_try
         }
         try XCTAssertEqual(key.label, tag.label)
         try XCTAssertEqual(key.applicationTag, tag.tagValue)
         try XCTAssertEqual(key.sizeInBits, tag.size)
-        print(unsafeBitCast(key, to: uintptr_t.self), unsafeBitCast(try XCTUnwrap(try keychainStorage.retrievePrivateKey(for: tag)), to: uintptr_t.self))
     }
     
     

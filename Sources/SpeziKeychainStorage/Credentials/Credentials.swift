@@ -7,6 +7,8 @@
 //
 
 
+// swiftlint:disable attributes
+
 import Foundation
 import Security
 
@@ -21,10 +23,10 @@ import Security
 ///
 /// In addition to these accessor properties, it also implements `Hashable` and `Equatable` conformances (based on the underlying attributes),
 /// and provides an extension point for adding additional accessors (via `subscript(_:as:)`).
-public protocol _CredentialsContainer: Hashable, Sendable {
+public protocol _CredentialsContainer: Hashable, Sendable { // swiftlint:disable:this type_name
     /// The raw attributes of the credentials entry.
     /// - Important: This needs to be public for implementation reasons. Do not access this property directly; instead, always use the respective accessors!
-    var _attributes: [CFString: Any] { get set }
+    var _attributes: [CFString: Any] { get set } // swiftlint:disable:this identifier_name
     
     /// The underlying ``CredentialsKind``, if known.
     ///
@@ -47,21 +49,8 @@ public protocol _CredentialsContainer: Hashable, Sendable {
 }
 
 
-extension _CredentialsContainer {
-    public func hash(into hasher: inout Hasher) {
-        for (key, value) in _attributes {
-            hasher.combine(key)
-            if let value = value as? any Hashable {
-                value.hash(into: &hasher)
-            } else {
-                // not perfect but the best we got.
-                // also not overly bad, since this branch is practically unreachable. (everything we expect to be in the dict is Hashable...)
-                let value = value as CFTypeRef
-                hasher.combine(CFHash(value))
-            }
-        }
-    }
-    
+extension _CredentialsContainer { // swiftlint:disable:this file_types_order
+    /// Compares two `_CredentialsContainer`s for equality, based on the contents of their underlying attributes.
     public static func == (lhs: Self, rhs: Self) -> Bool {
         guard lhs._attributes.keys == rhs._attributes.keys else {
             return false
@@ -77,26 +66,30 @@ extension _CredentialsContainer {
             }
         }
     }
+    
+    /// Hashes a `_CredentialsContainer`, based on the contents of its underlying attributes.
+    public func hash(into hasher: inout Hasher) {
+        for (key, value) in _attributes {
+            hasher.combine(key)
+            if let value = value as? any Hashable {
+                value.hash(into: &hasher)
+            } else {
+                // not perfect but the best we got.
+                // also not overly bad, since this branch is practically unreachable. (everything we expect to be in the dict is Hashable...)
+                let value = value as CFTypeRef
+                hasher.combine(CFHash(value))
+            }
+        }
+    }
 }
 
 
-extension _CredentialsContainer {
-    public var kind: CredentialsKind? {
-        if let server = self[kSecAttrServer, as: String.self] {
-            return .internetPassword(server: server)
-        } else if let service = self[kSecAttrService, as: String.self] {
-            return .genericPassword(service: service)
-        } else {
-            return nil
-        }
-    }
-    
+extension _CredentialsContainer { // swiftlint:disable:this file_types_order
     fileprivate subscript<T>(key: CFString, as _: T.Type = T.self) -> T? {
         get { _attributes[key] as? T }
         set { _attributes[key] = newValue }
     }
 }
-
 
 
 // MARK: Credentials Types
@@ -131,6 +124,7 @@ extension _CredentialsContainer {
 /// - ``isNegative``
 ///
 /// ### Subtypes
+/// - ``kind``
 /// - ``GenericCredentials``
 /// - ``InternetCredentials``
 /// - ``asGenericCredentials``
@@ -138,8 +132,18 @@ extension _CredentialsContainer {
 ///
 /// ### Other
 /// - ``CredentialsKind``
-public struct Credentials: _CredentialsContainer, Hashable, @unchecked Sendable {
-    public var _attributes: [CFString: Any]
+public struct Credentials: _CredentialsContainer, Hashable, @unchecked Sendable { // swiftlint:disable:this file_types_order
+    public var _attributes: [CFString: Any] // swiftlint:disable:this identifier_name
+    
+    public var kind: CredentialsKind? {
+        if let server = self[kSecAttrServer, as: String.self] {
+            return .internetPassword(server: server)
+        } else if let service = self[kSecAttrService, as: String.self] {
+            return .genericPassword(service: service)
+        } else {
+            return nil
+        }
+    }
     
     public var asGenericCredentials: GenericCredentials? {
         switch kind {
@@ -159,7 +163,7 @@ public struct Credentials: _CredentialsContainer, Hashable, @unchecked Sendable 
         }
     }
     
-    init(_ _attributes: [CFString: Any]) {
+    init(_ _attributes: [CFString: Any]) { // swiftlint:disable:this identifier_name
         self._attributes = _attributes
     }
     
@@ -170,7 +174,6 @@ public struct Credentials: _CredentialsContainer, Hashable, @unchecked Sendable 
         self.password = password
     }
 }
-
 
 
 /// A generic (i.e., non-internet) credentials entry from the keychain.
@@ -198,7 +201,7 @@ public struct Credentials: _CredentialsContainer, Hashable, @unchecked Sendable 
 /// - ``isNegative``
 /// - ``generic``
 public struct GenericCredentials: _CredentialsContainer, @unchecked Sendable {
-    public var _attributes: [CFString: Any]
+    public var _attributes: [CFString: Any] // swiftlint:disable:this identifier_name
     
     public var kind: CredentialsKind? {
         .genericPassword(service: service)
@@ -208,11 +211,10 @@ public struct GenericCredentials: _CredentialsContainer, @unchecked Sendable {
     
     public var asInternetCredentials: InternetCredentials? { nil }
     
-    init(_ _attributes: [CFString : Any]) {
+    init(_ _attributes: [CFString: Any]) { // swiftlint:disable:this identifier_name
         self._attributes = _attributes
     }
 }
-
 
 
 /// An internet credentials entry from the keychain.
@@ -243,7 +245,7 @@ public struct GenericCredentials: _CredentialsContainer, @unchecked Sendable {
 /// - ``port``
 /// - ``path``
 public struct InternetCredentials: _CredentialsContainer, @unchecked Sendable {
-    public var _attributes: [CFString: Any]
+    public var _attributes: [CFString: Any] // swiftlint:disable:this identifier_name
     
     public var kind: CredentialsKind? {
         .internetPassword(server: server)
@@ -253,7 +255,7 @@ public struct InternetCredentials: _CredentialsContainer, @unchecked Sendable {
     
     public var asInternetCredentials: InternetCredentials? { self }
     
-    init(_ _attributes: [CFString : Any]) {
+    init(_ _attributes: [CFString: Any]) { // swiftlint:disable:this identifier_name
         self._attributes = _attributes
     }
 }
@@ -272,7 +274,7 @@ extension _CredentialsContainer {
     /// The keychain access group to which the item belongs, if applicable.
     @_documentation(visibility: public)
     public var accessGroup: String {
-        self[kSecAttrAccessGroup]!
+        self[kSecAttrAccessGroup] ?? ""
     }
     
     /// The item's accessibilty option, which defines under which circumstances the item can be accessed.
@@ -359,14 +361,14 @@ extension _CredentialsContainer {
     /// The username stored in the Credentials item.
     @_documentation(visibility: public)
     public var username: String {
-        get { self[kSecAttrAccount]! }
+        get { self[kSecAttrAccount] ?? "" }
         set { self[kSecAttrAccount] = newValue }
     }
     
     /// The password stored in the Credentials item.
     @_documentation(visibility: public)
     public var password: String {
-        get { self[kSecValueData, as: Data.self].map { String(decoding: $0, as: UTF8.self) }! }
+        get { self[kSecValueData, as: Data.self].map { String(decoding: $0, as: UTF8.self) } ?? "" }
         set { self[kSecValueData] = Data(newValue.utf8) }
     }
 }
@@ -379,7 +381,7 @@ extension GenericCredentials {
     /// The service with which this generic credentials entry is associated.
     @_documentation(visibility: public)
     public var service: String {
-        self[kSecAttrService]!
+        self[kSecAttrService] ?? ""
     }
     
     /// Optional, additional data associated with this item.
@@ -397,13 +399,13 @@ extension InternetCredentials {
     /// The item's security domain.
     @_documentation(visibility: public)
     public var securityDomain: String {
-        self[kSecAttrSecurityDomain]!
+        self[kSecAttrSecurityDomain] ?? ""
     }
     
     /// The server (i.e., a website hostname or IP address) associated with this internet credentials entry.
     @_documentation(visibility: public)
     public var server: String {
-        self[kSecAttrServer]!
+        self[kSecAttrServer] ?? ""
     }
     
     /// The credentials entry's protocol.
@@ -446,3 +448,5 @@ extension Equatable {
         return self == other
     }
 }
+
+// swiftlint:enable attributes

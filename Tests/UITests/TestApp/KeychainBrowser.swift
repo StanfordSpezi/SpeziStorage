@@ -11,7 +11,7 @@ import SpeziKeychainStorage
 import SwiftUI
 
 
-struct KeychainBrowser: View {
+struct KeychainBrowser: View { // swiftlint:disable:this file_types_order
     @Environment(KeychainStorage.self) private var keychain
     
     @State private var keys: [SecKey] = []
@@ -20,71 +20,81 @@ struct KeychainBrowser: View {
     
     var body: some View {
         Form {
-            Section {
-                Button("Retrieve Keys") {
-                    updateKeys()
-                }
-                Button("Retrieve Credentials") {
-                    updateCredentials()
-                }
-            }
-            Section {
-                Button("Add Key Entry") {
-                    let tag1 = CryptographicKeyTag("edu.stanford.spezi.testKey1", storage: .secureEnclave, label: "Test Key 1")
-                    let tag2 = CryptographicKeyTag("edu.stanford.spezi.testKey2", storage: .keychain, label: "Test Key 2")
-                    _ = try? keychain.createKey(for: tag1)
-                    _ = try? keychain.createKey(for: tag2)
-                    updateKeys()
-                }
-                Button("Add Credentials Entry") {
-                    let tag1 = CredentialsTag.genericPassword(forService: "service_name")
-                    let tag2 = CredentialsTag.internetPassword(forServer: "stanford.edu")
-                    try? keychain.store(Credentials(username: "lukas", password: "1234"), for: tag1)
-                    try? keychain.store(Credentials(username: "lukas", password: "5678"), for: tag2)
-                    updateCredentials()
-                }
-            }
-            Section {
-                Button("Delete all Keys", role: .destructive) {
-                    try? keychain.deleteAllKeys(accessGroup: .any)
-                    updateKeys()
-                }
-                Button("Delete all Credentials (generic+internet)", role: .destructive) {
-                    try? keychain.deleteAllCredentials(accessGroup: .any)
-                    updateCredentials()
-                }
-            }
-            Section("Generic Credentials") {
-                ForEach(genericCredentials, id: \.self) { credentials in
-                    NavigationLink {
-                        CredentialsDetailsView(credentials: credentials)
-                    } label: {
-                        Text("\(credentials)")
-                    }
-                }
-            }
-            Section("Internet Credentials") {
-                ForEach(internetCredentials, id: \.self) { credentials in
-                    NavigationLink {
-                        CredentialsDetailsView(credentials: credentials)
-                    } label: {
-                        Text("\(credentials)")
-                    }
-                }
-            }
-            Section("Keys") {
-                ForEach(keys, id: \.self) { key in
-                    NavigationLink {
-                        KeyDetailsView(key: key)
-                    } label: {
-                        Text("\(key)")
-                    }
-                }
-            }
+            formActionSections
+            formContentSections
         }
         .refreshable {
             updateKeys()
             updateCredentials()
+        }
+    }
+    
+    
+    @ViewBuilder private var formActionSections: some View {
+        Section {
+            Button("Retrieve Keys") {
+                updateKeys()
+            }
+            Button("Retrieve Credentials") {
+                updateCredentials()
+            }
+        }
+        Section {
+            Button("Add Key Entry") {
+                let tag1 = CryptographicKeyTag("edu.stanford.spezi.testKey1", storage: .secureEnclave, label: "Test Key 1")
+                let tag2 = CryptographicKeyTag("edu.stanford.spezi.testKey2", storage: .keychain, label: "Test Key 2")
+                _ = try? keychain.createKey(for: tag1)
+                _ = try? keychain.createKey(for: tag2)
+                updateKeys()
+            }
+            Button("Add Credentials Entry") {
+                let tag1 = CredentialsTag.genericPassword(forService: "service_name")
+                let tag2 = CredentialsTag.internetPassword(forServer: "stanford.edu")
+                try? keychain.store(Credentials(username: "lukas", password: "1234"), for: tag1)
+                try? keychain.store(Credentials(username: "lukas", password: "5678"), for: tag2)
+                updateCredentials()
+            }
+        }
+        Section {
+            Button("Delete all Keys", role: .destructive) {
+                try? keychain.deleteAllKeys(accessGroup: .any)
+                updateKeys()
+            }
+            Button("Delete all Credentials (generic+internet)", role: .destructive) {
+                try? keychain.deleteAllCredentials(accessGroup: .any)
+                updateCredentials()
+            }
+        }
+    }
+    
+    
+    @ViewBuilder private var formContentSections: some View {
+        Section("Generic Credentials") {
+            ForEach(genericCredentials, id: \.self) { credentials in
+                NavigationLink {
+                    CredentialsDetailsView(credentials: credentials)
+                } label: {
+                    Text("\(credentials)")
+                }
+            }
+        }
+        Section("Internet Credentials") {
+            ForEach(internetCredentials, id: \.self) { credentials in
+                NavigationLink {
+                    CredentialsDetailsView(credentials: credentials)
+                } label: {
+                    Text("\(credentials)")
+                }
+            }
+        }
+        Section("Keys") {
+            ForEach(keys, id: \.self) { key in
+                NavigationLink {
+                    KeyDetailsView(key: key)
+                } label: {
+                    Text("\(key)")
+                }
+            }
         }
     }
     
@@ -101,7 +111,6 @@ struct KeychainBrowser: View {
         internetCredentials = (try? keychain.retrieveAllInternetCredentials()) ?? []
     }
 }
-
 
 
 private struct CredentialsDetailsView: View {
@@ -140,7 +149,6 @@ private struct CredentialsDetailsView: View {
         }
     }
 }
-
 
 
 private struct KeyDetailsView: View {

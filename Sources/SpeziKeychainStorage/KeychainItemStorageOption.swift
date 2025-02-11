@@ -42,24 +42,25 @@ extension KeychainItemStorageOption {
 
 
 extension KeychainItemStorageOption {
+    /// A string value uniquely identifying this storage option.
     public var id: String {
         switch self {
-        case .secureEnclave(let requireUserPresence):
-            return "secureEnclave(\(requireUserPresence))"
-        case .keychain(let requireUserPresence, .none):
-            return "keychain(\(requireUserPresence))"
-        case .keychain(let requireUserPresence, .some(let accessGroup)):
-            return "keychain(\(requireUserPresence);\(accessGroup))"
+        case let .secureEnclave(requireUserPresence):
+            "secureEnclave(\(requireUserPresence))"
+        case let .keychain(requireUserPresence, .none):
+            "keychain(\(requireUserPresence))"
+        case let .keychain(requireUserPresence, .some(accessGroup)):
+            "keychain(\(requireUserPresence);\(accessGroup))"
         case .keychainSynchronizable(accessGroup: .none):
-            return "keychainSynchronizable"
-        case .keychainSynchronizable(accessGroup: .some(let accessGroup)):
-            return "keychainSynchronizable(\(accessGroup))"
+            "keychainSynchronizable"
+        case let .keychainSynchronizable(accessGroup: .some(accessGroup)):
+            "keychainSynchronizable(\(accessGroup))"
         }
     }
     
     var requireUserPresence: Bool {
         switch self {
-        case let .secureEnclave(requireUserPresence), let .keychain(requireUserPresence, _):
+        case .secureEnclave(let requireUserPresence), .keychain(let requireUserPresence, _):
             requireUserPresence
         case .keychainSynchronizable:
             false

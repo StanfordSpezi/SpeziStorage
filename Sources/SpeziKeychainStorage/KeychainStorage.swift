@@ -155,7 +155,7 @@ extension KeychainStorage {
     func addAccessControlFields(for storageOption: KeychainItemStorageOption, to attrs: inout [String: Any]) throws(KeychainError) {
         // Follows https://developer.apple.com/documentation/security/keychain_services/keychain_items/restricting_keychain_item_accessibility
         
-        let protection: CFString // TODO maybe allow this to be specified via the API?
+        let protection: CFString // IDEA maybe allow this to be specified via the API? or at least make the API more fine-grained?
         var flags = SecAccessControlCreateFlags()
         
         switch storageOption {

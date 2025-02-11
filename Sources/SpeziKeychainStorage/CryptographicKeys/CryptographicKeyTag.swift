@@ -33,7 +33,12 @@ public struct CryptographicKeyTag: Hashable, Sendable {
     public var keyType: CFString { kSecAttrKeyTypeECSECPrimeRandom }
     
     /// Creates a new Key Tag
-    public init(_ tagValue: String, size: Int = 256, storage: KeychainItemStorageOption, label: String? = nil) {
+    public init(
+        _ tagValue: String,
+        size: Int = 256, // swiftlint:disable:this function_default_parameter_at_end
+        storage: KeychainItemStorageOption,
+        label: String? = nil
+    ) {
         self.tagValue = tagValue
         self.size = size
         self.storage = storage

@@ -11,9 +11,9 @@ import Foundation
 import Security
 
 
+// MARK: Adding Credentials
+
 extension KeychainStorage {
-    // MARK: Adding Credentials
-    
     /// Store credentials into the keychain.
     ///
     /// - parameter credentials: The credentials which should be stored
@@ -57,9 +57,22 @@ extension KeychainStorage {
         try deleteCredentials(withUsername: username, for: tag)
         try store(newCredentials, for: tag)
     }
-    
-    
-    // MARK: Retrieving Credentials
+}
+
+
+// MARK: Retrieving Credentials
+
+extension KeychainStorage {
+    private enum RetrieveCredentialsLimit {
+        case one, all
+        
+        var rawValue: CFString {
+            switch self {
+            case .one: kSecMatchLimitOne
+            case .all: kSecMatchLimitAll
+            }
+        }
+    }
     
     /// Retrieves the first matching credentials for the specified tag that match the specified username
     /// - parameter username: The username to check for. Specify `nil` to ignore this and fetch the first matching credentials that match the tag, regardless of their usernames.
@@ -72,7 +85,10 @@ extension KeychainStorage {
     /// Retrieves all credentials for the specified tag that match the specified username
     /// - parameter username: The username to check for. Specify `nil` to ignore this and fetch all credentials that match the tag, regardless of their usernames.
     /// - parameter tag: The ``CredentialsTag`` whose entries should be queried.
-    public func retrieveAllCredentials(withUsername username: String? = nil, for tag: CredentialsTag) throws -> [Credentials] {
+    public func retrieveAllCredentials(
+        withUsername username: String? = nil, // swiftlint:disable:this function_default_parameter_at_end
+        for tag: CredentialsTag
+    ) throws -> [Credentials] {
         var query: [String: Any] = [:]
         if let username {
             query[kSecAttrAccount as String] = username
@@ -128,17 +144,6 @@ extension KeychainStorage {
     }
     
     
-    private enum RetrieveCredentialsLimit {
-        case one, all
-        
-        var rawValue: CFString {
-            switch self {
-            case .one: kSecMatchLimitOne
-            case .all: kSecMatchLimitAll
-            }
-        }
-    }
-    
     private func runRetrieveCredentialsQuery(limit: RetrieveCredentialsLimit, extraQueryEntries: [String: Any]) throws -> [Credentials] {
         var query: [String: Any] = [
             kSecAttrSynchronizable as String: kSecAttrSynchronizableAny,
@@ -170,10 +175,12 @@ extension KeychainStorage {
         }
         return items.map { Credentials($0) }
     }
-    
-    
-    // MARK: Deleting Credentials
-    
+}
+
+
+// MARK: Deleting Credentials
+
+extension KeychainStorage {
     /// Deletes all matching credentials entries from the keychain.
     ///
     /// If no matching credentials entries exist in the keychain, nothing will be deleted.
@@ -189,7 +196,10 @@ extension KeychainStorage {
     ///
     /// - parameter username: The username associated with the credentials.
     /// - parameter tag: The tag identifying the credentials entry.
-    public func deleteCredentials(withUsername username: String? = nil, for tag: CredentialsTag) throws {
+    public func deleteCredentials(
+        withUsername username: String? = nil, // swiftlint:disable:this function_default_parameter_at_end
+        for tag: CredentialsTag
+    ) throws {
         do {
             try execute(SecItemDelete(queryFor(username: username, tag: tag) as CFDictionary))
         } catch .itemNotFound {
@@ -202,12 +212,15 @@ extension KeychainStorage {
     
     // MARK: Bulk Deletion
     
+    /// Deletes all credentials from the keychain.
+    /// - parameter accessGroup: optional filter determining the access group whose credentials should be deleted.
     public func deleteAllCredentials(accessGroup: AccessGroupFilter) throws {
         try deleteAllGenericCredentials(service: nil, accessGroup: accessGroup)
         try deleteAllInternetCredentials(server: nil, accessGroup: accessGroup)
     }
     
     /// Deletes all generic credentials from the keychain.
+    /// - parameter accessGroup: optional filter determining the access group whose credentials should be deleted.
     public func deleteAllGenericCredentials(service: String?, accessGroup: AccessGroupFilter) throws {
         var query = queryFor(username: nil, kind: nil, synchronizable: nil, accessGroup: accessGroup.stringValue)
         query[kSecClass as String] = kSecClassGenericPassword

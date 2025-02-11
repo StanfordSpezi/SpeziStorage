@@ -49,7 +49,6 @@ extension KeychainStorage {
     }
     
     
-    
     /// Create a `ECSECPrimeRandom` key for a specified size.
     /// - Parameters:
     ///   - keyTag: The tag used to define the key in the keychain or the secure enclave, and for key creation purposes.
@@ -108,9 +107,7 @@ extension KeychainStorage {
     }
     
     
-    
     // MARK: Key Retrieval
-    
     
     /// Retrieves a private key stored in the keychain or the secure enclave identified by a `tag`.
     /// - Parameter keyTag: The tag used to identify the key in the keychain or the secure enclave.
@@ -128,7 +125,7 @@ extension KeychainStorage {
     }
     
     
-    private func retrieveKey(_ keyClass: KeyClass, for tag: CryptographicKeyTag) throws -> SecKey? {
+    private func retrieveKey(_ keyClass: KeyClass, for tag: CryptographicKeyTag) throws -> SecKey? { // swiftlint:disable:this cyclomatic_complexity
         var query: [String: Any] = [
             kSecClass as String: kSecClassKey,
             kSecAttrApplicationTag as String: Data(tag.tagValue.utf8),

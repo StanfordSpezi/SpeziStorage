@@ -10,14 +10,14 @@ import Foundation
 import Security
 
 
-extension SecKey {
+extension SecKey { // swiftlint:disable:this file_types_order
     /// The key's "simple" attributes, as returned from `SecKeyCopyAttributes`.
-    private var simpleAttributes: [String: Any]? {
-        SecKeyCopyAttributes(self) as? [String: Any]
+    private var simpleAttributes: [String: Any] {
+        SecKeyCopyAttributes(self) as? [String: Any] ?? [:]
     }
     
     /// The key's "extended" attributes, as returned from `SecItemCopyMatching`.
-    private var extendedAttributes: [String: Any]? {
+    private var extendedAttributes: [String: Any] {
         let query: [String: Any] = [
             kSecClass as String: kSecClassKey,
             kSecValueRef as String: self,
@@ -25,16 +25,16 @@ extension SecKey {
         ]
         var attrs: CFTypeRef?
         let status = SecItemCopyMatching(query as CFDictionary, &attrs)
-        return status == errSecSuccess ? attrs as? [String: Any] : nil
+        return (status == errSecSuccess ? attrs as? [String: Any] : nil) ?? [:]
     }
     
     
-    private func readSimpleAttr<R>(_ key: CFString, as _: R.Type = R.self) -> R? {
-        simpleAttributes?[key as String] as? R
+    private func readSimpleAttr<R>(_ key: CFString, as _: R.Type = R.self) -> R? { // swiftlint:disable:this type_contents_order
+        simpleAttributes[key as String] as? R
     }
     
-    private func readExtendedAttr<R>(_ key: CFString, as _: R.Type = R.self) -> R? {
-        extendedAttributes?[key as String] as? R
+    private func readExtendedAttr<R>(_ key: CFString, as _: R.Type = R.self) -> R? { // swiftlint:disable:this type_contents_order
+        extendedAttributes[key as String] as? R
     }
     
     /// Fetches or computes a private key's corresponding public key.
@@ -42,10 +42,13 @@ extension SecKey {
         SecKeyCopyPublicKey(self)
     }
     
+    /// The `SecKey`'s application tag, if known.
     public var applicationTag: String? {
-        readExtendedAttr(kSecAttrApplicationTag, as: Data.self).flatMap { String(data: $0, encoding: .utf8) }
+        readExtendedAttr(kSecAttrApplicationTag, as: Data.self)
+            .flatMap { String(data: $0, encoding: .utf8) }
     }
     
+    /// The `SecKey`'s application label, if known.
     public var applicationLabel: Data? {
         readSimpleAttr(kSecAttrApplicationLabel)
     }
@@ -55,10 +58,12 @@ extension SecKey {
         readExtendedAttr(kSecAttrLabel)
     }
     
+    /// The `SecKey`'s key type, if known
     public var keyType: String? {
         readSimpleAttr(kSecAttrKeyType)
     }
     
+    /// The `SecKey`'s key class, if known
     public var keyClass: KeychainStorage.KeyClass? {
         readSimpleAttr(kSecAttrKeyClass, as: CFString.self)
             .flatMap { .init($0) }
@@ -96,48 +101,48 @@ extension SecKey {
     }
     
     /// Whether the `SecKey` is permanently persisted to either the keychain or the secure enclave
-    public var isPermanent: Bool? {
-        readExtendedAttr(kSecAttrIsPermanent)
+    public var isPermanent: Bool {
+        readExtendedAttr(kSecAttrIsPermanent) == kCFBooleanTrue
     }
     
     /// The `SecKey`'s effective size, in bits
     public var effectiveKeySize: Int? {
-        return readExtendedAttr(kSecAttrEffectiveKeySize)
+        readExtendedAttr(kSecAttrEffectiveKeySize)
     }
     
     /// Whether the `SecKey` can be used for encryption
-    public var canEncrypt: Bool? {
-        readSimpleAttr(kSecAttrCanEncrypt)
+    public var canEncrypt: Bool {
+        readSimpleAttr(kSecAttrCanEncrypt) == kCFBooleanTrue
     }
     
     /// Whether the `SecKey` can be used for decryption
-    public var canDecrypt: Bool? {
-        readSimpleAttr(kSecAttrCanDecrypt)
+    public var canDecrypt: Bool {
+        readSimpleAttr(kSecAttrCanDecrypt) == kCFBooleanTrue
     }
     
     /// Whether the `SecKey` can be used for derivation
-    public var canDerive: Bool? {
-        readSimpleAttr(kSecAttrCanDerive)
+    public var canDerive: Bool {
+        readSimpleAttr(kSecAttrCanDerive) == kCFBooleanTrue
     }
     
     /// Whether the `SecKey` can be used for signing
-    public var canSign: Bool? {
-        readSimpleAttr(kSecAttrCanSign)
+    public var canSign: Bool {
+        readSimpleAttr(kSecAttrCanSign) == kCFBooleanTrue
     }
     
     /// Whether the `SecKey` can be used for signature verification
-    public var canVerify: Bool? {
-        readSimpleAttr(kSecAttrCanVerify)
+    public var canVerify: Bool {
+        readSimpleAttr(kSecAttrCanVerify) == kCFBooleanTrue
     }
     
     /// Whether the `SecKey` can be used for wrapping
-    public var canWrap: Bool? {
-        readExtendedAttr(kSecAttrCanWrap)
+    public var canWrap: Bool {
+        readExtendedAttr(kSecAttrCanWrap) == kCFBooleanTrue
     }
     
     /// Whether the `SecKey` can be used for unwrapping
-    public var canUnwrap: Bool? {
-        readExtendedAttr(kSecAttrCanUnwrap)
+    public var canUnwrap: Bool {
+        readExtendedAttr(kSecAttrCanUnwrap) == kCFBooleanTrue
     }
     
     /// Whether the `SecKey` is synchronizable.
@@ -158,21 +163,22 @@ public enum KeychainItemTokenID: Hashable, Sendable {
     /// The keychain item is stored in the secure enclave.
     case secureEnclave
     
+    /// The underlying `CFString` value.
+    public var rawValue: CFString {
+        switch self {
+        case .secureEnclave:
+            kSecAttrTokenIDSecureEnclave
+        }
+    }
+    
     /// Creates a `KeychainItemTokenID` from its underlying `CFString` value.
+    /// - returns: `nil`, if `rawValue` doesn't match any known constant.
     public init?(_ rawValue: CFString) {
         switch rawValue {
         case kSecAttrTokenIDSecureEnclave:
             self = .secureEnclave
         default:
             return nil
-        }
-    }
-    
-    /// The underlying `CFString` value.
-    public var rawValue: CFString {
-        switch self {
-        case .secureEnclave:
-            kSecAttrTokenIDSecureEnclave
         }
     }
 }

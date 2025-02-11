@@ -11,6 +11,9 @@ import Foundation
 import Security
 
 
+/// Defines when, and under which conditions a keychain item can be accessed.
+///
+/// This enum models the constants defined [here](https://developer.apple.com/documentation/security/item-attribute-keys-and-values#Accessibility-Values).
 public enum KeychainItemAccessibility: Hashable, Sendable {
     /// The data in the keychain can only be accessed when the device is unlocked. Only available if a passcode is set on the device.
     case accessibleWhenPasscodeSetThisDeviceOnly
@@ -28,23 +31,7 @@ public enum KeychainItemAccessibility: Hashable, Sendable {
     case accessibleAfterFirstUnlock
     
     
-    public init?(_ value: CFString) {
-        switch value {
-        case kSecAttrAccessibleWhenPasscodeSetThisDeviceOnly:
-            self = .accessibleWhenPasscodeSetThisDeviceOnly
-        case kSecAttrAccessibleWhenUnlockedThisDeviceOnly:
-            self = .accessibleWhenUnlockedThisDeviceOnly
-        case kSecAttrAccessibleWhenUnlocked:
-            self = .accessibleWhenUnlocked
-        case kSecAttrAccessibleAfterFirstUnlockThisDeviceOnly:
-            self = .accessibleAfterFirstUnlockThisDeviceOnly
-        case kSecAttrAccessibleAfterFirstUnlock:
-            self = .accessibleAfterFirstUnlock
-        default:
-            return nil
-        }
-    }
-    
+    /// The underlying raw value.
     public var rawValue: CFString {
         switch self {
         case .accessibleWhenPasscodeSetThisDeviceOnly:
@@ -57,6 +44,26 @@ public enum KeychainItemAccessibility: Hashable, Sendable {
             kSecAttrAccessibleAfterFirstUnlockThisDeviceOnly
         case .accessibleAfterFirstUnlock:
             kSecAttrAccessibleAfterFirstUnlock
+        }
+    }
+    
+    
+    /// Creates an accessibility definition, based on its underlying raw value.
+    /// - returns: `nil`, if `rawValue` doesn't match any known constant.
+    public init?(_ rawValue: CFString) {
+        switch rawValue {
+        case kSecAttrAccessibleWhenPasscodeSetThisDeviceOnly:
+            self = .accessibleWhenPasscodeSetThisDeviceOnly
+        case kSecAttrAccessibleWhenUnlockedThisDeviceOnly:
+            self = .accessibleWhenUnlockedThisDeviceOnly
+        case kSecAttrAccessibleWhenUnlocked:
+            self = .accessibleWhenUnlocked
+        case kSecAttrAccessibleAfterFirstUnlockThisDeviceOnly:
+            self = .accessibleAfterFirstUnlockThisDeviceOnly
+        case kSecAttrAccessibleAfterFirstUnlock:
+            self = .accessibleAfterFirstUnlock
+        default:
+            return nil
         }
     }
 }
