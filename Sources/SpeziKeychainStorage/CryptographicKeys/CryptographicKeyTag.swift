@@ -20,7 +20,7 @@ public struct CryptographicKeyTag: Hashable, Sendable {
     
     /// The key's label.
     ///
-    /// When using ``Keychain/createKey(for:size:)`` to create a cryptographic key, this value is used to define the key's `kSecAttrLabel`.
+    /// When using ``KeychainStorage/createKey(for:)`` to create a cryptographic key, this value is used to define the key's `kSecAttrLabel`.
     public let label: String?
     
     /// How the key should be stored.

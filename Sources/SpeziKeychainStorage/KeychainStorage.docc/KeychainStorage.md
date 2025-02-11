@@ -149,4 +149,3 @@ See ``KeychainStorage`` for more info.
 
 ### Keychain Storage
 - ``KeychainStorage``
-- ``KeychainItemStorageOption``

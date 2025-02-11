@@ -49,6 +49,7 @@ public struct CredentialsTag: Hashable, Sendable {
     /// Creates a new Storage Key for storing an internet password.
     /// - parameter server: The domain name of the server for which this account is.
     /// - parameter storage: How an entry for this key should be persisted using the ``KeychainStorage``.
+    /// - parameter label: Optional label intended to be used when displaying credentials entries in a user-visible context.
     /// - Important: Such credentials cannot be stored in the secure enclave; you must specify one of the keychan options for the storage scope,
     public static func internetPassword(
         forServer server: String,
@@ -60,7 +61,9 @@ public struct CredentialsTag: Hashable, Sendable {
     }
     
     /// Creates a new Storage Key for storing a generic password, which is not associated with any particular website or server.
+    /// - parameter service: The service credentials entries using this tag are associated with.
     /// - parameter storage: How an entry for this key should be persisted using the ``KeychainStorage``.
+    /// - parameter label: Optional label intended to be used when displaying credentials entries in a user-visible context.
     /// - Important: Such credentials cannot be stored in the secure enclave; you must specify one of the keychan options for the storage scope,
     public static func genericPassword(
         forService service: String,

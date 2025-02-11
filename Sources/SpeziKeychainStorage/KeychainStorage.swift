@@ -25,6 +25,7 @@ import Spezi
 ///
 /// ### Credential Storage
 /// - ``Credentials``
+/// - ``CredentialsTag``
 /// - ``store(_:for:replaceDuplicates:)``
 /// - ``updateCredentials(withUsername:for:with:)``
 /// - ``retrieveCredentials(withUsername:for:)``
@@ -38,13 +39,15 @@ import Spezi
 /// - ``deleteAllCredentials(accessGroup:)``
 ///
 /// ### Cryptographic Key Storage
+/// - ``CryptographicKeyTag``
 /// - ``createKey(for:)``
 /// - ``retrievePublicKey(for:)``
 /// - ``retrievePrivateKey(for:)``
-/// - ``retrieveAllKeys(_:)``
+/// - ``retrieveAllKeys(_:accessGroup:)``
 /// - ``deleteKey(for:)``
 /// - ``deleteKey(_:)``
 /// - ``deleteAllKeys(accessGroup:)``
+/// - ``Security/SecKey``
 ///
 /// ### Other
 /// - ``CredentialsKind``
