@@ -141,5 +141,5 @@ extension LocalStorageKey {
 
 extension LocalStorageSetting {
     /// The default storage setting.
-    public static var `default`: Self { .encryptedUsingKeyChain() }
+    public static var `default`: Self { .encryptedUsingKeychain() }
 }

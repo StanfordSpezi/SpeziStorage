@@ -9,7 +9,7 @@
 import Foundation
 import Security
 import Spezi
-import SpeziCredentialsStorage
+import SpeziKeychainStorage
 import SpeziFoundation
 
 
@@ -34,7 +34,7 @@ import SpeziFoundation
 /// - ``delete(_:)``
 /// - ``deleteAll()``
 public final class LocalStorage: Module, DefaultInitializable, EnvironmentAccessible, @unchecked Sendable {
-    @Dependency(CredentialsStorage.self) private var credentialsStorage
+    @Dependency(KeychainStorage.self) private var keychainStorage
     @Application(\.logger) private var logger
     
     private let fileManager = FileManager.default
@@ -112,7 +112,7 @@ public final class LocalStorage: Module, DefaultInitializable, EnvironmentAccess
         let data = try key.encode(value)
 
         // Determine if the data should be encrypted or not:
-        guard let keys = try key.setting.keys(from: credentialsStorage) else {
+        guard let keys = try key.setting.keys(from: keychainStorage) else {
             // No encryption:
             try data.write(to: fileURL)
             try setResourceValues()
@@ -165,7 +165,7 @@ public final class LocalStorage: Module, DefaultInitializable, EnvironmentAccess
         let data = try Data(contentsOf: fileURL)
 
         // Determine if the data should be decrypted or not:
-        guard let keys = try key.setting.keys(from: credentialsStorage) else {
+        guard let keys = try key.setting.keys(from: keychainStorage) else {
             return try key.decode(data)
         }
 

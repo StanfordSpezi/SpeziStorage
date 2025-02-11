@@ -9,13 +9,13 @@
 import XCTest
 
 
-final class CredentialsStorageTests: XCTestCase {
+final class KeychainStorageTests: XCTestCase {
     @MainActor
-    func testCredentialsStorage() throws {
+    func testKeychainStorage() throws {
         let app = XCUIApplication()
         app.launch()
         
-        app.buttons["Credentials Storage"].tap()
+        app.buttons["Keychain Storage"].tap()
         
         XCTAssertTrue(app.staticTexts["Passed"].waitForExistence(timeout: 2))
     }

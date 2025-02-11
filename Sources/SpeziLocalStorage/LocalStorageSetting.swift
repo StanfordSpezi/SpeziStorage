@@ -8,7 +8,7 @@
 
 import Security
 import Spezi
-import SpeziCredentialsStorage
+import SpeziKeychainStorage
 
 
 /// Configure how data is encrypyed, stored, and retrieved.
@@ -20,14 +20,14 @@ public enum LocalStorageSetting {
     /// Encrypted using a `eciesEncryptionCofactorX963SHA256AESGCM` key stored in the Secure Enclave.
     case encryptedUsingSecureEnclave(userPresence: Bool = false)
     /// Encrypted using a `eciesEncryptionCofactorX963SHA256AESGCM` key stored in the Keychain.
-    case encryptedUsingKeyChain(userPresence: Bool = false, excludeFromBackup: Bool = true)
+    case encryptedUsingKeychain(userPresence: Bool = false, excludeFromBackup: Bool = true)
     
     
     var isExcludedFromBackup: Bool {
         switch self {
         case let .unencrypted(excludeFromBackup),
              let .encrypted(_, _, excludeFromBackup),
-             let .encryptedUsingKeyChain(_, excludeFromBackup):
+             let .encryptedUsingKeychain(_, excludeFromBackup):
             return excludeFromBackup
         case .encryptedUsingSecureEnclave:
             return true
@@ -35,28 +35,31 @@ public enum LocalStorageSetting {
     }
     
     
-    func keys(from credentialsStorage: CredentialsStorage) throws -> (privateKey: SecKey, publicKey: SecKey)? {
-        let storageScope: CredentialsStorageScope
+    func keys(from keychain: KeychainStorage) throws -> (privateKey: SecKey, publicKey: SecKey)? {
+        let storageOption: KeychainItemStorageOption
         switch self {
         case .unencrypted:
             return nil
         case let .encrypted(privateKey, publicKey, _):
             return (privateKey, publicKey)
         case let .encryptedUsingSecureEnclave(userPresence):
-            storageScope = .secureEnclave(userPresence: userPresence)
-        case let .encryptedUsingKeyChain(userPresence, _):
-            storageScope = .keychain(userPresence: userPresence, accessGroup: nil)
+            storageOption = .secureEnclave(requireUserPresence: userPresence)
+        case let .encryptedUsingKeychain(userPresence, _):
+            storageOption = .keychain(requireUserPresence: userPresence, accessGroup: nil)
         }
         
-        let keyTag = KeyTag("LocalStorage.\(storageScope.id)")
+        let keyTag = CryptographicKeyTag(
+            "LocalStorage.\(storageOption.id)",
+            storage: .secureEnclave(requireUserPresence: false)
+        )
         
-        if let privateKey = try? credentialsStorage.retrievePrivateKey(for: keyTag),
-           let publicKey = try? credentialsStorage.retrievePublicKey(for: keyTag) {
+        if let privateKey = try? keychain.retrievePrivateKey(for: keyTag),
+           let publicKey = try? keychain.retrievePublicKey(for: keyTag) {
             return (privateKey, publicKey)
         }
         
-        let privateKey = try credentialsStorage.createKey(for: keyTag)
-        guard let publicKey = try credentialsStorage.retrievePublicKey(for: keyTag) else {
+        let privateKey = try keychain.createKey(for: keyTag)
+        guard let publicKey = try keychain.retrievePublicKey(for: keyTag) else {
             throw LocalStorageError.encryptionNotPossible
         }
         

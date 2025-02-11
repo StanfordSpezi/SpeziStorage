@@ -207,6 +207,6 @@ final class LocalStorageTests: XCTestCase {
         let string = "hello, spezi" as NSString
         try localStorage.store(string, for: key)
         XCTAssertTrue(string.isEqual(try localStorage.load(key)))
-        XCTAssertFalse(string is Codable) // make sure we're actually using the NSSecureCoding path here...
+        XCTAssertFalse(string is any Codable) // make sure we're actually using the NSSecureCoding path here...
     }
 }
