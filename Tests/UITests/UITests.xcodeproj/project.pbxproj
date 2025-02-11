@@ -17,6 +17,7 @@
 		2F2D338729DE52EA00081B1D /* SpeziStorageTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2F2D338629DE52EA00081B1D /* SpeziStorageTests.swift */; };
 		2F6D139A28F5F386007C25D6 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 2F6D139928F5F386007C25D6 /* Assets.xcassets */; };
 		2FA7382C290ADFAA007ACEB9 /* TestApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2FA7382B290ADFAA007ACEB9 /* TestApp.swift */; };
+		805AFA9C2D5BC7BC00CA0485 /* XCTestApp in Frameworks */ = {isa = PBXBuildFile; productRef = 805AFA9B2D5BC7BC00CA0485 /* XCTestApp */; };
 		80CC46A22D53B1CB005BDFEE /* KeychainStorageTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 80CC46A12D53B1CB005BDFEE /* KeychainStorageTests.swift */; };
 		80DEF1BA2D57D03A00DC7E25 /* XCTestApp in Frameworks */ = {isa = PBXBuildFile; productRef = 80DEF1B92D57D03A00DC7E25 /* XCTestApp */; };
 		80DEF1BE2D58A9C400DC7E25 /* KeychainBrowser.swift in Sources */ = {isa = PBXBuildFile; fileRef = 80DEF1BD2D58A9C400DC7E25 /* KeychainBrowser.swift */; };
@@ -60,6 +61,7 @@
 			files = (
 				2F2D336229DE0E5A00081B1D /* SpeziLocalStorage in Frameworks */,
 				80DEF1BA2D57D03A00DC7E25 /* XCTestApp in Frameworks */,
+				805AFA9C2D5BC7BC00CA0485 /* XCTestApp in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -163,6 +165,7 @@
 			packageProductDependencies = (
 				2F2D336129DE0E5A00081B1D /* SpeziLocalStorage */,
 				80DEF1B92D57D03A00DC7E25 /* XCTestApp */,
+				805AFA9B2D5BC7BC00CA0485 /* XCTestApp */,
 			);
 			productName = Example;
 			productReference = 2F6D139228F5F384007C25D6 /* TestApp.app */;
@@ -217,7 +220,7 @@
 			);
 			mainGroup = 2F6D138928F5F384007C25D6;
 			packageReferences = (
-				80DEF1B82D57D03A00DC7E25 /* XCLocalSwiftPackageReference "../../../XCTestExtensions" */,
+				805AFA9A2D5BC7BC00CA0485 /* XCRemoteSwiftPackageReference "XCTestExtensions" */,
 			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = 2F6D139328F5F384007C25D6 /* Products */;
@@ -682,17 +685,26 @@
 		};
 /* End XCConfigurationList section */
 
-/* Begin XCLocalSwiftPackageReference section */
-		80DEF1B82D57D03A00DC7E25 /* XCLocalSwiftPackageReference "../../../XCTestExtensions" */ = {
-			isa = XCLocalSwiftPackageReference;
-			relativePath = ../../../XCTestExtensions;
+/* Begin XCRemoteSwiftPackageReference section */
+		805AFA9A2D5BC7BC00CA0485 /* XCRemoteSwiftPackageReference "XCTestExtensions" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/StanfordBDHG/XCTestExtensions";
+			requirement = {
+				branch = "lukas/xctest-changes";
+				kind = branch;
+			};
 		};
-/* End XCLocalSwiftPackageReference section */
+/* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
 		2F2D336129DE0E5A00081B1D /* SpeziLocalStorage */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = SpeziLocalStorage;
+		};
+		805AFA9B2D5BC7BC00CA0485 /* XCTestApp */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 805AFA9A2D5BC7BC00CA0485 /* XCRemoteSwiftPackageReference "XCTestExtensions" */;
+			productName = XCTestApp;
 		};
 		80DEF1B92D57D03A00DC7E25 /* XCTestApp */ = {
 			isa = XCSwiftPackageProductDependency;
