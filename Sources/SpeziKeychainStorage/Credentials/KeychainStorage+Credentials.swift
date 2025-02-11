@@ -21,25 +21,25 @@ extension KeychainStorage {
     /// - parameter replaceDuplicates: Whether the insert operation adding these credentials into the keychain should replace potential duplicates. Since there cannot be
     public func store(_ credentials: Credentials, for tag: CredentialsTag, replaceDuplicates: Bool = true) throws {
         var query = queryFor(username: credentials.username, tag: tag)
-        query[kSecValueData as String] = Data(credentials.password.utf8)
+        query[kSecValueData] = Data(credentials.password.utf8)
         // NOTE: we need to use the switch here; credentials.asGenericCredentials is unavailable,
         // since the credentials object we're getting in was most likely manually created.
         switch tag.kind {
         case .genericPassword:
             let credentials = GenericCredentials(credentials._attributes)
             if let genericData = credentials.generic {
-                query[kSecAttrGeneric as String] = genericData
+                query[kSecAttrGeneric] = genericData
             }
         case .internetPassword:
             let credentials = InternetCredentials(credentials._attributes)
             if let description = credentials.description {
-                query[kSecAttrDescription as String] = description
+                query[kSecAttrDescription] = description
             }
             if let comment = credentials.comment {
-                query[kSecAttrComment as String] = comment
+                query[kSecAttrComment] = comment
             }
             if let label = credentials.label ?? tag.label {
-                query[kSecAttrLabel as String] = label
+                query[kSecAttrLabel] = label
             }
         }
         try addAccessControlFields(for: tag, to: &query)
@@ -89,17 +89,17 @@ extension KeychainStorage {
         withUsername username: String? = nil, // swiftlint:disable:this function_default_parameter_at_end
         for tag: CredentialsTag
     ) throws -> [Credentials] {
-        var query: [String: Any] = [:]
+        var query: [CFString: Any] = [:]
         if let username {
-            query[kSecAttrAccount as String] = username
+            query[kSecAttrAccount] = username
         }
         switch tag.kind {
         case .genericPassword(let service):
-            query[kSecClass as String] = kSecClassGenericPassword
-            query[kSecAttrService as String] = service
+            query[kSecClass] = kSecClassGenericPassword
+            query[kSecAttrService] = service
         case .internetPassword(let server):
-            query[kSecClass as String] = kSecClassInternetPassword
-            query[kSecAttrServer as String] = server
+            query[kSecClass] = kSecClassInternetPassword
+            query[kSecAttrServer] = server
         }
         return try runRetrieveCredentialsQuery(limit: .all, extraQueryEntries: query)
     }
@@ -108,11 +108,11 @@ extension KeychainStorage {
     /// Retrieves all credentials of the "generic password" kind, for the specified service.
     /// - parameter service: The service for which the credentials should be filtered. Pass `nil` to skip the filtering and return all generic credentials.
     public func retrieveAllGenericCredentials(forService service: String? = nil) throws -> [Credentials] {
-        var query: [String: Any] = [
-            kSecClass as String: kSecClassGenericPassword
+        var query: [CFString: Any] = [
+            kSecClass: kSecClassGenericPassword
         ]
         if let service {
-            query[kSecAttrService as String] = service
+            query[kSecAttrService] = service
         }
         return try runRetrieveCredentialsQuery(limit: .all, extraQueryEntries: query)
     }
@@ -121,11 +121,11 @@ extension KeychainStorage {
     /// Retrieves all credentials of the "internet password" kind, for the specified service.
     /// - parameter server: The server for which the credentials should be filtered. Pass `nil` to skip the filtering and return all internet credentials.
     public func retrieveAllInternetCredentials(forServer server: String? = nil) throws -> [Credentials] {
-        var query: [String: Any] = [
-            kSecClass as String: kSecClassInternetPassword
+        var query: [CFString: Any] = [
+            kSecClass: kSecClassInternetPassword
         ]
         if let server {
-            query[kSecAttrServer as String] = server
+            query[kSecAttrServer] = server
         }
         return try runRetrieveCredentialsQuery(limit: .all, extraQueryEntries: query)
     }
@@ -135,21 +135,21 @@ extension KeychainStorage {
     public func retrieveAllCredentials() throws -> [Credentials] {
         var results: [Credentials] = []
         results.append(contentsOf: try runRetrieveCredentialsQuery(limit: .all, extraQueryEntries: [
-            kSecClass as String: kSecClassGenericPassword
+            kSecClass: kSecClassGenericPassword
         ]))
         results.append(contentsOf: try runRetrieveCredentialsQuery(limit: .all, extraQueryEntries: [
-            kSecClass as String: kSecClassInternetPassword
+            kSecClass: kSecClassInternetPassword
         ]))
         return results
     }
     
     
-    private func runRetrieveCredentialsQuery(limit: RetrieveCredentialsLimit, extraQueryEntries: [String: Any]) throws -> [Credentials] {
-        var query: [String: Any] = [
-            kSecAttrSynchronizable as String: kSecAttrSynchronizableAny,
-            kSecReturnAttributes as String: true,
-            kSecReturnData as String: true,
-            kSecMatchLimit as String: limit.rawValue
+    private func runRetrieveCredentialsQuery(limit: RetrieveCredentialsLimit, extraQueryEntries: [CFString: Any]) throws -> [Credentials] {
+        var query: [CFString: Any] = [
+            kSecAttrSynchronizable: kSecAttrSynchronizableAny,
+            kSecReturnAttributes: true,
+            kSecReturnData: true,
+            kSecMatchLimit: limit.rawValue
         ]
         query.merge(extraQueryEntries, uniquingKeysWith: { $1 }) // have incoming entries override existing ones
         var result: CFTypeRef?
@@ -223,9 +223,9 @@ extension KeychainStorage {
     /// - parameter accessGroup: optional filter determining the access group whose credentials should be deleted.
     public func deleteAllGenericCredentials(service: String?, accessGroup: AccessGroupFilter) throws {
         var query = queryFor(username: nil, kind: nil, synchronizable: nil, accessGroup: accessGroup.stringValue)
-        query[kSecClass as String] = kSecClassGenericPassword
+        query[kSecClass] = kSecClassGenericPassword
         if let service {
-            query[kSecAttrService as String] = service
+            query[kSecAttrService] = service
         }
         do {
             try execute(SecItemDelete(query as CFDictionary))
@@ -242,9 +242,9 @@ extension KeychainStorage {
     /// - parameter accessGroup: specify the access group from which the credentials should be deleted.
     public func deleteAllInternetCredentials(server: String?, accessGroup: AccessGroupFilter) throws {
         var query = queryFor(username: nil, kind: nil, synchronizable: nil, accessGroup: accessGroup.stringValue)
-        query[kSecClass as String] = kSecClassInternetPassword
+        query[kSecClass] = kSecClassInternetPassword
         if let server {
-            query[kSecAttrServer as String] = server
+            query[kSecAttrServer] = server
         }
         do {
             try execute(SecItemDelete(query as CFDictionary))
@@ -261,7 +261,7 @@ extension KeychainStorage {
 
 extension KeychainStorage {
     /// Constructs a query dictionary for the specified username and tag.
-    private func queryFor(username account: String?, tag: CredentialsTag) -> [String: Any] { // TODO have this use CFString for the key? would it still work the same?
+    private func queryFor(username account: String?, tag: CredentialsTag) -> [CFString: Any] {
         queryFor(
             username: account,
             kind: tag.kind,
@@ -280,36 +280,36 @@ extension KeychainStorage {
         kind: CredentialsKind?,
         synchronizable: Bool?, // swiftlint:disable:this discouraged_optional_boolean
         accessGroup: String?
-    ) -> [String: Any] {
+    ) -> [CFString: Any] {
         // This method uses code provided by the Apple Developer documentation at
         // https://developer.apple.com/documentation/security/keychain_services/keychain_items/using_the_keychain_to_manage_user_secrets
-        var query: [String: Any] = [
-            kSecUseDataProtectionKeychain as String: true
+        var query: [CFString: Any] = [
+            kSecUseDataProtectionKeychain: true
         ]
         switch kind {
         case nil:
             break
         case .genericPassword(let service):
-            query[kSecClass as String] = kSecClassGenericPassword
-            query[kSecAttrService as String] = service
+            query[kSecClass] = kSecClassGenericPassword
+            query[kSecAttrService] = service
         case .internetPassword(let server):
-            query[kSecClass as String] = kSecClassInternetPassword
-            query[kSecAttrServer as String] = server
+            query[kSecClass] = kSecClassInternetPassword
+            query[kSecAttrServer] = server
         }
         if let account {
-            query[kSecAttrAccount as String] = account
+            query[kSecAttrAccount] = account
         }
         if let accessGroup {
-            query[kSecAttrAccessGroup as String] = accessGroup
+            query[kSecAttrAccessGroup] = accessGroup
         }
         switch synchronizable {
         case .none:
             // if the `synchronizable` parameter is set to nil, we do not filter for this field,
             // and instead wanna fetch all entried (both synchronizable and non-synchronizable)
-            query[kSecAttrSynchronizable as String] = kSecAttrSynchronizableAny
+            query[kSecAttrSynchronizable] = kSecAttrSynchronizableAny
         case .some(let value):
             // if the parameter is set, we want to filter for that value
-            query[kSecAttrSynchronizable as String] = value
+            query[kSecAttrSynchronizable] = value
         }
         return query
     }

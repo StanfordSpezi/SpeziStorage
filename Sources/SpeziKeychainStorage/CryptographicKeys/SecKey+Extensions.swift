@@ -18,10 +18,10 @@ extension SecKey { // swiftlint:disable:this file_types_order
     
     /// The key's "extended" attributes, as returned from `SecItemCopyMatching`.
     private var extendedAttributes: [String: Any] {
-        let query: [String: Any] = [
-            kSecClass as String: kSecClassKey,
-            kSecValueRef as String: self,
-            kSecReturnAttributes as String: true
+        let query: [CFString: Any] = [
+            kSecClass: kSecClassKey,
+            kSecValueRef: self,
+            kSecReturnAttributes: true
         ]
         var attrs: CFTypeRef?
         let status = SecItemCopyMatching(query as CFDictionary, &attrs)

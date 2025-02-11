@@ -142,17 +142,17 @@ extension KeychainStorage {
 // MARK: Access Control
 
 extension KeychainStorage {
-    func addAccessControlFields(for tag: CryptographicKeyTag, to attrs: inout [String: Any]) throws(KeychainError) {
+    func addAccessControlFields(for tag: CryptographicKeyTag, to attrs: inout [CFString: Any]) throws(KeychainError) {
         try addAccessControlFields(for: tag.storage, to: &attrs)
     }
     
     
-    func addAccessControlFields(for tag: CredentialsTag, to attrs: inout [String: Any]) throws(KeychainError) {
+    func addAccessControlFields(for tag: CredentialsTag, to attrs: inout [CFString: Any]) throws(KeychainError) {
         try addAccessControlFields(for: tag.storageOption, to: &attrs)
     }
     
     
-    func addAccessControlFields(for storageOption: KeychainItemStorageOption, to attrs: inout [String: Any]) throws(KeychainError) {
+    func addAccessControlFields(for storageOption: KeychainItemStorageOption, to attrs: inout [CFString: Any]) throws(KeychainError) {
         // Follows https://developer.apple.com/documentation/security/keychain_services/keychain_items/restricting_keychain_item_accessibility
         
         let protection: CFString // IDEA maybe allow this to be specified via the API? or at least make the API more fine-grained?
@@ -172,11 +172,11 @@ extension KeychainStorage {
                 protection = kSecAttrAccessibleWhenUnlockedThisDeviceOnly
                 flags.insert(.userPresence)
             } else {
-                attrs[kSecAttrAccessible as String] = kSecAttrAccessibleAfterFirstUnlockThisDeviceOnly
+                attrs[kSecAttrAccessible] = kSecAttrAccessibleAfterFirstUnlockThisDeviceOnly
                 return
             }
         case .keychainSynchronizable:
-            attrs[kSecAttrAccessible as String] = kSecAttrAccessibleAfterFirstUnlock
+            attrs[kSecAttrAccessible] = kSecAttrAccessibleAfterFirstUnlock
             return
         }
         var error: Unmanaged<CFError>?
@@ -184,6 +184,6 @@ extension KeychainStorage {
             // SAFETY: the docs say that the error pointer will be populated in the case that the call fails.
             throw .failedToCreateAccessControl(error!.takeRetainedValue()) // swiftlint:disable:this force_unwrapping
         }
-        attrs[kSecAttrAccessControl as String] = accessControl
+        attrs[kSecAttrAccessControl] = accessControl
     }
 }

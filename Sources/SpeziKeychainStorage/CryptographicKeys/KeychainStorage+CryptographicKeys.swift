@@ -60,35 +60,35 @@ extension KeychainStorage {
         // and
         // https://developer.apple.com/documentation/security/certificate_key_and_trust_services/keys/generating_new_cryptographic_keys
         
-        let privateKeyAttrs: [String: Any] = try { () -> [String: Any] in
-            var attrs: [String: Any] = [
-                kSecAttrIsPermanent as String: true,
-                kSecAttrApplicationTag as String: Data(keyTag.tagValue.utf8) as CFData
+        let privateKeyAttrs: [CFString: Any] = try { () -> [CFString: Any] in
+            var attrs: [CFString: Any] = [
+                kSecAttrIsPermanent: true,
+                kSecAttrApplicationTag: Data(keyTag.tagValue.utf8) as CFData
             ]
             if let label = keyTag.label {
-                attrs[kSecAttrLabel as String] = label as CFString
+                attrs[kSecAttrLabel] = label as CFString
             }
             try addAccessControlFields(for: keyTag, to: &attrs)
             if let accessGroup = keyTag.storage.accessGroup {
-                attrs[kSecAttrAccessGroup as String] = accessGroup as CFString
+                attrs[kSecAttrAccessGroup] = accessGroup as CFString
             }
             if keyTag.storage.isSynchronizable {
-                attrs[kSecAttrSynchronizable as String] = true
+                attrs[kSecAttrSynchronizable] = true
             }
             return attrs
         }()
         
-        var attributes: [String: Any] = [
-            kSecAttrKeyType as String: keyTag.keyType,
-            kSecAttrKeySizeInBits as String: keyTag.size as CFNumber,
-            kSecPrivateKeyAttrs as String: privateKeyAttrs,
-            kSecUseDataProtectionKeychain as String: true
+        var attributes: [CFString: Any] = [
+            kSecAttrKeyType: keyTag.keyType,
+            kSecAttrKeySizeInBits: keyTag.size as CFNumber,
+            kSecPrivateKeyAttrs: privateKeyAttrs,
+            kSecUseDataProtectionKeychain: true
         ]
         
         // Check that the device has a Secure Enclave
         switch (keyTag.storage.isSecureEnclave, SecureEnclave.isAvailable) {
         case (true, true):
-            attributes[kSecAttrTokenID as String] = kSecAttrTokenIDSecureEnclave
+            attributes[kSecAttrTokenID] = kSecAttrTokenIDSecureEnclave
         case (false, _):
             break
         case (true, false):
@@ -126,24 +126,24 @@ extension KeychainStorage {
     
     
     private func retrieveKey(_ keyClass: KeyClass, for tag: CryptographicKeyTag) throws -> SecKey? { // swiftlint:disable:this cyclomatic_complexity
-        var query: [String: Any] = [
-            kSecClass as String: kSecClassKey,
-            kSecAttrApplicationTag as String: Data(tag.tagValue.utf8),
-            kSecAttrKeyType as String: tag.keyType,
-            kSecReturnRef as String: true,
-            kSecUseDataProtectionKeychain as String: true
+        var query: [CFString: Any] = [
+            kSecClass: kSecClassKey,
+            kSecAttrApplicationTag: Data(tag.tagValue.utf8),
+            kSecAttrKeyType: tag.keyType,
+            kSecReturnRef: true,
+            kSecUseDataProtectionKeychain: true
         ]
         switch tag.storage {
         case .secureEnclave:
             break
         case .keychain(requireUserPresence: _, let accessGroup):
             if let accessGroup {
-                query[kSecAttrAccessGroup as String] = accessGroup
+                query[kSecAttrAccessGroup] = accessGroup
             }
         case .keychainSynchronizable(let accessGroup):
-            query[kSecAttrSynchronizable as String] = true
+            query[kSecAttrSynchronizable] = true
             if let accessGroup {
-                query[kSecAttrAccessGroup as String] = accessGroup
+                query[kSecAttrAccessGroup] = accessGroup
             }
         }
         var item: CFTypeRef?
@@ -175,15 +175,15 @@ extension KeychainStorage {
     
     /// Retrieves all keys of the specified key class belonging to the specified access group
     public func retrieveAllKeys(_ keyClass: KeyClass, accessGroup: AccessGroupFilter = .any) throws -> [SecKey] {
-        var query: [String: Any] = [
-            kSecClass as String: kSecClassKey,
-            kSecAttrKeyClass as String: keyClass.rawValue,
-            kSecReturnRef as String: true,
-            kSecMatchLimit as String: kSecMatchLimitAll,
-            kSecAttrSynchronizable as String: kSecAttrSynchronizableAny
+        var query: [CFString: Any] = [
+            kSecClass: kSecClassKey,
+            kSecAttrKeyClass: keyClass.rawValue,
+            kSecReturnRef: true,
+            kSecMatchLimit: kSecMatchLimitAll,
+            kSecAttrSynchronizable: kSecAttrSynchronizableAny
         ]
         if let accessGroup = accessGroup.stringValue {
-            query[kSecAttrAccessGroup as String] = accessGroup
+            query[kSecAttrAccessGroup ] = accessGroup
         }
         var items: CFTypeRef?
         do {
@@ -212,12 +212,12 @@ extension KeychainStorage {
     /// Deletes a key from the keychain or secure enclave
     /// - parameter key: The `SecKey` which should be deleted.
     public func deleteKey(_ key: SecKey) throws {
-        let query: [String: Any] = [
-            kSecClass as String: kSecClassKey,
+        let query: [CFString: Any] = [
+            kSecClass: kSecClassKey,
             // for some reason, deleting a synchronizable key won't work (and fail with .itemNotFound) unless we specify this,
             // which is weird since you'd expect the fact that we specify the key directly would be sufficient for the API to find it.
-            kSecAttrSynchronizable as String: kSecAttrSynchronizableAny,
-            kSecValueRef as String: key
+            kSecAttrSynchronizable: kSecAttrSynchronizableAny,
+            kSecValueRef: key
         ]
         do {
             try execute(SecItemDelete(query as CFDictionary))
@@ -231,12 +231,12 @@ extension KeychainStorage {
     
     /// Deletes all keys from the keychain.
     public func deleteAllKeys(accessGroup: AccessGroupFilter) throws {
-        var query: [String: Any] = [
-            kSecClass as String: kSecClassKey,
-            kSecAttrSynchronizable as String: kSecAttrSynchronizableAny
+        var query: [CFString: Any] = [
+            kSecClass: kSecClassKey,
+            kSecAttrSynchronizable: kSecAttrSynchronizableAny
         ]
         if let accessGroup = accessGroup.stringValue {
-            query[kSecAttrAccessGroup as String] = accessGroup
+            query[kSecAttrAccessGroup ] = accessGroup
         }
         do {
             try execute(SecItemDelete(query as CFDictionary))
