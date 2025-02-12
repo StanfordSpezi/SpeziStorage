@@ -90,6 +90,7 @@ extension KeychainStorage {
         for tag: CredentialsTag
     ) throws -> [Credentials] {
         var query: [CFString: Any] = [:]
+        query[kSecAttrSynchronizable] = tag.storageOption.isSynchronizable
         if let username {
             query[kSecAttrAccount] = username
         }
