@@ -102,7 +102,7 @@ extension SecKey { // swiftlint:disable:this file_types_order
     
     /// Whether the `SecKey` is permanently persisted to either the keychain or the secure enclave
     public var isPermanent: Bool {
-        readExtendedAttr(kSecAttrIsPermanent) == kCFBooleanTrue
+        readExtendedAttr(kSecAttrIsPermanent) == true
     }
     
     /// The `SecKey`'s effective size, in bits
@@ -112,42 +112,42 @@ extension SecKey { // swiftlint:disable:this file_types_order
     
     /// Whether the `SecKey` can be used for encryption
     public var canEncrypt: Bool {
-        readSimpleAttr(kSecAttrCanEncrypt) == kCFBooleanTrue
+        readSimpleAttr(kSecAttrCanEncrypt) == true
     }
     
     /// Whether the `SecKey` can be used for decryption
     public var canDecrypt: Bool {
-        readSimpleAttr(kSecAttrCanDecrypt) == kCFBooleanTrue
+        readSimpleAttr(kSecAttrCanDecrypt) == true
     }
     
     /// Whether the `SecKey` can be used for derivation
     public var canDerive: Bool {
-        readSimpleAttr(kSecAttrCanDerive) == kCFBooleanTrue
+        readSimpleAttr(kSecAttrCanDerive) == true
     }
     
     /// Whether the `SecKey` can be used for signing
     public var canSign: Bool {
-        readSimpleAttr(kSecAttrCanSign) == kCFBooleanTrue
+        readSimpleAttr(kSecAttrCanSign) == true
     }
     
     /// Whether the `SecKey` can be used for signature verification
     public var canVerify: Bool {
-        readSimpleAttr(kSecAttrCanVerify) == kCFBooleanTrue
+        readSimpleAttr(kSecAttrCanVerify) == true
     }
     
     /// Whether the `SecKey` can be used for wrapping
     public var canWrap: Bool {
-        readExtendedAttr(kSecAttrCanWrap) == kCFBooleanTrue
+        readExtendedAttr(kSecAttrCanWrap) == true
     }
     
     /// Whether the `SecKey` can be used for unwrapping
     public var canUnwrap: Bool {
-        readExtendedAttr(kSecAttrCanUnwrap) == kCFBooleanTrue
+        readExtendedAttr(kSecAttrCanUnwrap) == true
     }
     
     /// Whether the `SecKey` is synchronizable.
     public var synchronizable: Bool {
-        readExtendedAttr(kSecAttrSynchronizable) == kCFBooleanTrue
+        readExtendedAttr(kSecAttrSynchronizable) == true
     }
     
     /// Whether the `SecKey` is stored in an external location (i.e, outside of the keychain), and if yes in which location it is stored.

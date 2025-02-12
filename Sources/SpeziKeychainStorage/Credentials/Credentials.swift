@@ -336,13 +336,13 @@ extension _CredentialsContainer {
     /// Whether the item is invisible, i.e. should not be displayed in e.g. the keychain.
     @_documentation(visibility: public)
     public var isInvisible: Bool {
-        self[kSecAttrIsInvisible] == kCFBooleanTrue
+        self[kSecAttrIsInvisible] == true
     }
     
     /// A key with a value that’s a Boolean indicating whether the item has a valid password.
     @_documentation(visibility: public)
     public var isNegative: Bool {
-        self[kSecAttrIsNegative] == kCFBooleanTrue
+        self[kSecAttrIsNegative] == true
     }
     
     /// The item's account value, i.e. username.
@@ -354,7 +354,7 @@ extension _CredentialsContainer {
     /// Whether the item is synchronized across multiple devices belonging to the same user.
     @_documentation(visibility: public)
     public var synchronizable: Bool {
-        self[kSecAttrSynchronizable] == kCFBooleanTrue
+        self[kSecAttrSynchronizable] == true
     }
     
     
