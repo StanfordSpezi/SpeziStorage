@@ -122,8 +122,11 @@ final class KeychainStorageTests: TestAppTestCase {
         
         var serverCredentials = Credentials(username: "@PSchmiedmayer", password: "SpeziInventor")
         try keychainStorage.store(serverCredentials, for: speziLoginTagNoSync)
+        try XCTAssertFalse(try XCTUnwrap(try keychainStorage.retrieveCredentials(withUsername: "@PSchmiedmayer", for: speziLoginTagNoSync)).synchronizable)
         try keychainStorage.store(serverCredentials, for: speziLoginTagYesSync)
+        try XCTAssertTrue(try XCTUnwrap(try keychainStorage.retrieveCredentials(withUsername: "@PSchmiedmayer", for: speziLoginTagYesSync)).synchronizable)
         try keychainStorage.store(serverCredentials, for: speziLoginTagYesSync) // Overwrite existing credentials
+        try XCTAssertTrue(try XCTUnwrap(try keychainStorage.retrieveCredentials(withUsername: "@PSchmiedmayer", for: speziLoginTagYesSync)).synchronizable)
         
         try XCTAssertCredentialsMainPropertiesEqual(
             serverCredentials,
@@ -133,6 +136,31 @@ final class KeychainStorageTests: TestAppTestCase {
             serverCredentials,
             try XCTUnwrap(try keychainStorage.retrieveCredentials(withUsername: "@PSchmiedmayer", for: speziLoginTagYesSync))
         )
+        try XCTAssertEqual(
+            try XCTUnwrap(try keychainStorage.retrieveCredentials(withUsername: "@PSchmiedmayer", for: speziLoginTagNoSync)),
+            try XCTUnwrap(try keychainStorage.retrieveCredentials(withUsername: "@PSchmiedmayer", for: speziLoginTagNoSync))
+        )
+        try XCTAssertEqual(
+            try XCTUnwrap(try keychainStorage.retrieveCredentials(withUsername: "@PSchmiedmayer", for: speziLoginTagYesSync)),
+            try XCTUnwrap(try keychainStorage.retrieveCredentials(withUsername: "@PSchmiedmayer", for: speziLoginTagYesSync))
+        )
+        do {
+            var credentialsSet = Set<Credentials>()
+            try XCTAssertEqual(credentialsSet.count, 0)
+            
+            let creds1 = try XCTUnwrap(try keychainStorage.retrieveCredentials(withUsername: "@PSchmiedmayer", for: speziLoginTagNoSync))
+            let creds2 = try XCTUnwrap(try keychainStorage.retrieveCredentials(withUsername: "@PSchmiedmayer", for: speziLoginTagNoSync))
+            
+            credentialsSet.insert(try XCTUnwrap(try keychainStorage.retrieveCredentials(withUsername: "@PSchmiedmayer", for: speziLoginTagNoSync)))
+            try XCTAssertEqual(credentialsSet.count, 1)
+            credentialsSet.insert(try XCTUnwrap(try keychainStorage.retrieveCredentials(withUsername: "@PSchmiedmayer", for: speziLoginTagNoSync)))
+            try XCTAssertEqual(credentialsSet.count, 1)
+            
+            credentialsSet.insert(try XCTUnwrap(try keychainStorage.retrieveCredentials(withUsername: "@PSchmiedmayer", for: speziLoginTagYesSync)))
+            try XCTAssertEqual(credentialsSet.count, 2)
+            credentialsSet.insert(try XCTUnwrap(try keychainStorage.retrieveCredentials(withUsername: "@PSchmiedmayer", for: speziLoginTagYesSync)))
+            try XCTAssertEqual(credentialsSet.count, 2)
+        }
         
         serverCredentials = Credentials(username: "@Spezi", password: "Paul")
         try keychainStorage.updateCredentials(withUsername: "@PSchmiedmayer", for: speziLoginTagYesSync, with: serverCredentials)
@@ -290,11 +318,11 @@ final class KeychainStorageTests: TestAppTestCase {
             .secureEnclave(requireUserPresence: false),
             .secureEnclave(requireUserPresence: true),
             .keychain(requireUserPresence: false, accessGroup: nil),
-            .keychain(requireUserPresence: false, accessGroup: "637867499T.edu.stanford.spezi.storage.testapp"),
+            .keychain(requireUserPresence: false, accessGroup: "A485NLSB8K.edu.stanford.spezi.storage.testapp"), // 637867499T
             .keychain(requireUserPresence: true, accessGroup: nil),
-            .keychain(requireUserPresence: true, accessGroup: "637867499T.edu.stanford.spezi.storage.testapp"),
+            .keychain(requireUserPresence: true, accessGroup: "A485NLSB8K.edu.stanford.spezi.storage.testapp"),
             .keychainSynchronizable(accessGroup: nil),
-            .keychainSynchronizable(accessGroup: "637867499T.edu.stanford.spezi.storage.testapp")
+            .keychainSynchronizable(accessGroup: "A485NLSB8K.edu.stanford.spezi.storage.testapp")
         ]
         #if targetEnvironment(simulator)
         storageOptionsToTest.remove(at: 1) // secure enclave with user presence isn't supported on the simulator
