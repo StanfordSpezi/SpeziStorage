@@ -122,11 +122,17 @@ final class KeychainStorageTests: TestAppTestCase {
         
         var serverCredentials = Credentials(username: "@PSchmiedmayer", password: "SpeziInventor")
         try keychainStorage.store(serverCredentials, for: speziLoginTagNoSync)
-        try XCTAssertFalse(try XCTUnwrap(try keychainStorage.retrieveCredentials(withUsername: "@PSchmiedmayer", for: speziLoginTagNoSync)).synchronizable)
+        try XCTAssertFalse(
+            try XCTUnwrap(try keychainStorage.retrieveCredentials(withUsername: "@PSchmiedmayer", for: speziLoginTagNoSync)).synchronizable
+        )
         try keychainStorage.store(serverCredentials, for: speziLoginTagYesSync)
-        try XCTAssertTrue(try XCTUnwrap(try keychainStorage.retrieveCredentials(withUsername: "@PSchmiedmayer", for: speziLoginTagYesSync)).synchronizable)
+        try XCTAssertTrue(
+            try XCTUnwrap(try keychainStorage.retrieveCredentials(withUsername: "@PSchmiedmayer", for: speziLoginTagYesSync)).synchronizable
+        )
         try keychainStorage.store(serverCredentials, for: speziLoginTagYesSync) // Overwrite existing credentials
-        try XCTAssertTrue(try XCTUnwrap(try keychainStorage.retrieveCredentials(withUsername: "@PSchmiedmayer", for: speziLoginTagYesSync)).synchronizable)
+        try XCTAssertTrue(
+            try XCTUnwrap(try keychainStorage.retrieveCredentials(withUsername: "@PSchmiedmayer", for: speziLoginTagYesSync)).synchronizable
+        )
         
         try XCTAssertCredentialsMainPropertiesEqual(
             serverCredentials,
