@@ -67,19 +67,13 @@ extension _CredentialsContainer { // swiftlint:disable:this file_types_order
         }
     }
     
-    /// Hashes a `_CredentialsContainer`, based on the contents of its underlying attributes.
+    /// Hashes a `_CredentialsContainer`.
     public func hash(into hasher: inout Hasher) {
-        for (key, value) in _attributes {
-            hasher.combine(key)
-            if let value = value as? any Hashable {
-                value.hash(into: &hasher)
-            } else {
-                // not perfect but the best we got.
-                // also not overly bad, since this branch is practically unreachable. (everything we expect to be in the dict is Hashable...)
-                let value = value as CFTypeRef
-                hasher.combine(CFHash(value))
-            }
-        }
+        // NOTE: since _attributes typically is a bridged CFDictionary (rather than a native Swift Dictionary),
+        // it seems we aren't able to simply compute a hash by iterating over the dict and hashing the key-value pairs.
+        // (The issue is that two dictionaries with the same contents apparently might store/iterate them in a different order?)
+        // Instead, we match the NSDictionary/CFDictionary behaviour and simply use the number of entries as our hash.
+        hasher.combine(_attributes.count)
     }
 }
 
