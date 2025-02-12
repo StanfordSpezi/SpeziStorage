@@ -6,7 +6,7 @@
 	<true/>
 	<key>keychain-access-groups</key>
 	<array>
-		<string>$(AppIdentifierPrefix)de.lukaskollmer.jvnriwnifowe</string>
+		<string>$(AppIdentifierPrefix)edu.stanford.spezi.storage.testapp</string>
 	</array>
 </dict>
 </plist>
