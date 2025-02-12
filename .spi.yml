@@ -12,4 +12,4 @@ builder:
     - platform: ios
       documentation_targets:
       - SpeziLocalStorage
-      - SpeziCredentialsStorage
+      - SpeziKeychainStorage
