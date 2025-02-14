@@ -288,7 +288,7 @@ final class KeychainStorageTests: TestAppTestCase {
         try XCTAssertFalse(key.isPublicKey)
         try XCTAssertEqual(key.keyClass, .private)
         try XCTAssertEqual(try XCTUnwrap(key.publicKey).keyClass, .public)
-        try XCTAssertEqual(key.accessGroup, "A485NLSB8K.edu.stanford.spezi.storage.testapp")
+        try XCTAssertEqual(key.accessGroup, "637867499T.edu.stanford.spezi.storage.testapp")
         try XCTAssertTrue(key.isPermanent)
         try XCTAssertNil(key.tokenId) // not in the secure enclave.
         
