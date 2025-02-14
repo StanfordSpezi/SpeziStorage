@@ -20,6 +20,7 @@ extension SecKey { // swiftlint:disable:this file_types_order
     private var extendedAttributes: [String: Any] {
         let query: [CFString: Any] = [
             kSecClass: kSecClassKey,
+            kSecAttrSynchronizable: kSecAttrSynchronizableAny,
             kSecValueRef: self,
             kSecReturnAttributes: true
         ]
