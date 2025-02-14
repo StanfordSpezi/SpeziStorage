@@ -92,7 +92,7 @@ extension KeychainStorage {
         case (false, _):
             break
         case (true, false):
-            throw KeychainError.failedToCreateKeyPair(.secureEnclaveNotAvailable)
+            throw KeychainError.failedToCreateKeyPair(keyTag, .secureEnclaveNotAvailable)
         }
         
         var error: Unmanaged<CFError>?
@@ -102,7 +102,7 @@ extension KeychainStorage {
             // SAFETY: the force unwrap here is ok,
             // since it's guaranteed that the error will be non-nil if the SecKeyCreateRandomKey retval was.
             let error = error!.takeRetainedValue() // swiftlint:disable:this force_unwrapping
-            throw KeychainError.failedToCreateKeyPair(.other(error))
+            throw KeychainError.failedToCreateKeyPair(keyTag, .other(error))
         }
     }
     

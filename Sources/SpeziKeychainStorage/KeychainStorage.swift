@@ -125,7 +125,7 @@ extension KeychainStorage {
         /// The keychain was unable to create a `SecAccessControl` object
         case failedToCreateAccessControl(CFError)
         /// The keychain was unable to create a cryptographic key pair
-        case failedToCreateKeyPair(KeyCreationErrorReason)
+        case failedToCreateKeyPair(CryptographicKeyTag, KeyCreationErrorReason)
         /// A keychain operation failed.
         case other(String)
         
