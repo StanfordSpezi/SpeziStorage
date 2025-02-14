@@ -77,18 +77,6 @@ public protocol _CredentialsContainer: Hashable, Sendable { // swiftlint:disable
     ///
     /// - Note: this value being nil/non-nil does not necessarily correlate to how the credentials object was created; use refer to `_creationKind` for that.
     var kind: CredentialsKind? { get }
-    
-    /// Casts the credentials object into a ``GenericCredentials``, if applicable.
-    ///
-    /// This will return a ``GenericCredentials`` instance if the credentials object represents a "generic password" credentials item.
-    /// If the object is an internet password instead, this will return `nil`.
-    var asGenericCredentials: GenericCredentials? { get }
-    
-    /// Casts the credentials object into an ``InternetCredentials``, if applicable.
-    ///
-    /// This will return an ``InternetCredentials`` instance if the credentials object represents an "internet password" credentials item.
-    /// If the object is a generic password instead, this will return `nil`.
-    var asInternetCredentials: InternetCredentials? { get }
 }
 
 
@@ -121,7 +109,11 @@ extension _CredentialsContainer { // swiftlint:disable:this file_types_order
 }
 
 
-extension _CredentialsContainer {
+extension _CredentialsContainer { // swiftlint:disable:this file_types_order
+    /// Casts the credentials object into a ``GenericCredentials``, if applicable.
+    ///
+    /// This will return a ``GenericCredentials`` instance if the credentials object represents a "generic password" credentials item.
+    /// If the object is an internet password instead, this will return `nil`.
     public var asGenericCredentials: GenericCredentials? {
         switch kind {
         case .genericPassword:
@@ -131,6 +123,10 @@ extension _CredentialsContainer {
         }
     }
     
+    /// Casts the credentials object into an ``InternetCredentials``, if applicable.
+    ///
+    /// This will return an ``InternetCredentials`` instance if the credentials object represents an "internet password" credentials item.
+    /// If the object is a generic password instead, this will return `nil`.
     public var asInternetCredentials: InternetCredentials? {
         switch kind {
         case .internetPassword:
