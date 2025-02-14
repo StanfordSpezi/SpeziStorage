@@ -296,6 +296,15 @@ final class KeychainStorageTests: TestAppTestCase { // swiftlint:disable:this ty
         try XCTAssertNil(key.tokenId) // not in the secure enclave.
         try XCTAssertNotNil(key.externalRepresentation)
         try XCTAssertNotNil(key.publicKey?.externalRepresentation)
+        try XCTAssertFalse(key.synchronizable)
+        try XCTAssertEqual(key.keyType, kSecAttrKeyTypeECSECPrimeRandom as String)
+        try XCTAssertFalse(key.canEncrypt)
+        try XCTAssertTrue(key.canDecrypt)
+        try XCTAssertTrue(key.canDerive)
+        try XCTAssertTrue(key.canSign)
+        try XCTAssertFalse(key.canVerify)
+        try XCTAssertFalse(key.canWrap)
+        try XCTAssertTrue(key.canUnwrap)
         
         try XCTAssertEqual(try keychainStorage.retrieveAllKeys(.private), [key])
         
@@ -321,6 +330,7 @@ final class KeychainStorageTests: TestAppTestCase { // swiftlint:disable:this ty
         try XCTAssertNotNil(try keychainStorage.retrievePublicKey(for: keyTag1))
         try XCTAssertNotNil(try keychainStorage.retrievePrivateKey(for: keyTag2))
         try XCTAssertNotNil(try keychainStorage.retrievePublicKey(for: keyTag2))
+        try XCTAssertTrue(try XCTUnwrap(try keychainStorage.retrievePrivateKey(for: keyTag2)).synchronizable)
         
         if SecureEnclave.isAvailable {
             try keychainStorage.createKey(for: keyTag3)
