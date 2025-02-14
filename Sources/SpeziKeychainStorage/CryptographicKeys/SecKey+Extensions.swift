@@ -157,6 +157,7 @@ extension SecKey { // swiftlint:disable:this file_types_order
             .flatMap { .init($0) }
     }
     
+    /// The `SecKey`'s external representation, suitable for the key's specific type.
     public var externalRepresentation: Data? {
         var error: Unmanaged<CFError>?
         if let data = SecKeyCopyExternalRepresentation(self, &error) {

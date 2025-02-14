@@ -307,7 +307,6 @@ final class KeychainStorageTests: TestAppTestCase { // swiftlint:disable:this ty
         try XCTAssertTrue(key.canUnwrap)
         
         try XCTAssertEqual(try keychainStorage.retrieveAllKeys(.private), [key])
-        
     }
     
     
