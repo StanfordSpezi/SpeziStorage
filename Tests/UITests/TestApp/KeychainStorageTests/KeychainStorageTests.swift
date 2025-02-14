@@ -9,7 +9,7 @@
 import CryptoKit
 import Foundation
 import Spezi
-import SpeziKeychainStorage
+@_spi(Internal) import SpeziKeychainStorage
 import XCTestApp
 import XCTRuntimeAssertions
 

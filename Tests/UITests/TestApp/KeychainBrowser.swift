@@ -7,7 +7,7 @@
 //
 
 
-import SpeziKeychainStorage
+@_spi(Internal) import SpeziKeychainStorage
 import SwiftUI
 
 

@@ -215,6 +215,7 @@ extension KeychainStorage {
     
     /// Deletes all credentials from the keychain.
     /// - parameter accessGroup: optional filter determining the access group whose credentials should be deleted.
+    @_spi(Internal)
     public func deleteAllCredentials(accessGroup: AccessGroupFilter) throws {
         try deleteAllGenericCredentials(service: nil, accessGroup: accessGroup)
         try deleteAllInternetCredentials(server: nil, accessGroup: accessGroup)
@@ -223,6 +224,7 @@ extension KeychainStorage {
     /// Deletes all generic credentials from the keychain.
     /// - parameter service: the service whose credentials should be deleted. pass `nil` to not filter based on service and instead delete everything.
     /// - parameter accessGroup: optional filter determining the access group whose credentials should be deleted.
+    @_spi(Internal)
     public func deleteAllGenericCredentials(service: String?, accessGroup: AccessGroupFilter) throws {
         var query = queryFor(username: nil, kind: nil, synchronizable: nil, accessGroup: accessGroup.stringValue)
         query[kSecClass] = kSecClassGenericPassword
@@ -242,6 +244,7 @@ extension KeychainStorage {
     ///
     /// - parameter server: optional filter; if nonnil only internet credentials matching the server will be deleted.
     /// - parameter accessGroup: specify the access group from which the credentials should be deleted.
+    @_spi(Internal)
     public func deleteAllInternetCredentials(server: String?, accessGroup: AccessGroupFilter) throws {
         var query = queryFor(username: nil, kind: nil, synchronizable: nil, accessGroup: accessGroup.stringValue)
         query[kSecClass] = kSecClassInternetPassword

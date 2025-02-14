@@ -230,6 +230,7 @@ extension KeychainStorage {
     
     
     /// Deletes all keys from the keychain.
+    @_spi(Internal)
     public func deleteAllKeys(accessGroup: AccessGroupFilter) throws {
         var query: [CFString: Any] = [
             kSecClass: kSecClassKey,
