@@ -16,6 +16,15 @@ import Security
 // MARK: Credentials Container
 
 
+/// How a ``Credentials`` object was populated.
+public enum _CredentialsContainerCreationKind: Hashable, Sendable { // swiftlint:disable:this type_name
+    /// the credentials object was populated from the results returned form a keychain query
+    case keychainQuery
+    /// the credentials object was created and populated manually, e.g. via the ``Credentials/init(username:password:)`` initializer.
+    case manual
+}
+
+
 /// Internal protocol modeling a container type which represents a keychain-compatible credentials dictionary.
 ///
 /// The `_CredentialsContainer` protocol serves as a unified implementation providing accessor properties
@@ -23,16 +32,50 @@ import Security
 ///
 /// In addition to these accessor properties, it also implements `Hashable` and `Equatable` conformances (based on the underlying attributes),
 /// and provides an extension point for adding additional accessors (via `subscript(_:as:)`).
+///
+/// ## Topics
+/// ### Meta-Properties
+/// - ``_attributes``
+/// - ``_creationKind``
+/// - ``kind``
+/// - ``asGenericCredentials``
+/// - ``asInternetCredentials``
+/// ### Credentials Attributes
+/// - ``accessControl``
+/// - ``accessGroup``
+/// - ``accessible``
+/// - ``creationDate``
+/// - ``modificationDate``
+/// - ``description``
+/// - ``comment``
+/// - ``creator``
+/// - ``type``
+/// - ``label``
+/// - ``isInvisible``
+/// - ``isNegative``
+/// - ``account``
+/// - ``synchronizable``
+/// - ``username``
+/// - ``password``
 public protocol _CredentialsContainer: Hashable, Sendable { // swiftlint:disable:this type_name
     /// The raw attributes of the credentials entry.
     /// - Important: This needs to be public for implementation reasons. Do not access this property directly; instead, always use the respective accessors!
     var _attributes: [CFString: Any] { get set } // swiftlint:disable:this identifier_name
     
+    /// How the credentials object was created and populated.
+    ///
+    /// Based on this value, we can determine whether certain attributes are allowed to be optional, or should be required/expected to exist in the attributes dict.
+    /// For example, an interner password will always have a server associated with it,
+    /// but this value will typically not be present when the ``Credentials`` object was created via ``Credentials/init(username:password:)``.
+    var _creationKind: _CredentialsContainerCreationKind { get } // swiftlint:disable:this identifier_name
+    
     /// The underlying ``CredentialsKind``, if known.
     ///
-    /// For credentials which are the result of keychain query operations, this value will be non-nil.
-    /// For ``Credentials`` objects which were created using ``Credentials/init(username:password:)``, it will be `nil`,
-    /// because the kind isn't yet known at that stage (and will be determined based on the ``CredentialsTag`` used to store the credentials into the keychain).
+    /// For credentials which are the result of keychain query operations, this value will typically be non-nil.
+    ///
+    /// - Note: test this: ``asGenericCredentials``
+    ///
+    /// - Note: this value being nil/non-nil does not necessarily correlate to how the credentials object was created; use refer to `_creationKind` for that.
     var kind: CredentialsKind? { get }
     
     /// Casts the credentials object into a ``GenericCredentials``, if applicable.
@@ -127,6 +170,7 @@ extension _CredentialsContainer { // swiftlint:disable:this file_types_order
 /// ### Other
 /// - ``CredentialsKind``
 public struct Credentials: _CredentialsContainer, Hashable, @unchecked Sendable { // swiftlint:disable:this file_types_order
+    public let _creationKind: _CredentialsContainerCreationKind // swiftlint:disable:this identifier_name
     public var _attributes: [CFString: Any] // swiftlint:disable:this identifier_name
     
     public var kind: CredentialsKind? {
@@ -142,7 +186,7 @@ public struct Credentials: _CredentialsContainer, Hashable, @unchecked Sendable 
     public var asGenericCredentials: GenericCredentials? {
         switch kind {
         case .genericPassword:
-            GenericCredentials(_attributes)
+            GenericCredentials(other: self)
         case .internetPassword, nil:
             nil
         }
@@ -151,19 +195,21 @@ public struct Credentials: _CredentialsContainer, Hashable, @unchecked Sendable 
     public var asInternetCredentials: InternetCredentials? {
         switch kind {
         case .internetPassword:
-            InternetCredentials(_attributes)
+            InternetCredentials(other: self)
         case .genericPassword, nil:
             nil
         }
     }
     
     init(_ _attributes: [CFString: Any]) { // swiftlint:disable:this identifier_name
+        self._creationKind = .keychainQuery
         self._attributes = _attributes
     }
     
     /// Creates a new credentials object, with the specified username and password
     public init(username: String, password: String) {
-        self.init([:])
+        _creationKind = .manual
+        _attributes = [:]
         self.username = username
         self.password = password
     }
@@ -195,6 +241,7 @@ public struct Credentials: _CredentialsContainer, Hashable, @unchecked Sendable 
 /// - ``isNegative``
 /// - ``generic``
 public struct GenericCredentials: _CredentialsContainer, @unchecked Sendable {
+    public let _creationKind: _CredentialsContainerCreationKind // swiftlint:disable:this identifier_name
     public var _attributes: [CFString: Any] // swiftlint:disable:this identifier_name
     
     public var kind: CredentialsKind? {
@@ -205,8 +252,9 @@ public struct GenericCredentials: _CredentialsContainer, @unchecked Sendable {
     
     public var asInternetCredentials: InternetCredentials? { nil }
     
-    init(_ _attributes: [CFString: Any]) { // swiftlint:disable:this identifier_name
-        self._attributes = _attributes
+    init(other: Credentials) {
+        _creationKind = other._creationKind
+        _attributes = other._attributes
     }
 }
 
@@ -239,6 +287,7 @@ public struct GenericCredentials: _CredentialsContainer, @unchecked Sendable {
 /// - ``port``
 /// - ``path``
 public struct InternetCredentials: _CredentialsContainer, @unchecked Sendable {
+    public let _creationKind: _CredentialsContainerCreationKind // swiftlint:disable:this identifier_name
     public var _attributes: [CFString: Any] // swiftlint:disable:this identifier_name
     
     public var kind: CredentialsKind? {
@@ -249,8 +298,9 @@ public struct InternetCredentials: _CredentialsContainer, @unchecked Sendable {
     
     public var asInternetCredentials: InternetCredentials? { self }
     
-    init(_ _attributes: [CFString: Any]) { // swiftlint:disable:this identifier_name
-        self._attributes = _attributes
+    init(other: Credentials) {
+        _creationKind = other._creationKind
+        _attributes = other._attributes
     }
 }
 

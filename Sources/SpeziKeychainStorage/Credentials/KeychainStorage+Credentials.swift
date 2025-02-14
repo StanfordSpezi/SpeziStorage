@@ -26,12 +26,12 @@ extension KeychainStorage {
         // since the credentials object we're getting in was most likely manually created.
         switch tag.kind {
         case .genericPassword:
-            let credentials = GenericCredentials(credentials._attributes)
+            let credentials = GenericCredentials(other: credentials)
             if let genericData = credentials.generic {
                 query[kSecAttrGeneric] = genericData
             }
         case .internetPassword:
-            let credentials = InternetCredentials(credentials._attributes)
+            let credentials = InternetCredentials(other: credentials)
             if let description = credentials.description {
                 query[kSecAttrDescription] = description
             }
@@ -221,6 +221,7 @@ extension KeychainStorage {
     }
     
     /// Deletes all generic credentials from the keychain.
+    /// - parameter service: the service whose credentials should be deleted. pass `nil` to not filter based on service and instead delete everything.
     /// - parameter accessGroup: optional filter determining the access group whose credentials should be deleted.
     public func deleteAllGenericCredentials(service: String?, accessGroup: AccessGroupFilter) throws {
         var query = queryFor(username: nil, kind: nil, synchronizable: nil, accessGroup: accessGroup.stringValue)

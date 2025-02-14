@@ -49,7 +49,6 @@ public enum KeychainItemAccessibility: Hashable, Sendable {
     
     
     /// Creates an accessibility definition, based on its underlying raw value.
-    /// - returns: `nil`, if `rawValue` doesn't match any known constant.
     public init?(_ rawValue: CFString) {
         switch rawValue {
         case kSecAttrAccessibleWhenPasscodeSetThisDeviceOnly:

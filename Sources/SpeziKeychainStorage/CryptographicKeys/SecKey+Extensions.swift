@@ -172,7 +172,6 @@ public enum KeychainItemTokenID: Hashable, Sendable {
     }
     
     /// Creates a `KeychainItemTokenID` from its underlying `CFString` value.
-    /// - returns: `nil`, if `rawValue` doesn't match any known constant.
     public init?(_ rawValue: CFString) {
         switch rawValue {
         case kSecAttrTokenIDSecureEnclave:

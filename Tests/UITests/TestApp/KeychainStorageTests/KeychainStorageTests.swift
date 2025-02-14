@@ -20,22 +20,28 @@ func XCTAssertCredentialsMainPropertiesEqual(
     file: StaticString = #filePath,
     line: UInt = #line
 ) throws {
-    switch (lhs.kind, rhs.kind) {
-    case (.none, .none):
-        // ok
-        break
-    case let (.some(lhsKind), .some(rhsKind)):
-        try XCTAssertEqual(lhsKind, rhsKind, file: file, line: line)
-    case (.none, .some), (.some, .none):
-        // We need to allow this, since it means that one of the two credentials was manually created and the other was obtained via a query,
-        // and in that case we do want to allow comparing the two. (to make sure that the credentials creation worked as expected.)
-        break
+    /// indicates that both `lhs` and `rhs` are "full" credentials objects, i.e. obtained from a keychain query and fully populated
+    /// (rather than manually created and containing only a username and a password.
+    /// there are some properties we only can check for equality if both credentials objects were obtained from the keychain (ie, are "full" objects).
+    let bothAreFullObjects: Bool
+    
+    switch (lhs._creationKind, rhs._creationKind) {
+    case (.keychainQuery, .keychainQuery):
+        bothAreFullObjects = true
+    case (.manual, _), (_, .manual):
+        bothAreFullObjects = false
     }
+    
     try XCTAssertEqual(lhs.username, rhs.username, file: file, line: line)
     try XCTAssertEqual(lhs.password, rhs.password, file: file, line: line)
-    try XCTAssertEqual(lhs.description, rhs.description, file: file, line: line)
-    try XCTAssertEqual(lhs.label, rhs.label, file: file, line: line)
-    try XCTAssertEqual(lhs.comment, rhs.comment, file: file, line: line)
+    
+    if bothAreFullObjects {
+        try XCTAssertEqual(lhs.kind, rhs.kind, file: file, line: line)
+        try XCTAssertEqual(lhs.description, rhs.description, file: file, line: line)
+        try XCTAssertEqual(lhs.label, rhs.label, file: file, line: line)
+        try XCTAssertEqual(lhs.comment, rhs.comment, file: file, line: line)
+        try XCTAssertEqual(lhs.synchronizable, rhs.synchronizable, file: file, line: line)
+    }
 }
 
 
@@ -153,9 +159,6 @@ final class KeychainStorageTests: TestAppTestCase {
         do {
             var credentialsSet = Set<Credentials>()
             try XCTAssertEqual(credentialsSet.count, 0)
-            
-            let creds1 = try XCTUnwrap(try keychainStorage.retrieveCredentials(withUsername: "@PSchmiedmayer", for: speziLoginTagNoSync))
-            let creds2 = try XCTUnwrap(try keychainStorage.retrieveCredentials(withUsername: "@PSchmiedmayer", for: speziLoginTagNoSync))
             
             credentialsSet.insert(try XCTUnwrap(try keychainStorage.retrieveCredentials(withUsername: "@PSchmiedmayer", for: speziLoginTagNoSync)))
             try XCTAssertEqual(credentialsSet.count, 1)
