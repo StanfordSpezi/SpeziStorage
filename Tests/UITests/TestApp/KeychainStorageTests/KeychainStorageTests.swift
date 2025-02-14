@@ -336,11 +336,11 @@ final class KeychainStorageTests: TestAppTestCase {
             .secureEnclave(requireUserPresence: false),
             .secureEnclave(requireUserPresence: true),
             .keychain(requireUserPresence: false, accessGroup: nil),
-            .keychain(requireUserPresence: false, accessGroup: "A485NLSB8K.edu.stanford.spezi.storage.testapp"), // 637867499T
+            .keychain(requireUserPresence: false, accessGroup: "637867499T.edu.stanford.spezi.storage.testapp"),
             .keychain(requireUserPresence: true, accessGroup: nil),
-            .keychain(requireUserPresence: true, accessGroup: "A485NLSB8K.edu.stanford.spezi.storage.testapp"),
+            .keychain(requireUserPresence: true, accessGroup: "637867499T.edu.stanford.spezi.storage.testapp"),
             .keychainSynchronizable(accessGroup: nil),
-            .keychainSynchronizable(accessGroup: "A485NLSB8K.edu.stanford.spezi.storage.testapp")
+            .keychainSynchronizable(accessGroup: "637867499T.edu.stanford.spezi.storage.testapp")
         ]
         #if targetEnvironment(simulator)
         // secure enclave isn't really supported on the simulator
