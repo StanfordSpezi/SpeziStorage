@@ -55,7 +55,7 @@ func `throws`(_ block: () throws -> Void) -> Bool {
 }
 
 
-final class KeychainStorageTests: TestAppTestCase {
+final class KeychainStorageTests: TestAppTestCase { // swiftlint:disable:this type_body_length
     let keychainStorage: KeychainStorage
     
     init(keychainStorage: KeychainStorage) {
@@ -276,6 +276,9 @@ final class KeychainStorageTests: TestAppTestCase {
     func testKeys0() throws {
         let tag = CryptographicKeyTag("edu.stanford.spezi.testKey", storage: .keychain, label: "TestKey Label")
         
+        try XCTAssertEqual(try keychainStorage.retrieveAllKeys(.private), [])
+        try XCTAssertEqual(try keychainStorage.retrieveAllKeys(.public), [])
+        
         let key = try keychainStorage.createKey(for: tag)
         defer {
             try! keychainStorage.deleteKey(key) // swiftlint:disable:this force_try
@@ -291,6 +294,10 @@ final class KeychainStorageTests: TestAppTestCase {
         try XCTAssertEqual(key.accessGroup, "637867499T.edu.stanford.spezi.storage.testapp")
         try XCTAssertTrue(key.isPermanent)
         try XCTAssertNil(key.tokenId) // not in the secure enclave.
+        try XCTAssertNotNil(key.externalRepresentation)
+        try XCTAssertNotNil(key.publicKey?.externalRepresentation)
+        
+        try XCTAssertEqual(try keychainStorage.retrieveAllKeys(.private), [key])
         
     }
     

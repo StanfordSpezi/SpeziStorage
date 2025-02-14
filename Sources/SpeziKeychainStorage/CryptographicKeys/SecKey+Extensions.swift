@@ -155,6 +155,16 @@ extension SecKey { // swiftlint:disable:this file_types_order
         readSimpleAttr(kSecAttrTokenID, as: CFString.self)
             .flatMap { .init($0) }
     }
+    
+    public var externalRepresentation: Data? {
+        var error: Unmanaged<CFError>?
+        if let data = SecKeyCopyExternalRepresentation(self, &error) {
+            return data as Data
+        } else {
+            // handle error somehow?
+            return nil
+        }
+    }
 }
 
 

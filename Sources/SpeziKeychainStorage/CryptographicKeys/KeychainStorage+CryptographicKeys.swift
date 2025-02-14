@@ -13,7 +13,7 @@ import Security
 
 
 extension KeychainStorage {
-    public enum KeyClass: Hashable, Sendable, CustomDebugStringConvertible {
+    public enum KeyClass: Hashable, Sendable {
         case `private`
         case `public`
         case symmetric
@@ -36,14 +36,6 @@ extension KeychainStorage {
             case .private: kSecAttrKeyClassPrivate
             case .public: kSecAttrKeyClassPublic
             case .symmetric: kSecAttrKeyClassSymmetric
-            }
-        }
-        
-        public var debugDescription: String {
-            switch self {
-            case .private: "private"
-            case .public: "public"
-            case .symmetric: "symmetric"
             }
         }
     }
@@ -100,7 +92,7 @@ extension KeychainStorage {
             return privateKey
         } else {
             // SAFETY: the force unwrap here is ok,
-            // since it's guaranteed that the error will be non-nil if the SecKeyCreateRandomKey retval was.
+            // since it's guaranteed that the error will be non-nil if the SecKeyCreateRandomKey retval was nil.
             let error = error!.takeRetainedValue() // swiftlint:disable:this force_unwrapping
             throw KeychainError.failedToCreateKeyPair(keyTag, .other(error))
         }
@@ -183,7 +175,7 @@ extension KeychainStorage {
             kSecAttrSynchronizable: kSecAttrSynchronizableAny
         ]
         if let accessGroup = accessGroup.stringValue {
-            query[kSecAttrAccessGroup ] = accessGroup
+            query[kSecAttrAccessGroup] = accessGroup
         }
         var items: CFTypeRef?
         do {
@@ -237,7 +229,7 @@ extension KeychainStorage {
             kSecAttrSynchronizable: kSecAttrSynchronizableAny
         ]
         if let accessGroup = accessGroup.stringValue {
-            query[kSecAttrAccessGroup ] = accessGroup
+            query[kSecAttrAccessGroup] = accessGroup
         }
         do {
             try execute(SecItemDelete(query as CFDictionary))
