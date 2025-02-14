@@ -123,6 +123,8 @@ final class KeychainStorageTests: TestAppTestCase {
     func testCredentials() throws { // swiftlint:disable:this function_body_length
         try keychainStorage.deleteAllCredentials(accessGroup: .any)
         
+        try XCTAssertNil(Credentials(username: "", password: "").kind)
+        
         let speziLoginTagNoSync = CredentialsTag.genericPassword(forService: "speziLogin", storage: .keychain)
         let speziLoginTagYesSync = CredentialsTag.genericPassword(forService: "speziLogin", storage: .keychainSynchronizable)
         
@@ -135,6 +137,7 @@ final class KeychainStorageTests: TestAppTestCase {
             let credentials = try XCTUnwrap(try keychainStorage.retrieveCredentials(withUsername: "@PSchmiedmayer", for: speziLoginTagNoSync))
             try XCTAssertNotNil(credentials.asGenericCredentials)
             try XCTAssertNil(credentials.asInternetCredentials)
+            try XCTAssertEqual(try XCTUnwrap(credentials.asGenericCredentials).kind, .genericPassword(service: "speziLogin"))
         }
         try keychainStorage.store(serverCredentials, for: speziLoginTagYesSync)
         try XCTAssertTrue(
@@ -231,8 +234,12 @@ final class KeychainStorageTests: TestAppTestCase {
         try XCTAssertEqual(retrievedCredentials.count, 2)
         try XCTAssertNotNil(retrievedCredentials[0].asInternetCredentials)
         try XCTAssertNotNil(retrievedCredentials[1].asInternetCredentials)
+        try XCTAssertEqual(try XCTUnwrap(retrievedCredentials[0].asInternetCredentials).kind, .internetPassword(server: "linkedin.com"))
         try XCTAssertNil(retrievedCredentials[0].asGenericCredentials)
         try XCTAssertNil(retrievedCredentials[1].asGenericCredentials)
+        try XCTAssertEqual(retrievedCredentials[0], retrievedCredentials[0])
+        try XCTAssertEqual(retrievedCredentials[1], retrievedCredentials[1])
+        try XCTAssertNotEqual(retrievedCredentials[0], retrievedCredentials[1])
         try XCTAssert(retrievedCredentials.contains { cred in !`throws` { try XCTAssertCredentialsMainPropertiesEqual(cred, serverCredentials1) } })
         try XCTAssert(retrievedCredentials.contains { cred in !`throws` { try XCTAssertCredentialsMainPropertiesEqual(cred, serverCredentials2) } })
         
@@ -276,6 +283,15 @@ final class KeychainStorageTests: TestAppTestCase {
         try XCTAssertEqual(key.label, tag.label)
         try XCTAssertEqual(key.applicationTag, tag.tagValue)
         try XCTAssertEqual(key.sizeInBits, tag.size)
+        try XCTAssertNotNil(key.publicKey)
+        try XCTAssertTrue(key.isPrivateKey)
+        try XCTAssertFalse(key.isPublicKey)
+        try XCTAssertEqual(key.keyClass, .private)
+        try XCTAssertEqual(try XCTUnwrap(key.publicKey).keyClass, .public)
+        try XCTAssertEqual(key.accessGroup, "A485NLSB8K.edu.stanford.spezi.storage.testapp")
+        try XCTAssertTrue(key.isPermanent)
+        try XCTAssertNil(key.tokenId) // not in the secure enclave.
+        
     }
     
     
