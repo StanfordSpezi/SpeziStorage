@@ -164,6 +164,7 @@ final class KeychainStorageTests: TestAppTestCase { // swiftlint:disable:this ty
             try XCTUnwrap(try keychainStorage.retrieveCredentials(withUsername: "@PSchmiedmayer", for: speziLoginTagYesSync)),
             try XCTUnwrap(try keychainStorage.retrieveCredentials(withUsername: "@PSchmiedmayer", for: speziLoginTagYesSync))
         )
+        
         do {
             var credentialsSet = Set<Credentials>()
             try XCTAssertEqual(credentialsSet.count, 0)
@@ -203,6 +204,11 @@ final class KeychainStorageTests: TestAppTestCase { // swiftlint:disable:this ty
             keychainStorage.retrieveCredentials(withUsername: "@PSchmiedmayer", for: twitterCredentialsKey)
         )
         try XCTAssertCredentialsMainPropertiesEqual(serverCredentials, retrievedCredentials)
+        try XCTAssertEqual(retrievedCredentials.accessGroup, "637867499T.edu.stanford.spezi.storage.testapp")
+        try XCTAssertNotNil(retrievedCredentials.creationDate)
+        try XCTAssertNotNil(retrievedCredentials.modificationDate)
+        try XCTAssertFalse(retrievedCredentials.isInvisible)
+        try XCTAssertFalse(retrievedCredentials.isNegative)
         
         
         serverCredentials = Credentials(username: "@Spezi", password: "Paul")
@@ -240,8 +246,17 @@ final class KeychainStorageTests: TestAppTestCase { // swiftlint:disable:this ty
         try XCTAssertEqual(retrievedCredentials[0], retrievedCredentials[0])
         try XCTAssertEqual(retrievedCredentials[1], retrievedCredentials[1])
         try XCTAssertNotEqual(retrievedCredentials[0], retrievedCredentials[1])
+        try XCTAssertNotEqual(retrievedCredentials[0], Credentials(username: "Paul Schmiedmayer", password: "SpeziInventor"))
         try XCTAssert(retrievedCredentials.contains { cred in !`throws` { try XCTAssertCredentialsMainPropertiesEqual(cred, serverCredentials1) } })
         try XCTAssert(retrievedCredentials.contains { cred in !`throws` { try XCTAssertCredentialsMainPropertiesEqual(cred, serverCredentials2) } })
+        do {
+            let credentials = try XCTUnwrap(retrievedCredentials.first { $0.username == "Paul Schmiedmayer" }?.asInternetCredentials)
+            try XCTAssertEqual(credentials.securityDomain, "")
+            try XCTAssertEqual(credentials.server, "linkedin.com")
+            try XCTAssertNil(credentials.protocol)
+            try XCTAssertEqual(credentials.port, 0)
+            try XCTAssertEqual(credentials.path, "")
+        }
         
         try keychainStorage.deleteCredentials(withUsername: "Paul Schmiedmayer", for: linkedInCredentialsKey)
         try keychainStorage.deleteCredentials(withUsername: "Stanford Spezi", for: linkedInCredentialsKey)

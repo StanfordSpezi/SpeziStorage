@@ -11,12 +11,12 @@ import Security
 
 
 extension SecKey { // swiftlint:disable:this file_types_order
-    /// The key's "simple" attributes, as returned from `SecKeyCopyAttributes`.
+    /// The key's "simple" attributes, as obtained via `SecKeyCopyAttributes`.
     private var simpleAttributes: [String: Any] {
         SecKeyCopyAttributes(self) as? [String: Any] ?? [:]
     }
     
-    /// The key's "extended" attributes, as returned from `SecItemCopyMatching`.
+    /// The key's "extended" attributes, as obtained via `SecItemCopyMatching`.
     private var extendedAttributes: [String: Any] {
         let query: [CFString: Any] = [
             kSecClass: kSecClassKey,
@@ -174,14 +174,6 @@ extension SecKey { // swiftlint:disable:this file_types_order
 public enum KeychainItemTokenID: Hashable, Sendable {
     /// The keychain item is stored in the secure enclave.
     case secureEnclave
-    
-    /// The underlying `CFString` value.
-    public var rawValue: CFString {
-        switch self {
-        case .secureEnclave:
-            kSecAttrTokenIDSecureEnclave
-        }
-    }
     
     /// Creates a `KeychainItemTokenID` from its underlying `CFString` value.
     public init?(_ rawValue: CFString) {

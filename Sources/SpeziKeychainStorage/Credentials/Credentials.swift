@@ -103,7 +103,7 @@ extension _CredentialsContainer { // swiftlint:disable:this file_types_order
         // NOTE: since _attributes typically is a bridged CFDictionary (rather than a native Swift Dictionary),
         // it seems we aren't able to simply compute a hash by iterating over the dict and hashing the key-value pairs.
         // (The issue is that two dictionaries with the same contents apparently might store/iterate them in a different order?)
-        // Instead, we match the NSDictionary/CFDictionary behaviour and simply use the number of entries as our hash.
+        // Instead, we match the NSDictionary/CFDictionary behaviour of simply using the number of entries as the hash value.
         hasher.combine(_attributes.count)
     }
 }
@@ -378,12 +378,6 @@ extension _CredentialsContainer {
     @_documentation(visibility: public)
     public var isNegative: Bool {
         self[kSecAttrIsNegative] == true
-    }
-    
-    /// The item's account value, i.e. username.
-    @_documentation(visibility: public)
-    public var account: String {
-        username
     }
     
     /// Whether the item is synchronized across multiple devices belonging to the same user.
