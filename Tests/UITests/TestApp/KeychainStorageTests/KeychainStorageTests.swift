@@ -120,7 +120,7 @@ final class KeychainStorageTests: TestAppTestCase {
     }
     
     
-    func testCredentials() throws { // swiftlint:disable:this function_body_length
+    func testCredentials() throws {
         try keychainStorage.deleteAllCredentials(accessGroup: .any)
         
         let speziLoginTagNoSync = CredentialsTag.genericPassword(forService: "speziLogin", storage: .keychain)
