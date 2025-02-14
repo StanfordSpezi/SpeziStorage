@@ -131,6 +131,11 @@ final class KeychainStorageTests: TestAppTestCase {
         try XCTAssertFalse(
             try XCTUnwrap(try keychainStorage.retrieveCredentials(withUsername: "@PSchmiedmayer", for: speziLoginTagNoSync)).synchronizable
         )
+        do {
+            let credentials = try XCTUnwrap(try keychainStorage.retrieveCredentials(withUsername: "@PSchmiedmayer", for: speziLoginTagNoSync))
+            try XCTAssertNotNil(credentials.asGenericCredentials)
+            try XCTAssertNil(credentials.asInternetCredentials)
+        }
         try keychainStorage.store(serverCredentials, for: speziLoginTagYesSync)
         try XCTAssertTrue(
             try XCTUnwrap(try keychainStorage.retrieveCredentials(withUsername: "@PSchmiedmayer", for: speziLoginTagYesSync)).synchronizable
@@ -224,6 +229,10 @@ final class KeychainStorageTests: TestAppTestCase {
         
         let retrievedCredentials = try XCTUnwrap(keychainStorage.retrieveAllCredentials(for: linkedInCredentialsKey))
         try XCTAssertEqual(retrievedCredentials.count, 2)
+        try XCTAssertNotNil(retrievedCredentials[0].asInternetCredentials)
+        try XCTAssertNotNil(retrievedCredentials[1].asInternetCredentials)
+        try XCTAssertNil(retrievedCredentials[0].asGenericCredentials)
+        try XCTAssertNil(retrievedCredentials[1].asGenericCredentials)
         try XCTAssert(retrievedCredentials.contains { cred in !`throws` { try XCTAssertCredentialsMainPropertiesEqual(cred, serverCredentials1) } })
         try XCTAssert(retrievedCredentials.contains { cred in !`throws` { try XCTAssertCredentialsMainPropertiesEqual(cred, serverCredentials2) } })
         

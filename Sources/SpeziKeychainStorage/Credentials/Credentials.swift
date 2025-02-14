@@ -121,6 +121,27 @@ extension _CredentialsContainer { // swiftlint:disable:this file_types_order
 }
 
 
+extension _CredentialsContainer {
+    public var asGenericCredentials: GenericCredentials? {
+        switch kind {
+        case .genericPassword:
+            GenericCredentials(other: self)
+        case .internetPassword, nil:
+            nil
+        }
+    }
+    
+    public var asInternetCredentials: InternetCredentials? {
+        switch kind {
+        case .internetPassword:
+            InternetCredentials(other: self)
+        case .genericPassword, nil:
+            nil
+        }
+    }
+}
+
+
 extension _CredentialsContainer { // swiftlint:disable:this file_types_order
     fileprivate subscript<T>(key: CFString, as _: T.Type = T.self) -> T? {
         get { _attributes[key] as? T }
@@ -183,24 +204,6 @@ public struct Credentials: _CredentialsContainer, Hashable, @unchecked Sendable 
         }
     }
     
-    public var asGenericCredentials: GenericCredentials? {
-        switch kind {
-        case .genericPassword:
-            GenericCredentials(other: self)
-        case .internetPassword, nil:
-            nil
-        }
-    }
-    
-    public var asInternetCredentials: InternetCredentials? {
-        switch kind {
-        case .internetPassword:
-            InternetCredentials(other: self)
-        case .genericPassword, nil:
-            nil
-        }
-    }
-    
     init(_ _attributes: [CFString: Any]) { // swiftlint:disable:this identifier_name
         self._creationKind = .keychainQuery
         self._attributes = _attributes
@@ -248,11 +251,7 @@ public struct GenericCredentials: _CredentialsContainer, @unchecked Sendable {
         .genericPassword(service: service)
     }
     
-    public var asGenericCredentials: GenericCredentials? { self }
-    
-    public var asInternetCredentials: InternetCredentials? { nil }
-    
-    init(other: Credentials) {
+    init(other: some _CredentialsContainer) {
         _creationKind = other._creationKind
         _attributes = other._attributes
     }
@@ -294,11 +293,7 @@ public struct InternetCredentials: _CredentialsContainer, @unchecked Sendable {
         .internetPassword(server: server)
     }
     
-    public var asGenericCredentials: GenericCredentials? { nil }
-    
-    public var asInternetCredentials: InternetCredentials? { self }
-    
-    init(other: Credentials) {
+    init(other: some _CredentialsContainer) {
         _creationKind = other._creationKind
         _attributes = other._attributes
     }
