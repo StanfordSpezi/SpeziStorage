@@ -265,6 +265,10 @@ final class KeychainStorageTests: TestAppTestCase { // swiftlint:disable:this ty
             try XCTAssertNil(credentials.protocol)
             try XCTAssertEqual(credentials.port, 0)
             try XCTAssertEqual(credentials.path, "")
+            try XCTAssertNotNil(credentials.authenticationType)
+            try XCTAssertNil(credentials.creator)
+            try XCTAssertNil(credentials.type)
+            try XCTAssertNotNil(credentials.accessControl)
         }
         
         try keychainStorage.deleteCredentials(withUsername: "Paul Schmiedmayer", for: linkedInCredentialsKey)
