@@ -71,7 +71,7 @@ final class KeychainStorageTests: TestAppTestCase { // swiftlint:disable:this ty
         }
         #endif
         try testDeleteCredentials()
-        try testCredentials()
+        try testGenericCredentials()
         try testInternetCredentials()
         try testMultipleInternetCredentials()
         try testMultipleCredentials()
@@ -120,19 +120,21 @@ final class KeychainStorageTests: TestAppTestCase { // swiftlint:disable:this ty
     }
     
     
-    func testCredentials() throws { // swiftlint:disable:this function_body_length
+    func testGenericCredentials() throws { // swiftlint:disable:this function_body_length
         try keychainStorage.deleteAllCredentials(accessGroup: .any)
         
         try XCTAssertNil(Credentials(username: "", password: "").kind)
         
         let speziLoginTagNoSync = CredentialsTag.genericPassword(forService: "speziLogin", storage: .keychain)
         let speziLoginTagYesSync = CredentialsTag.genericPassword(forService: "speziLogin", storage: .keychainSynchronizable)
+        let apodiniCredentialsTag = CredentialsTag.genericPassword(forService: "apodini")
         
         var serverCredentials = Credentials(username: "@PSchmiedmayer", password: "SpeziInventor")
         try keychainStorage.store(serverCredentials, for: speziLoginTagNoSync)
         try XCTAssertFalse(
             try XCTUnwrap(try keychainStorage.retrieveCredentials(withUsername: "@PSchmiedmayer", for: speziLoginTagNoSync)).synchronizable
         )
+        try keychainStorage.store(.init(username: "lukas", password: "psstthisissecret"), for: apodiniCredentialsTag)
         do {
             let credentials = try XCTUnwrap(try keychainStorage.retrieveCredentials(withUsername: "@PSchmiedmayer", for: speziLoginTagNoSync))
             try XCTAssertNotNil(credentials.asGenericCredentials)
@@ -186,8 +188,15 @@ final class KeychainStorageTests: TestAppTestCase { // swiftlint:disable:this ty
         let retrievedUpdatedCredentials = try XCTUnwrap(keychainStorage.retrieveCredentials(withUsername: "@Spezi", for: speziLoginTagYesSync))
         try XCTAssertCredentialsMainPropertiesEqual(serverCredentials, retrievedUpdatedCredentials)
         
+        try XCTAssertEqual(try keychainStorage.retrieveAllCredentials().count, 3)
+        try XCTAssertEqual(try keychainStorage.retrieveAllGenericCredentials(forService: "speziLogin").count, 2)
+        try XCTAssertEqual(try keychainStorage.retrieveAllGenericCredentials(forService: "apodini").count, 1)
+        
+        try keychainStorage.deleteCredentials(withUsername: "@PSchmiedmayer", for: speziLoginTagNoSync)
         try keychainStorage.deleteCredentials(withUsername: "@Spezi", for: speziLoginTagYesSync)
         try XCTAssertNil(try keychainStorage.retrieveCredentials(withUsername: "@Spezi", for: speziLoginTagYesSync))
+        try keychainStorage.deleteAllGenericCredentials(service: "apodini", accessGroup: .any)
+        try XCTAssertTrue(try keychainStorage.retrieveAllCredentials().isEmpty)
     }
     
     
@@ -269,6 +278,7 @@ final class KeychainStorageTests: TestAppTestCase { // swiftlint:disable:this ty
         try keychainStorage.deleteAllCredentials(accessGroup: .any)
         
         let stanfordCredentialsTag = CredentialsTag.internetPassword(forServer: "stanford.edu")
+        let googleCredentialsTag = CredentialsTag.internetPassword(forServer: "google.com")
         
         let serverCredentials1 = Credentials(username: "Paul Schmiedmayer", password: "SpeziInventor")
         try keychainStorage.store(serverCredentials1, for: stanfordCredentialsTag)
@@ -281,10 +291,18 @@ final class KeychainStorageTests: TestAppTestCase { // swiftlint:disable:this ty
         try XCTAssert(retrievedCredentials.contains { cred in !`throws` { try XCTAssertCredentialsMainPropertiesEqual(cred, serverCredentials1) } })
         try XCTAssert(retrievedCredentials.contains { cred in !`throws` { try XCTAssertCredentialsMainPropertiesEqual(cred, serverCredentials2) } })
         
+        try keychainStorage.store(Credentials(username: "Paul", password: "Schmiedmayer"), for: googleCredentialsTag)
+        
+        try XCTAssertEqual(try keychainStorage.retrieveAllInternetCredentials(forServer: "google.com").count, 1)
+        try XCTAssertEqual(try keychainStorage.retrieveAllInternetCredentials(forServer: "stanford.edu").count, 2)
+        try XCTAssertEqual(try keychainStorage.retrieveAllInternetCredentials().count, 3)
+        
         try keychainStorage.deleteCredentials(withUsername: "Paul Schmiedmayer", for: stanfordCredentialsTag)
         try keychainStorage.deleteCredentials(withUsername: "Stanford Spezi", for: stanfordCredentialsTag)
+        try keychainStorage.deleteAllInternetCredentials(server: "google.com", accessGroup: .any)
         
         try XCTAssertEqual(try XCTUnwrap(keychainStorage.retrieveAllCredentials(for: stanfordCredentialsTag)).count, 0)
+        try XCTAssertEqual(try XCTUnwrap(keychainStorage.retrieveAllCredentials(for: googleCredentialsTag)).count, 0)
         try XCTAssertTrue(try keychainStorage.retrieveAllCredentials().isEmpty)
     }
     
