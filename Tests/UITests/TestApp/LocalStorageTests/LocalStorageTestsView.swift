@@ -6,18 +6,21 @@
 // SPDX-License-Identifier: MIT
 //
 
+import SpeziKeychainStorage
 import SpeziLocalStorage
-import SpeziSecureStorage
 import SwiftUI
 import XCTestApp
 
 
 struct LocalStorageTestsView: View {
     @Environment(LocalStorage.self) var localStorage
-    @Environment(SecureStorage.self) var secureStorage
+    @Environment(KeychainStorage.self) var keychainStorage
 
     
     var body: some View {
-        TestAppView(testCase: LocalStorageTests(localStorage: localStorage, secureStorage: secureStorage))
+        TestAppView(testCase: LocalStorageTests(
+            localStorage: localStorage,
+            keychainStorage: keychainStorage
+        ))
     }
 }

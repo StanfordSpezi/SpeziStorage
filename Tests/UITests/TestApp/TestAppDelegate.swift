@@ -7,15 +7,15 @@
 //
 
 import Spezi
+import SpeziKeychainStorage
 import SpeziLocalStorage
-import SpeziSecureStorage
 
 
 class TestAppDelegate: SpeziAppDelegate {
     override var configuration: Configuration {
         Configuration {
             LocalStorage()
-            SecureStorage()
+            KeychainStorage()
         }
     }
 }

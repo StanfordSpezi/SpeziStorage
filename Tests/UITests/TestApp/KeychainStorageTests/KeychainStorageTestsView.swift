@@ -6,16 +6,15 @@
 // SPDX-License-Identifier: MIT
 //
 
-import SpeziSecureStorage
+import SpeziKeychainStorage
 import SwiftUI
 import XCTestApp
 
 
-struct SecureStorageTestsView: View {
-    @Environment(SecureStorage.self) var secureStorage
-    
+struct KeychainStorageTestsView: View {
+    @Environment(KeychainStorage.self) var keychainStorage
     
     var body: some View {
-        TestAppView(testCase: SecureStorageTests(secureStorage: secureStorage))
+        TestAppView(testCase: KeychainStorageTests(keychainStorage: keychainStorage))
     }
 }

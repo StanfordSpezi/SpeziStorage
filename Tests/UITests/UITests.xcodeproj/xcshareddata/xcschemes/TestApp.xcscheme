@@ -14,9 +14,9 @@
             buildForAnalyzing = "NO">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "SpeziSecureStorage"
-               BuildableName = "SpeziSecureStorage"
-               BlueprintName = "SpeziSecureStorage"
+               BlueprintIdentifier = "SpeziKeychainStorage"
+               BuildableName = "SpeziKeychainStorage"
+               BlueprintName = "SpeziKeychainStorage"
                ReferencedContainer = "container:../..">
             </BuildableReference>
          </BuildActionEntry>

@@ -21,7 +21,7 @@ let package = Package(
     ],
     products: [
         .library(name: "SpeziLocalStorage", targets: ["SpeziLocalStorage"]),
-        .library(name: "SpeziSecureStorage", targets: ["SpeziSecureStorage"])
+        .library(name: "SpeziKeychainStorage", targets: ["SpeziKeychainStorage"])
     ],
     dependencies: [
         .package(url: "https://github.com/StanfordSpezi/Spezi", from: "1.7.3"),
@@ -30,28 +30,30 @@ let package = Package(
     ] + swiftLintPackage(),
     targets: [
         .target(
-            name: "SpeziLocalStorage",
-            dependencies: [
-                .product(name: "Spezi", package: "Spezi"),
-                .product(name: "SpeziFoundation", package: "SpeziFoundation"),
-                .target(name: "SpeziSecureStorage")
-            ],
-            plugins: [] + swiftLintPlugin()
-        ),
-        .testTarget(
-            name: "SpeziLocalStorageTests",
-            dependencies: [
-                .target(name: "SpeziLocalStorage"),
-                .product(name: "XCTSpezi", package: "Spezi")
-            ],
-            plugins: [] + swiftLintPlugin()
-        ),
-        .target(
-            name: "SpeziSecureStorage",
+            name: "SpeziKeychainStorage",
             dependencies: [
                 .product(name: "Spezi", package: "Spezi"),
                 .product(name: "XCTRuntimeAssertions", package: "XCTRuntimeAssertions")
             ],
+            swiftSettings: [.enableUpcomingFeature("ExistentialAny")]
+        ),
+        .target(
+            name: "SpeziLocalStorage",
+            dependencies: [
+                .product(name: "Spezi", package: "Spezi"),
+                .product(name: "SpeziFoundation", package: "SpeziFoundation"),
+                .target(name: "SpeziKeychainStorage")
+            ],
+            swiftSettings: [.enableUpcomingFeature("ExistentialAny")],
+            plugins: [] + swiftLintPlugin()
+        ),
+        .testTarget(
+            name: "SpeziStorageTests",
+            dependencies: [
+                .target(name: "SpeziLocalStorage"),
+                .product(name: "XCTSpezi", package: "Spezi")
+            ],
+            swiftSettings: [.enableUpcomingFeature("ExistentialAny")],
             plugins: [] + swiftLintPlugin()
         )
     ]

@@ -7,8 +7,8 @@
 //
 
 import CryptoKit
+import SpeziKeychainStorage
 import SpeziLocalStorage
-import SpeziSecureStorage
 import XCTestApp
 import XCTRuntimeAssertions
 
@@ -20,15 +20,15 @@ final class LocalStorageTests: TestAppTestCase {
     
     
     let localStorage: LocalStorage
-    let secureStorage: SecureStorage
+    let keychainStorage: KeychainStorage
     
     
     init(
         localStorage: LocalStorage,
-        secureStorage: SecureStorage
+        keychainStorage: KeychainStorage
     ) {
         self.localStorage = localStorage
-        self.secureStorage = secureStorage
+        self.keychainStorage = keychainStorage
     }
     
     
@@ -45,8 +45,9 @@ final class LocalStorageTests: TestAppTestCase {
     }
     
     func testLocalStorageTestEncryptedManualKeys() throws {
-        let privateKey = try secureStorage.retrievePrivateKey(forTag: "LocalStorageTests") ?? secureStorage.createKey("LocalStorageTests")
-        guard let publicKey = try secureStorage.retrievePublicKey(forTag: "LocalStorageTests") else {
+        let keyTag = CryptographicKeyTag("LocalStorageTests", storage: .keychain)
+        let privateKey = try keychainStorage.retrievePrivateKey(for: keyTag) ?? keychainStorage.createKey(for: keyTag)
+        guard let publicKey = try keychainStorage.retrievePublicKey(for: keyTag) else {
             throw XCTestFailure()
         }
         let key = LocalStorageKey<Letter>("letter1", setting: .encrypted(privateKey: privateKey, publicKey: publicKey))
@@ -61,7 +62,7 @@ final class LocalStorageTests: TestAppTestCase {
     
     
     func testLocalStorageTestEncryptedKeychain() throws {
-        let key = LocalStorageKey<Letter>("letter2", setting: .encryptedUsingKeyChain())
+        let key = LocalStorageKey<Letter>("letter2", setting: .encryptedUsingKeychain())
         let letter = Letter(greeting: "Hello Paul 👋\(String(repeating: "🚀", count: Int.random(in: 0...10)))")
 
         try localStorage.store(letter, for: key)
