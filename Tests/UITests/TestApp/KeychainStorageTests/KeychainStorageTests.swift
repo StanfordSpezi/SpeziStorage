@@ -285,6 +285,7 @@ final class KeychainStorageTests: TestAppTestCase { // swiftlint:disable:this ty
         try keychainStorage.deleteCredentials(withUsername: "Stanford Spezi", for: stanfordCredentialsTag)
         
         try XCTAssertEqual(try XCTUnwrap(keychainStorage.retrieveAllCredentials(for: stanfordCredentialsTag)).count, 0)
+        try XCTAssertTrue(try keychainStorage.retrieveAllCredentials().isEmpty)
     }
     
     

@@ -58,15 +58,6 @@ extension KeychainItemStorageOption {
         }
     }
     
-    var requireUserPresence: Bool {
-        switch self {
-        case .secureEnclave(let requireUserPresence), .keychain(let requireUserPresence, _):
-            requireUserPresence
-        case .keychainSynchronizable:
-            false
-        }
-    }
-    
     var accessGroup: String? {
         switch self {
         case .secureEnclave:
