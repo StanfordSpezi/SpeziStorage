@@ -12,7 +12,7 @@ import SpeziKeychainStorage
 
 
 /// Configure how data is encrypyed, stored, and retrieved.
-public enum LocalStorageSetting {
+public enum LocalStorageSetting: Hashable, Sendable {
     /// Unencrypted
     case unencrypted(excludeFromBackup: Bool = true)
     /// Encrypted using a `eciesEncryptionCofactorX963SHA256AESGCM` key: private key for encryption and a public key for decryption.
