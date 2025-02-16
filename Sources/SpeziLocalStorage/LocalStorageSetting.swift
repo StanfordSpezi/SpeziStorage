@@ -12,7 +12,12 @@ import SpeziKeychainStorage
 
 
 /// Configure how data is encrypyed, stored, and retrieved.
-public enum LocalStorageSetting {
+public enum LocalStorageSetting: Hashable, @unchecked Sendable {
+    // ^^^SAFETY: The `@unckeched Sendable` conformance above should be fine; we need this because some cases have
+    // `SecKey` associated values, which itself is not Sendable.
+    // But since these `SecKey` objects represent de-facto immutable references to keychain items (private keys),
+    // it should be fine for us to make the type Sendable.
+    
     /// Unencrypted
     case unencrypted(excludeFromBackup: Bool = true)
     /// Encrypted using a `eciesEncryptionCofactorX963SHA256AESGCM` key: private key for encryption and a public key for decryption.
