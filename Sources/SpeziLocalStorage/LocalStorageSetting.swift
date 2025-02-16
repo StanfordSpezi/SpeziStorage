@@ -66,3 +66,6 @@ public enum LocalStorageSetting: Hashable, Sendable {
         return (privateKey, publicKey)
     }
 }
+
+
+extension SecKey: @retroactive @unchecked Sendable {}
