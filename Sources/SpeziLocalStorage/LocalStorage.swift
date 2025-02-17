@@ -25,10 +25,13 @@ import SpeziKeychainStorage
 ///
 /// ### Storing Elements
 /// - ``store(_:for:)``
+/// - ``store(_:for:configuration:)``
 /// - ``modify(_:_:)``
+/// - ``modify(_:decodingConfiguration:encodingConfiguration:_:)``
 ///
 /// ### Loading Elements
 /// - ``load(_:)``
+/// - ``load(_:configuration:)``
 ///
 /// ### Deleting Entries
 /// - ``delete(_:)``
@@ -80,7 +83,27 @@ public final class LocalStorage: Module, DefaultInitializable, EnvironmentAccess
     public func store<Value>(_ value: Value?, for key: LocalStorageKey<Value>) throws {
         try key.withWriteLock {
             if let value {
-                try storeImp(value, for: key)
+                try storeImp(value, for: key, context: Void?.none)
+            } else {
+                try deleteImp(key)
+            }
+        }
+    }
+    
+    /// Put a value into the `LocalStorage`.
+    ///
+    /// - parameter value: The value which should be persisted. Passing `nil` will delete the most-recently-stored value.
+    /// - parameter key: The ``LocalStorageKey`` with which the value should be associated.
+    ///
+    /// - Note: This operation will overwrite any previously-stored values for this key.
+    public func store<Value>(
+        _ value: Value?,
+        for key: LocalStorageKey<Value>,
+        configuration: Value.EncodingConfiguration
+    ) throws where Value: EncodableWithConfiguration {
+        try key.withWriteLock {
+            if let value {
+                try storeImp(value, for: key, context: configuration)
             } else {
                 try deleteImp(key)
             }
@@ -89,7 +112,7 @@ public final class LocalStorage: Module, DefaultInitializable, EnvironmentAccess
     
     
     /// - invariant: assumes that the key's write lock is held.
-    private func storeImp<Value>(_ value: Value, for key: LocalStorageKey<Value>) throws {
+    private func storeImp<Value>(_ value: Value, for key: LocalStorageKey<Value>, context: some Any) throws {
         var fileURL = fileURL(for: key)
         let fileExistsAlready = fileManager.fileExists(atPath: fileURL.path)
 
@@ -109,7 +132,7 @@ public final class LocalStorage: Module, DefaultInitializable, EnvironmentAccess
             }
         }
 
-        let data = try key.encode(value)
+        let data = try key.encode(value, context: context)
 
         // Determine if the data should be encrypted or not:
         guard let keys = try key.setting.keys(from: keychainStorage) else {
@@ -143,7 +166,21 @@ public final class LocalStorage: Module, DefaultInitializable, EnvironmentAccess
     /// - returns: The most recent stored value associated with the key; `nil` if no such value exists.
     public func load<Value>(_ key: LocalStorageKey<Value>) throws -> Value? {
         try key.withReadLock {
-            try readImp(key)
+            try readImp(key, context: Void?.none)
+        }
+    }
+    
+    /// Load a value from the `LocalStorage`.
+    ///
+    /// - parameter key: The ``LocalStorageKey`` associated with the to-be-retrieved value.
+    /// - parameter configuration: The decoding configuration which should be used when decoding a value.
+    /// - returns: The most recent stored value associated with the key; `nil` if no such value exists.
+    public func load<Value>(
+        _ key: LocalStorageKey<Value>,
+        configuration: Value.DecodingConfiguration
+    ) throws -> Value? where Value: DecodableWithConfiguration {
+        try key.withReadLock {
+            try readImp(key, context: configuration)
         }
     }
     
@@ -157,7 +194,7 @@ public final class LocalStorage: Module, DefaultInitializable, EnvironmentAccess
     
     
     /// - invariant: assumes that the key's read lock is held.
-    private func readImp<Value>(_ key: LocalStorageKey<Value>) throws -> Value? {
+    private func readImp<Value>(_ key: LocalStorageKey<Value>, context: some Any) throws -> Value? {
         let fileURL = fileURL(for: key)
         guard fileManager.fileExists(atPath: fileURL.path) else {
             return nil
@@ -166,7 +203,7 @@ public final class LocalStorage: Module, DefaultInitializable, EnvironmentAccess
 
         // Determine if the data should be decrypted or not:
         guard let keys = try key.setting.keys(from: keychainStorage) else {
-            return try key.decode(data)
+            return try key.decode(from: data, context: context)
         }
 
         guard SecKeyIsAlgorithmSupported(keys.privateKey, .decrypt, encryptionAlgorithm) else {
@@ -178,7 +215,7 @@ public final class LocalStorage: Module, DefaultInitializable, EnvironmentAccess
             throw LocalStorageError.decryptionNotPossible
         }
 
-        return try key.decode(decryptedData)
+        return try key.decode(from: decryptedData, context: context)
     }
     
     
@@ -241,10 +278,38 @@ public final class LocalStorage: Module, DefaultInitializable, EnvironmentAccess
     /// - throws: if `transform` throws,
     public func modify<Value>(_ key: LocalStorageKey<Value>, _ transform: (_ value: inout Value?) throws -> Void) throws {
         try key.withWriteLock {
-            var value = try readImp(key)
+            var value = try readImp(key, context: Void?.none)
             try transform(&value)
             if let value {
-                try storeImp(value, for: key)
+                try storeImp(value, for: key, context: Void?.none)
+            } else {
+                try deleteImp(key)
+            }
+        }
+    }
+    
+    
+    /// Modify a stored value in place
+    ///
+    /// Use this function to perform an atomic mutation of an entry in the `LocalStorage`.
+    ///
+    /// - parameter key: The ``LocalStorageKey`` whose value should be mutated.
+    /// - parameter transform: A mapping closure, which will be called with the current value stored for `key` (or `nil`, if no value is stored).
+    ///     The value after the closure invocation will be stored into the `LocalStorage`, for the entry identified by `key`.
+    ///     If the closure sets `value` to `nil`, the entry will be removed from the `LocalStorage`.
+    ///
+    /// - throws: if `transform` throws,
+    public func modify<Value: CodableWithConfiguration>(
+        _ key: LocalStorageKey<Value>,
+        decodingConfiguration: Value.DecodingConfiguration,
+        encodingConfiguration: Value.EncodingConfiguration,
+        _ transform: (_ value: inout Value?) throws -> Void
+    ) throws {
+        try key.withWriteLock {
+            var value = try readImp(key, context: decodingConfiguration)
+            try transform(&value)
+            if let value {
+                try storeImp(value, for: key, context: encodingConfiguration)
             } else {
                 try deleteImp(key)
             }
