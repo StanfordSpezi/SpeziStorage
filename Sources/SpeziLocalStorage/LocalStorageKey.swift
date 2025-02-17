@@ -153,7 +153,8 @@ extension LocalStorageKey {
         }
     }
     
-    /// Creates a Local Storage Key that uses a custom encoder and decoder.
+    /// Creates a Local Storage Key for a `CodableWithConfiguration` type, that uses a custom encoder and decoder.
+    /// - Note: When creating a Local Storage Key for a type that is both `Codable` and `CodableWithConfiguration`, the `CodableWithConfiguration` conformance will take predecence.
     public convenience init<E: SpeziFoundation.TopLevelEncoder & Sendable, D: SpeziFoundation.TopLevelDecoder & Sendable>(
         _ key: String,
         setting: LocalStorageSetting = .default, // swiftlint:disable:this function_default_parameter_at_end
