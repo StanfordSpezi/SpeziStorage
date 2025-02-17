@@ -299,12 +299,12 @@ public final class LocalStorage: Module, DefaultInitializable, EnvironmentAccess
     ///     If the closure sets `value` to `nil`, the entry will be removed from the `LocalStorage`.
     ///
     /// - throws: if `transform` throws,
-    public func modify<Value>(
+    public func modify<Value: CodableWithConfiguration>(
         _ key: LocalStorageKey<Value>,
         decodingConfiguration: Value.DecodingConfiguration,
         encodingConfiguration: Value.EncodingConfiguration,
         _ transform: (_ value: inout Value?) throws -> Void
-    ) throws where Value: CodableWithConfiguration {
+    ) throws {
         try key.withWriteLock {
             var value = try readImp(key, context: decodingConfiguration)
             try transform(&value)
