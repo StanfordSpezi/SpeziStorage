@@ -262,7 +262,7 @@ final class LocalStorageTests: XCTestCase {
             struct DecodingConfiguration {
                 let multiplicativeFactor: Int
             }
-            let value: Int
+            var value: Int
             init(value: Int) {
                 self.value = value
             }
@@ -298,5 +298,17 @@ final class LocalStorageTests: XCTestCase {
         try localStorage.store(inputValue, for: key)
         XCTAssertEqual(try String(contentsOf: localStorage.fileURL(for: key), encoding: .utf8), #"{"value":12}"#)
         XCTAssertEqual(try localStorage.load(key), inputValue)
+        
+        try localStorage.store(inputValue, for: key, configuration: .init(multiplicativeFactor: 2))
+        
+        try localStorage.modify(
+            key,
+            decodingConfiguration: .init(multiplicativeFactor: 2),
+            encodingConfiguration: .init(multiplicativeFactor: 2)
+        ) { value in
+            value?.value += 2
+        }
+        
+        XCTAssertEqual(try localStorage.load(key, configuration: .init(multiplicativeFactor: 2))?.value, 14)
     }
 }
