@@ -83,7 +83,7 @@ public final class LocalStorage: Module, DefaultInitializable, EnvironmentAccess
     public func store<Value>(_ value: Value?, for key: LocalStorageKey<Value>) throws {
         try key.withWriteLock {
             if let value {
-                try storeImp(value, for: key, context: ())
+                try storeImp(value, for: key, context: Void?.none)
             } else {
                 try deleteImp(key)
             }
@@ -166,7 +166,7 @@ public final class LocalStorage: Module, DefaultInitializable, EnvironmentAccess
     /// - returns: The most recent stored value associated with the key; `nil` if no such value exists.
     public func load<Value>(_ key: LocalStorageKey<Value>) throws -> Value? {
         try key.withReadLock {
-            try readImp(key, context: ())
+            try readImp(key, context: Void?.none)
         }
     }
     
@@ -278,10 +278,10 @@ public final class LocalStorage: Module, DefaultInitializable, EnvironmentAccess
     /// - throws: if `transform` throws,
     public func modify<Value>(_ key: LocalStorageKey<Value>, _ transform: (_ value: inout Value?) throws -> Void) throws {
         try key.withWriteLock {
-            var value = try readImp(key, context: ())
+            var value = try readImp(key, context: Void?.none)
             try transform(&value)
             if let value {
-                try storeImp(value, for: key, context: ())
+                try storeImp(value, for: key, context: Void?.none)
             } else {
                 try deleteImp(key)
             }

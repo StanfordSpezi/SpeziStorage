@@ -67,8 +67,8 @@ public class LocalStorageKeys {
 public final class LocalStorageKey<Value>: LocalStorageKeys, @unchecked Sendable {
     let key: String
     let setting: LocalStorageSetting
-    private let encodeImp: @Sendable (Value, Any) throws -> Data
-    private let decodeImp: @Sendable (Data, Any) throws -> Value?
+    private let encodeImp: @Sendable (Value, Any?) throws -> Data
+    private let decodeImp: @Sendable (Data, Any?) throws -> Value?
     private let lock = RWLock()
     private let subject = PassthroughSubject<Value?, Never>()
     
@@ -121,11 +121,17 @@ public final class LocalStorageKey<Value>: LocalStorageKeys, @unchecked Sendable
         subject.send(newValue)
     }
     
-    func encode(_ value: Value, context: some Any) throws -> Data {
+    /// Encodes a `Value` into `Data`.
+    /// - parameter value: the to-be-encoded value
+    /// - parameter context: optional context which should be passed to the encoding operation. This is intended for passing e.g. an encoding configuration. The caller is responsible for ensuring that the passed-in value is compatible with the specific LocalStorageKey's encoding operation.
+    func encode(_ value: Value, context: (some Any)?) throws -> Data {
         try encodeImp(value, context)
     }
     
-    func decode(from data: Data, context: some Any) throws -> Value? {
+    /// Decodes a `Value` from `Data`.
+    /// - parameter data: the to-be-decoded data
+    /// - parameter context: optional context which should be passed to the decoding operation. This is intended for passing e.g. an decoding configuration. The caller is responsible for ensuring that the passed-in value is compatible with the specific LocalStorageKey's decoding operation.
+    func decode(from data: Data, context: (some Any)?) throws -> Value? {
         try decodeImp(data, context)
     }
 }
