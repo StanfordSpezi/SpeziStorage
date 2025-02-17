@@ -264,7 +264,7 @@ extension LocalStorageKey {
             } else {
                 preconditionFailure("Invalid context passed to CodableWithConfiguration encoding operation")
             }
-        } decode: { (data, _) in
+        } decode: { data, _ in
             try decoder.decode(Value.self, from: data)
         }
     }
