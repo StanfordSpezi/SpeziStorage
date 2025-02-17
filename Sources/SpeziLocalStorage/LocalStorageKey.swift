@@ -67,12 +67,34 @@ public class LocalStorageKeys {
 public final class LocalStorageKey<Value>: LocalStorageKeys, @unchecked Sendable {
     let key: String
     let setting: LocalStorageSetting
-    let encode: @Sendable (Value) throws -> Data
-    let decode: @Sendable (Data) throws -> Value?
+    private let encodeImp: @Sendable (Value, Any) throws -> Data
+    private let decodeImp: @Sendable (Data, Any) throws -> Value?
     private let lock = RWLock()
     private let subject = PassthroughSubject<Value?, Never>()
     
     var publisher: some Publisher<Value?, Never> { subject }
+    
+    private init<EncodingContext, DecodingContext>(
+        key: String,
+        setting: LocalStorageSetting,
+        encode: @Sendable @escaping (Value, EncodingContext) throws -> Data,
+        decode: @Sendable @escaping (Data, DecodingContext) throws -> Value?
+    ) {
+        self.key = key
+        self.setting = setting
+        self.encodeImp = { value, context in
+            guard let context = context as? EncodingContext else {
+                preconditionFailure("Invalid encoding context passed. Expected '\(EncodingContext.self)'; got \(type(of: context))")
+            }
+            return try encode(value, context)
+        }
+        self.decodeImp = { data, context in
+            guard let context = context as? DecodingContext else {
+                preconditionFailure("Invalid decoding context passed. Expected '\(DecodingContext.self)'; got \(type(of: context))")
+            }
+            return try decode(data, context)
+        }
+    }
     
     /// Creates a Local Storage Key that uses custom encoding and decoding functions.
     public init(
@@ -83,8 +105,8 @@ public final class LocalStorageKey<Value>: LocalStorageKeys, @unchecked Sendable
     ) {
         self.key = key
         self.setting = setting
-        self.encode = encode
-        self.decode = decode
+        self.encodeImp = { value, _ in try encode(value) }
+        self.decodeImp = { data, _ in try decode(data) }
     }
     
     func withReadLock<Result>(_ block: () throws -> Result) rethrows -> Result {
@@ -98,6 +120,14 @@ public final class LocalStorageKey<Value>: LocalStorageKeys, @unchecked Sendable
     func informSubscribersAboutNewValue(_ newValue: Value?) {
         subject.send(newValue)
     }
+    
+    func encode(_ value: Value, context: some Any) throws -> Data {
+        try encodeImp(value, context)
+    }
+    
+    func decode(from data: Data, context: some Any) throws -> Value? {
+        try decodeImp(data, context)
+    }
 }
 
 
@@ -107,7 +137,9 @@ extension LocalStorageKey {
         self.init(key, setting: setting, encoder: JSONEncoder(), decoder: JSONDecoder())
     }
     
-    /// Creates a Local Storage Key that uses a custom encoder and decoder.
+    /// Creates a Local Storage Key for a `Codable` type, that uses a custom encoder and decoder.
+    /// - Note: When creating a Local Storage Key for a type that is both `Codable` and `CodableWithConfiguration`, the `CodableWithConfiguration` conformance will take predecence.
+    @_disfavoredOverload
     public convenience init<E: SpeziFoundation.TopLevelEncoder & Sendable, D: SpeziFoundation.TopLevelDecoder & Sendable>(
         _ key: String,
         setting: LocalStorageSetting = .default, // swiftlint:disable:this function_default_parameter_at_end
@@ -118,6 +150,20 @@ extension LocalStorageKey {
             try encoder.encode(value)
         } decode: { data in
             try decoder.decode(Value.self, from: data)
+        }
+    }
+    
+    /// Creates a Local Storage Key that uses a custom encoder and decoder.
+    public convenience init<E: SpeziFoundation.TopLevelEncoder & Sendable, D: SpeziFoundation.TopLevelDecoder & Sendable>(
+        _ key: String,
+        setting: LocalStorageSetting = .default, // swiftlint:disable:this function_default_parameter_at_end
+        encoder: E,
+        decoder: D
+    ) where Value: CodableWithConfiguration, E.Output == Data, D.Input == Data {
+        self.init(key: key, setting: setting) { (value, configuration: Value.EncodingConfiguration) in
+            try encoder.encode(value, configuration: configuration)
+        } decode: { (data, configuration: Value.DecodingConfiguration) in
+            try decoder.decode(Value.self, from: data, configuration: configuration)
         }
     }
     

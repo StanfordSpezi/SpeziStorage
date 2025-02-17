@@ -209,4 +209,51 @@ final class LocalStorageTests: XCTestCase {
         XCTAssertTrue(string.isEqual(try localStorage.load(key)))
         XCTAssertFalse(string is any Codable) // make sure we're actually using the NSSecureCoding path here...
     }
+    
+    
+    @MainActor
+    func testCodableWithConfiguration() throws {
+        struct TestType: Hashable, Codable, CodableWithConfiguration {
+            struct EncodingConfiguration {
+                let multiplicativeFactor: Int
+            }
+            
+            struct DecodingConfiguration {
+                let multiplicativeFactor: Int
+            }
+            
+            let value: Int
+            
+            init(value: Int) {
+                self.value = value
+            }
+            
+            init(from decoder: any Decoder, configuration: DecodingConfiguration) throws {
+                let container = try decoder.singleValueContainer()
+                value = try container.decode(Int.self) * configuration.multiplicativeFactor
+            }
+            
+            func encode(to encoder: any Encoder, configuration: EncodingConfiguration) throws {
+                var container = encoder.singleValueContainer()
+                try container.encode(value / configuration.multiplicativeFactor)
+            }
+        }
+        
+        let localStorage = LocalStorage()
+        withDependencyResolution {
+            localStorage
+        }
+        
+        let key = LocalStorageKey<TestType>(
+            "testtestCodableWithConfig",
+            setting: .unencrypted(excludeFromBackup: true),
+            encoder: JSONEncoder(),
+            decoder: JSONDecoder()
+        )
+        
+        let inputValue = TestType(value: 12)
+        try localStorage.store(inputValue, for: key, configuration: .init(multiplicativeFactor: 2))
+        XCTAssertEqual(try String(contentsOf: localStorage.fileURL(for: key), encoding: .utf8), "6")
+        XCTAssertEqual(try localStorage.load(key, configuration: .init(multiplicativeFactor: 2)), inputValue)
+    }
 }
