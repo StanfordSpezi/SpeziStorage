@@ -144,7 +144,6 @@ extension LocalStorageKey {
     }
     
     /// Creates a Local Storage Key for a `Codable` type, that uses a custom encoder and decoder.
-    /// - Note: When creating a Local Storage Key for a type that is both `Codable` and `CodableWithConfiguration`, the `CodableWithConfiguration` conformance will take predecence.
     @_disfavoredOverload
     public convenience init<E: SpeziFoundation.TopLevelEncoder & Sendable, D: SpeziFoundation.TopLevelDecoder & Sendable>(
         _ key: String,
@@ -160,7 +159,6 @@ extension LocalStorageKey {
     }
     
     /// Creates a Local Storage Key for a `CodableWithConfiguration` type, that uses a custom encoder and decoder.
-    /// - Note: When creating a Local Storage Key for a type that is both `Codable` and `CodableWithConfiguration`, the `CodableWithConfiguration` conformance will take predecence.
     public convenience init<E: SpeziFoundation.TopLevelEncoder & Sendable, D: SpeziFoundation.TopLevelDecoder & Sendable>(
         _ key: String,
         setting: LocalStorageSetting = .default, // swiftlint:disable:this function_default_parameter_at_end
@@ -171,6 +169,28 @@ extension LocalStorageKey {
             try encoder.encode(value, configuration: configuration)
         } decode: { (data, configuration: Value.DecodingConfiguration) in
             try decoder.decode(Value.self, from: data, configuration: configuration)
+        }
+    }
+    
+    /// Creates a Local Storage Key for a type that is both `Codable` and `CodableWithConfiguration`, that uses a custom encoder and decoder.
+    public convenience init<E: SpeziFoundation.TopLevelEncoder & Sendable, D: SpeziFoundation.TopLevelDecoder & Sendable>(
+        _ key: String,
+        setting: LocalStorageSetting = .default, // swiftlint:disable:this function_default_parameter_at_end
+        encoder: E,
+        decoder: D
+    ) where Value: Codable & CodableWithConfiguration, E.Output == Data, D.Input == Data {
+        self.init(key: key, setting: setting) { (value, configuration: Any?) in
+            if let configuration = configuration as? Value.EncodingConfiguration {
+                try encoder.encode(value, configuration: configuration)
+            } else {
+                try encoder.encode(value)
+            }
+        } decode: { (data, configuration: Any?) in
+            if let configuration = configuration as? Value.DecodingConfiguration {
+                try decoder.decode(Value.self, from: data, configuration: configuration)
+            } else {
+                try decoder.decode(Value.self, from: data)
+            }
         }
     }
     
