@@ -176,6 +176,8 @@ extension LocalStorageKey { // swiftlint:disable:this file_types_order
             if let value = value as? any Encodable {
                 return try encoder.encode(value)
             }
+            // should be unreachable, since this initializer is only used by initializers which themselves
+            // require `Value` be either `Encodable`, or `EncodableWithConfiguration`, or both.
             preconditionFailure("Input type ('\(Value.self)') is neither \((any Encodable).self) nor \((any EncodableWithConfiguration).self)")
         } decode: { (data: Data, context: Any?) in
             if let type = Value.self as? any DecodableWithConfiguration.Type {
@@ -196,6 +198,8 @@ extension LocalStorageKey { // swiftlint:disable:this file_types_order
                 // `Decodable` protocol.
                 return try decoder.decode(type, from: data) as! Value? // swiftlint:disable:this force_cast
             }
+            // should be unreachable, since this initializer is only used by initializers which themselves
+            // require `Value` be either `Decodable`, or `DecodableWithConfiguration`, or both.
             preconditionFailure("Input type ('\(Value.self)') is neither \((any Decodable).self) nor \((any DecodableWithConfiguration).self)")
         }
     }
