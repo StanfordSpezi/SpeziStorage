@@ -74,26 +74,16 @@ public final class LocalStorageKey<Value>: LocalStorageKeys, @unchecked Sendable
     
     var publisher: some Publisher<Value?, Never> { subject }
     
-    private init<EncodingContext, DecodingContext>(
+    private init(
         key: String,
         setting: LocalStorageSetting,
-        encode: @Sendable @escaping (Value, EncodingContext) throws -> Data,
-        decode: @Sendable @escaping (Data, DecodingContext) throws -> Value?
+        encode: @Sendable @escaping (Value, Any?) throws -> Data,
+        decode: @Sendable @escaping (Data, Any?) throws -> Value?
     ) {
         self.key = key
         self.setting = setting
-        self.encodeImp = { value, context in
-            guard let context = context as? EncodingContext else {
-                preconditionFailure("Invalid encoding context passed. Expected '\(EncodingContext.self)'; got \(type(of: context))")
-            }
-            return try encode(value, context)
-        }
-        self.decodeImp = { data, context in
-            guard let context = context as? DecodingContext else {
-                preconditionFailure("Invalid decoding context passed. Expected '\(DecodingContext.self)'; got \(type(of: context))")
-            }
-            return try decode(data, context)
-        }
+        self.encodeImp = encode
+        self.decodeImp = decode
     }
     
     /// Creates a Local Storage Key that uses custom encoding and decoding functions.
@@ -165,10 +155,16 @@ extension LocalStorageKey {
         encoder: E,
         decoder: D
     ) where Value: CodableWithConfiguration, E.Output == Data, D.Input == Data {
-        self.init(key: key, setting: setting) { (value, configuration: Value.EncodingConfiguration) in
-            try encoder.encode(value, configuration: configuration)
-        } decode: { (data, configuration: Value.DecodingConfiguration) in
-            try decoder.decode(Value.self, from: data, configuration: configuration)
+        self.init(key: key, setting: setting) { value, configuration in
+            guard let configuration = configuration as? Value.EncodingConfiguration else {
+                preconditionFailure("Invalid context passed to CodableWithConfiguration encoding operation")
+            }
+            return try encoder.encode(value, configuration: configuration)
+        } decode: { data, configuration in
+            guard let configuration = configuration as? Value.DecodingConfiguration else {
+                preconditionFailure("Invalid context passed to CodableWithConfiguration decoding operation")
+            }
+            return try decoder.decode(Value.self, from: data, configuration: configuration)
         }
     }
     
