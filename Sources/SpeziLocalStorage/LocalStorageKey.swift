@@ -133,8 +133,24 @@ extension LocalStorageKey {
         self.init(key, setting: setting, encoder: JSONEncoder(), decoder: JSONDecoder())
     }
     
+    /// Creates a Local Storage Key for storing and loading `NSSecureCoding`-compliant objects.
+    public convenience init(_ key: String, setting: LocalStorageSetting = .default) where Value: NSObject & NSSecureCoding {
+        self.init(key: key, setting: setting) { value in
+            try NSKeyedArchiver.archivedData(withRootObject: value, requiringSecureCoding: true)
+        } decode: { data in
+            try NSKeyedUnarchiver.unarchivedObject(ofClass: Value.self, from: data)
+        }
+    }
+    
+    /// Creates a Local Storage Key for storing and loading `Data` objects.
+    ///
+    /// This initializer allows more efficient persistance: if the value is already `Data`, there is no need to perform a dedicated encoding or decoding step.
+    public convenience init(_ key: String, setting: LocalStorageSetting = .default) where Value == Data {
+        self.init(key: key, setting: setting, encode: { $0 }, decode: { $0 })
+    }
+    
+    
     /// Creates a Local Storage Key for a `Codable` type, that uses a custom encoder and decoder.
-    @_disfavoredOverload
     public convenience init<E: SpeziFoundation.TopLevelEncoder & Sendable, D: SpeziFoundation.TopLevelDecoder & Sendable>(
         _ key: String,
         setting: LocalStorageSetting = .default, // swiftlint:disable:this function_default_parameter_at_end
@@ -190,20 +206,85 @@ extension LocalStorageKey {
         }
     }
     
-    /// Creates a Local Storage Key for storing and loading `NSSecureCoding`-compliant objects.
-    public convenience init(_ key: String, setting: LocalStorageSetting = .default) where Value: NSObject & NSSecureCoding {
-        self.init(key: key, setting: setting) { value in
-            try NSKeyedArchiver.archivedData(withRootObject: value, requiringSecureCoding: true)
-        } decode: { data in
-            try NSKeyedUnarchiver.unarchivedObject(ofClass: Value.self, from: data)
+    /// Creates a Local Storage Key for a type that is both `Encodable` and `CodableWithConfiguration`, that uses a custom encoder and decoder.
+    public convenience init<E: SpeziFoundation.TopLevelEncoder & Sendable, D: SpeziFoundation.TopLevelDecoder & Sendable>(
+        _ key: String,
+        setting: LocalStorageSetting = .default, // swiftlint:disable:this function_default_parameter_at_end
+        encoder: E,
+        decoder: D
+    ) where Value: Encodable & CodableWithConfiguration, E.Output == Data, D.Input == Data {
+        self.init(key: key, setting: setting) { (value, configuration: Any?) in
+            if let configuration = configuration as? Value.EncodingConfiguration {
+                try encoder.encode(value, configuration: configuration)
+            } else {
+                try encoder.encode(value)
+            }
+        } decode: { (data, configuration: Any?) in
+            if let configuration = configuration as? Value.DecodingConfiguration {
+                try decoder.decode(Value.self, from: data, configuration: configuration)
+            } else {
+                preconditionFailure("Invalid context passed to CodableWithConfiguration decoding operation")
+            }
         }
     }
     
-    /// Creates a Local Storage Key for storing and loading `Data` objects.
-    ///
-    /// This initializer allows more efficient persistance: if the value is already `Data`, there is no need to perform a dedicated encoding or decoding step.
-    public convenience init(_ key: String, setting: LocalStorageSetting = .default) where Value == Data {
-        self.init(key: key, setting: setting, encode: { $0 }, decode: { $0 })
+    
+    /// Creates a Local Storage Key for a type that is both `Decodable` and `CodableWithConfiguration`, that uses a custom encoder and decoder.
+    public convenience init<E: SpeziFoundation.TopLevelEncoder & Sendable, D: SpeziFoundation.TopLevelDecoder & Sendable>(
+        _ key: String,
+        setting: LocalStorageSetting = .default, // swiftlint:disable:this function_default_parameter_at_end
+        encoder: E,
+        decoder: D
+    ) where Value: Decodable & CodableWithConfiguration, E.Output == Data, D.Input == Data {
+        self.init(key: key, setting: setting) { (value, configuration: Any?) in
+            if let configuration = configuration as? Value.EncodingConfiguration {
+                try encoder.encode(value, configuration: configuration)
+            } else {
+                preconditionFailure("Invalid context passed to CodableWithConfiguration encoding operation")
+            }
+        } decode: { (data, configuration: Any?) in
+            if let configuration = configuration as? Value.DecodingConfiguration {
+                try decoder.decode(Value.self, from: data, configuration: configuration)
+            } else {
+                try decoder.decode(Value.self, from: data)
+            }
+        }
+    }
+    
+    /// Creates a Local Storage Key for a type that is both `Codable` and `EncodableWithConfiguration`, that uses a custom encoder and decoder.
+    public convenience init<E: SpeziFoundation.TopLevelEncoder & Sendable, D: SpeziFoundation.TopLevelDecoder & Sendable>(
+        _ key: String,
+        setting: LocalStorageSetting = .default, // swiftlint:disable:this function_default_parameter_at_end
+        encoder: E,
+        decoder: D
+    ) where Value: Codable & EncodableWithConfiguration, E.Output == Data, D.Input == Data {
+        self.init(key: key, setting: setting) { (value, configuration: Any?) in
+            if let configuration = configuration as? Value.EncodingConfiguration {
+                try encoder.encode(value, configuration: configuration)
+            } else {
+                preconditionFailure("Invalid context passed to CodableWithConfiguration encoding operation")
+            }
+        } decode: { (data, _) in
+            try decoder.decode(Value.self, from: data)
+        }
+    }
+    
+    /// Creates a Local Storage Key for a type that is both `Codable` and `DecodableWithConfiguration`, that uses a custom encoder and decoder.
+    public convenience init<E: SpeziFoundation.TopLevelEncoder & Sendable, D: SpeziFoundation.TopLevelDecoder & Sendable>(
+        _ key: String,
+        setting: LocalStorageSetting = .default, // swiftlint:disable:this function_default_parameter_at_end
+        encoder: E,
+        decoder: D
+    ) where Value: Codable & DecodableWithConfiguration, E.Output == Data, D.Input == Data {
+        self.init(key: key, setting: setting) { value, _ in
+            try encoder.encode(value)
+        } decode: { (data, configuration: Any?) in
+            if let configuration = configuration as? Value.DecodingConfiguration {
+                try decoder.decode(Value.self, from: data, configuration: configuration)
+            } else {
+                try decoder.decode(Value.self, from: data)
+            }
+        }
     }
 }
 
