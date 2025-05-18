@@ -10,7 +10,6 @@ import CryptoKit
 import SpeziKeychainStorage
 import SpeziLocalStorage
 import XCTestApp
-import XCTRuntimeAssertions
 
 
 final class LocalStorageTests: TestAppTestCase {
