@@ -24,9 +24,9 @@ let package = Package(
         .library(name: "SpeziKeychainStorage", targets: ["SpeziKeychainStorage"])
     ],
     dependencies: [
-        .package(url: "https://github.com/StanfordSpezi/Spezi.git", branch: "lukas/fix-test-issue"),
-        .package(url: "https://github.com/StanfordSpezi/SpeziFoundation.git", branch: "lukas/orderedarray-unsafe-operations"),
-        .package(url: "https://github.com/StanfordBDHG/XCTRuntimeAssertions.git", branch: "lukas/fix")
+        .package(url: "https://github.com/StanfordSpezi/Spezi.git", from: "1.8.2"),
+        .package(url: "https://github.com/StanfordSpezi/SpeziFoundation.git", from: "2.1.7"),
+        .package(url: "https://github.com/StanfordBDHG/XCTRuntimeAssertions.git", from: "2.0.0")
     ] + swiftLintPackage(),
     targets: [
         .target(
