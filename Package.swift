@@ -24,16 +24,16 @@ let package = Package(
         .library(name: "SpeziKeychainStorage", targets: ["SpeziKeychainStorage"])
     ],
     dependencies: [
-        .package(url: "https://github.com/StanfordSpezi/Spezi", from: "1.7.3"),
-        .package(url: "https://github.com/StanfordSpezi/SpeziFoundation", from: "2.0.0"),
-        .package(url: "https://github.com/StanfordBDHG/XCTRuntimeAssertions", from: "1.1.1")
+        .package(url: "https://github.com/StanfordSpezi/Spezi.git", from: "1.8.2"),
+        .package(url: "https://github.com/StanfordSpezi/SpeziFoundation.git", from: "2.1.7"),
+        .package(url: "https://github.com/StanfordBDHG/XCTRuntimeAssertions.git", from: "2.0.0")
     ] + swiftLintPackage(),
     targets: [
         .target(
             name: "SpeziKeychainStorage",
             dependencies: [
                 .product(name: "Spezi", package: "Spezi"),
-                .product(name: "XCTRuntimeAssertions", package: "XCTRuntimeAssertions")
+                .product(name: "RuntimeAssertions", package: "XCTRuntimeAssertions")
             ],
             swiftSettings: [.enableUpcomingFeature("ExistentialAny")]
         ),

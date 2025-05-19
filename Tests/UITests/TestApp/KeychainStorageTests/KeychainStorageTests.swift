@@ -11,7 +11,6 @@ import Foundation
 import Spezi
 @_spi(Internal) import SpeziKeychainStorage
 import XCTestApp
-import XCTRuntimeAssertions
 
 
 func XCTAssertCredentialsMainPropertiesEqual(

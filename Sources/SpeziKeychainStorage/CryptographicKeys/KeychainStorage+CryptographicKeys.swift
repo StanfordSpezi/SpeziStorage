@@ -18,6 +18,14 @@ extension KeychainStorage {
         case `public`
         case symmetric
         
+        public var rawValue: CFString {
+            switch self {
+            case .private: kSecAttrKeyClassPrivate
+            case .public: kSecAttrKeyClassPublic
+            case .symmetric: kSecAttrKeyClassSymmetric
+            }
+        }
+        
         public init?(_ rawValue: CFString) {
             switch rawValue {
             case kSecAttrKeyClassPrivate:
@@ -28,14 +36,6 @@ extension KeychainStorage {
                 self = .symmetric
             default:
                 return nil
-            }
-        }
-        
-        public var rawValue: CFString {
-            switch self {
-            case .private: kSecAttrKeyClassPrivate
-            case .public: kSecAttrKeyClassPublic
-            case .symmetric: kSecAttrKeyClassSymmetric
             }
         }
     }
