@@ -71,7 +71,12 @@ public struct LocalStorageEntry<Value: Sendable>: DynamicProperty, Sendable { //
     
     @_documentation(visibility: internal)
     public func update() {
-        internals.subscribe(to: key, in: localStorage)
+        Task {
+            // we sometimes get "precondition failure: setting value during update" crashes in the subscribe call on iOS 26;
+            // this is our way of hopefully avoiding this
+            await Task.yield()
+            internals.subscribe(to: key, in: localStorage)
+        }
     }
 }
 
