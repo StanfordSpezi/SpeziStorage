@@ -39,7 +39,7 @@ import SwiftUI
 /// }
 /// ```
 @propertyWrapper
-public struct LocalStorageEntry<Value>: DynamicProperty { // swiftlint:disable:this file_types_order
+public struct LocalStorageEntry<Value: Sendable>: DynamicProperty, Sendable { // swiftlint:disable:this file_types_order
     private let key: LocalStorageKey<Value>
     
     @Environment(LocalStorage.self) private var localStorage
@@ -53,6 +53,14 @@ public struct LocalStorageEntry<Value>: DynamicProperty { // swiftlint:disable:t
             } else {
                 try? localStorage.store(newValue, for: key)
             }
+        }
+    }
+    
+    public var projectedValue: Binding<Value?> {
+        Binding<Value?> {
+            self.wrappedValue
+        } set: {
+            self.wrappedValue = $0
         }
     }
     
@@ -70,7 +78,7 @@ public struct LocalStorageEntry<Value>: DynamicProperty { // swiftlint:disable:t
 
 @Observable
 private final class LocalStorageEntryInternals<Value> {
-    fileprivate var value: Value?
+    fileprivate private(set) var value: Value?
     
     @ObservationIgnored private var cancellable: AnyCancellable?
     
@@ -82,6 +90,8 @@ private final class LocalStorageEntryInternals<Value> {
         value = try? localStorage.load(key)
     }
 }
+
+extension LocalStorageEntryInternals: @unchecked Sendable where Value: Sendable {}
 
 
 extension Equatable {
