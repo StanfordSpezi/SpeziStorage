@@ -39,7 +39,7 @@ import SwiftUI
 /// }
 /// ```
 @propertyWrapper
-public struct LocalStorageEntry<Value>: DynamicProperty { // swiftlint:disable:this file_types_order
+public struct LocalStorageEntry<Value: Sendable>: DynamicProperty, Sendable { // swiftlint:disable:this file_types_order
     private let key: LocalStorageKey<Value>
     
     @Environment(LocalStorage.self) private var localStorage
@@ -56,6 +56,14 @@ public struct LocalStorageEntry<Value>: DynamicProperty { // swiftlint:disable:t
         }
     }
     
+    public var projectedValue: Binding<Value?> {
+        Binding<Value?> {
+            self.wrappedValue
+        } set: {
+            self.wrappedValue = $0
+        }
+    }
+    
     /// Creates a new `LocalStorageEntry` for the specified storage key
     public init(_ key: LocalStorageKey<Value>) {
         self.key = key
@@ -63,14 +71,19 @@ public struct LocalStorageEntry<Value>: DynamicProperty { // swiftlint:disable:t
     
     @_documentation(visibility: internal)
     public func update() {
-        internals.subscribe(to: key, in: localStorage)
+        Task {
+            // we sometimes get "precondition failure: setting value during update" crashes in the subscribe call on iOS 26;
+            // this is our way of hopefully avoiding this
+            await Task.yield()
+            internals.subscribe(to: key, in: localStorage)
+        }
     }
 }
 
 
 @Observable
 private final class LocalStorageEntryInternals<Value> {
-    fileprivate var value: Value?
+    fileprivate private(set) var value: Value?
     @ObservationIgnored private var key: LocalStorageKey<Value>?
     @ObservationIgnored private var localStorage: LocalStorage?
     @ObservationIgnored private var cancellable: AnyCancellable?
@@ -88,6 +101,8 @@ private final class LocalStorageEntryInternals<Value> {
         value = try? localStorage.load(key)
     }
 }
+
+extension LocalStorageEntryInternals: @unchecked Sendable where Value: Sendable {}
 
 
 extension Equatable {
