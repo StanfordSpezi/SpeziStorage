@@ -71,6 +71,6 @@ jobs:
     needs: [package_tests, ui_tests]
     uses: StanfordBDHG/.github/.github/workflows/create-and-upload-coverage-report.yml@v2
     with:
-      coveragereports: SpeziScheSpeziStorageduler-*.xcresult TestApp-*.xcresult
+      coveragereports: SpeziStorage-*.xcresult TestApp-*.xcresult
     secrets:
       token: ${{ secrets.CODECOV_TOKEN }}
