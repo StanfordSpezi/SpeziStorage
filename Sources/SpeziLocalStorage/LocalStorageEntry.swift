@@ -71,11 +71,17 @@ public struct LocalStorageEntry<Value>: DynamicProperty { // swiftlint:disable:t
 @Observable
 private final class LocalStorageEntryInternals<Value> {
     fileprivate var value: Value?
-    
+    @ObservationIgnored private var key: LocalStorageKey<Value>?
+    @ObservationIgnored private var localStorage: LocalStorage?
     @ObservationIgnored private var cancellable: AnyCancellable?
     
     func subscribe(to key: LocalStorageKey<Value>, in localStorage: LocalStorage) {
+        if self.key === key, self.localStorage === localStorage, cancellable != nil {
+            return
+        }
         cancellable?.cancel()
+        self.key = key
+        self.localStorage = localStorage
         cancellable = key.publisher.sink { [weak self] newValue in
             self?.value = newValue
         }

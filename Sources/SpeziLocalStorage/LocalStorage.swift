@@ -139,6 +139,7 @@ public final class LocalStorage: Module, DefaultInitializable, EnvironmentAccess
             // No encryption:
             try data.write(to: fileURL)
             try setResourceValues()
+            key.informSubscribersAboutNewValue(value)
             return
         }
 
