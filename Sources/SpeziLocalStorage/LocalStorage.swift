@@ -265,6 +265,19 @@ public final class LocalStorage: Module, DefaultInitializable, EnvironmentAccess
     }
     
     
+    /// Deletes all entries whose key's satisfy the predicate
+    ///
+    /// - Note: This operation is not synchronized with reads or writes on individual storage keys.
+    public func deleteAll(where predicate: (_ rawKey: String) -> Bool) throws {
+        for url in (try? fileManager.contentsOfDirectory(at: localStorageDirectory, includingPropertiesForKeys: nil)) ?? [] {
+            let rawKey = url.deletingPathExtension().lastPathComponent
+            if predicate(rawKey) {
+                try fileManager.removeItem(at: url)
+            }
+        }
+    }
+    
+    
     // MARK: Other
     
     /// Modify a stored value in place
