@@ -48,6 +48,8 @@ extension KeychainStorage {
         } catch .duplicateItem where replaceDuplicates {
             try deleteCredentials(withUsername: credentials.username, for: tag)
             try store(credentials, for: tag, replaceDuplicates: false)
+        } catch {
+            throw error
         }
     }
     
