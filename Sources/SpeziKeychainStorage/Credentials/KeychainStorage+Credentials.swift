@@ -49,6 +49,7 @@ extension KeychainStorage {
             try deleteCredentials(withUsername: credentials.username, for: tag)
             try store(credentials, for: tag, replaceDuplicates: false)
         } catch {
+            // https://github.com/swiftlang/swift/issues/88220
             throw error
         }
     }
