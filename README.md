@@ -17,8 +17,8 @@ SPDX-License-Identifier: MIT
 [![](https://img.shields.io/endpoint?url=https%3A%2F%2Fswiftpackageindex.com%2Fapi%2Fpackages%2FStanfordSpezi%2FSpeziStorage%2Fbadge%3Ftype%3Dplatforms)](https://swiftpackageindex.com/StanfordSpezi/SpeziStorage)
 
 The Spezi Storage framework provides two Modules that enable on-disk storage of information.
-The  [`LocalStorage`](https://swiftpackageindex.com/stanfordspezi/spezistorage/documentation/spezilocalstorage/localstorage) module can be used to store information that does not need to be encrypted.
-Credentials, keys, and other sensitive information that needs to be encrypted may be stored by using the [`KeychainStorage`](https://swiftpackageindex.com/StanfordSpezi/SpeziStorage/documentation/spezikeychainstorage) module.
+The  [`LocalStorage`](https://github.com/StanfordSpezi/SpeziStorage/blob/main/Sources/SpeziLocalStorage/LocalStorage.swift) module can be used to store information that does not need to be encrypted.
+Credentials, keys, and other sensitive information that needs to be encrypted may be stored by using the [`KeychainStorage`](https://github.com/StanfordSpezi/SpeziStorage/blob/main/Sources/SpeziKeychainStorage/KeychainStorage.swift) module.
 
 
 ## Setup
@@ -28,9 +28,9 @@ You need to add the Spezi Storage Swift package to
 [Swift package](https://developer.apple.com/documentation/xcode/creating-a-standalone-swift-package-with-xcode#Add-a-dependency-on-another-Swift-package).
 
 > [!IMPORTANT]
-> If your application is not yet configured to use Spezi, follow the [Spezi setup article](https://swiftpackageindex.com/stanfordspezi/spezi/documentation/spezi/initial-setup) to set up the core Spezi infrastructure.
+> If your application is not yet configured to use Spezi, follow the [Spezi setup article](https://github.com/StanfordSpezi/Spezi/blob/main/Sources/Spezi/Spezi.docc/Initial%20Setup.md) to set up the core Spezi infrastructure.
 
-You can configure the [`LocalStorage`](https://swiftpackageindex.com/stanfordspezi/spezistorage/documentation/spezilocalstorage/localstorage) or [`KeychainStorage`](https://swiftpackageindex.com/StanfordSpezi/SpeziStorage/documentation/spezikeychainstorage) module in the [`SpeziAppDelegate`](https://swiftpackageindex.com/stanfordspezi/spezi/documentation/spezi/speziappdelegate).
+You can configure the [`LocalStorage`](https://github.com/StanfordSpezi/SpeziStorage/blob/main/Sources/SpeziLocalStorage/LocalStorage.swift) or [`KeychainStorage`](https://github.com/StanfordSpezi/SpeziStorage/blob/main/Sources/SpeziKeychainStorage/KeychainStorage.swift) module in the [`SpeziAppDelegate`](https://github.com/StanfordSpezi/Spezi/blob/main/Sources/Spezi/Spezi/SpeziAppDelegate.swift).
 
 > [!IMPORTANT]
 > If you use SpeziStorage on the macOS platform, ensure to add the [`Keychain Access Groups` entitlement](https://developer.apple.com/documentation/bundleresources/entitlements/keychain-access-groups) to the enclosing Xcode project via *PROJECT_NAME > Signing&Capabilities > + Capability*. The array of keychain groups can be left empty, only the base entitlement is required.
@@ -64,7 +64,7 @@ struct ExampleStorageView: View {
 }
 ```
 
-Alternatively, it is common to use the `LocalStorage` or `KeychainStorage` module in other modules as a dependency: [Spezi Module dependencies](https://swiftpackageindex.com/stanfordspezi/spezi/documentation/spezi/module-dependency).
+Alternatively, it is common to use the `LocalStorage` or `KeychainStorage` module in other modules as a dependency: [Spezi Module dependencies](https://github.com/StanfordSpezi/Spezi/blob/main/Sources/Spezi/Spezi.docc/Module/Module%20Dependency.md).
 
 
 ## Local Storage
@@ -72,7 +72,7 @@ Alternatively, it is common to use the `LocalStorage` or `KeychainStorage` modul
 The `LocalStorage` module enables the on-disk storage of data in mobile applications.
 
 The `LocalStorage` module defaults to storing data encrypted supported by the `KeychainStorage` module.
-The [`LocalStorageKey`](https://swiftpackageindex.com/stanfordspezi/spezistorage/documentation/spezilocalstorage/localstoragekey) type is used to define storage entries, and specify how data should be persisted.
+The [`LocalStorageKey`](https://github.com/StanfordSpezi/SpeziStorage/blob/main/Sources/SpeziLocalStorage/LocalStorageKey.swift) type is used to define storage entries, and specify how data should be persisted.
 
 
 ## Keychain Storage
@@ -83,7 +83,7 @@ Credentials can be stored in the Secure Enclave (if available) or the Keychain. 
 
 ### Handling Credentials
 
-Use the `KeychainStorage` module to store a set of [`Credentials`](https://swiftpackageindex.com/stanfordspezi/spezistorage/documentation/spezikeychainstorage/credentials) instances in the Keychain associated with a server that is synchronizable between different devices.
+Use the `KeychainStorage` module to store a set of [`Credentials`](https://github.com/StanfordSpezi/SpeziStorage/blob/main/Sources/SpeziKeychainStorage/Credentials/Credentials.swift) instances in the Keychain associated with a server that is synchronizable between different devices.
 
 
 
@@ -93,7 +93,7 @@ Similar to `Credentials` instances, you can also use the `KeychainStorage` modul
 
 
 
-For more information, please refer to the [API documentation](https://swiftpackageindex.com/StanfordSpezi/SpeziStorage/documentation).
+For more information, please refer to the [API documentation](https://github.com/StanfordSpezi/SpeziStorage/tree/main/Sources).
 
 
 ## The Spezi Template Application
