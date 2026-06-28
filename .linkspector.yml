@@ -4,11 +4,7 @@ useGitIgnore: true
 ignorePatterns:
   - pattern: '^doc:.*$'
   - pattern: '^http://localhost.*$'
-httpHeaders:
-  - url:
-      - https://swiftpackageindex.com/
-    headers:
-      User-Agent: Mozilla/5.0
+  - pattern: '^https://swiftpackageindex\\.com/.*/documentation(/.*)?$'
 replacementPatterns:
   - pattern: '(.*)#gh-dark-mode-only'
     replacement: '$1'
