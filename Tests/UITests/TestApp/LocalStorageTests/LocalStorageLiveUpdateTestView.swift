@@ -38,11 +38,28 @@ struct RowView: View {
     @LocalStorageEntry(.number) private var number
     
     var body: some View {
-        LabeledContent("Number", value: number.map(String.init) ?? "–")
-        Button("Double Number") {
-            if let number {
-                self.number = number * 2
+        Section {
+            LabeledContent("Number (a)", value: number.map(String.init) ?? "–")
+            Button("Double Number") {
+                if let number {
+                    self.number = number * 2
+                }
             }
+        }
+        Section {
+            ResetNumberView(number: $number)
+        }
+    }
+}
+
+
+private struct ResetNumberView: View {
+    @Binding var number: Int?
+    
+    var body: some View {
+        LabeledContent("Number (b)", value: number.map(String.init) ?? "–")
+        Button("Reset") {
+            number = nil
         }
     }
 }
